@@ -1,0 +1,121 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ['class'],
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        gold: {
+          50: '#fdf9e7',
+          100: '#faf0c0',
+          200: '#f5e07a',
+          300: '#f0ce3a',
+          400: '#e8bb18',
+          500: '#D4AF37',
+          600: '#b8920d',
+          700: '#8f6e0d',
+          800: '#6b5211',
+          900: '#5a4312',
+          950: '#342407',
+        },
+        maroon: {
+          50: '#fff1f1',
+          100: '#ffe0e0',
+          200: '#ffc5c5',
+          300: '#ff9d9d',
+          400: '#ff6464',
+          500: '#ff3030',
+          600: '#ed0e0e',
+          700: '#c80808',
+          800: '#a50c0c',
+          900: '#881111',
+          950: '#5C1A1A',
+        },
+        rosegold: {
+          DEFAULT: '#B76E79',
+          light: '#d4929b',
+          dark: '#8f4f58',
+        },
+        ivory: '#FFFFF0',
+        cream: '#FDF8F0',
+        champagne: '#F7E7CE',
+        darkbase: '#0A0806',
+      },
+      fontFamily: {
+        playfair: ['var(--font-playfair)', 'Georgia', 'serif'],
+        inter: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        cormorant: ['var(--font-cormorant)', 'Georgia', 'serif'],
+      },
+      backgroundImage: {
+        'gradient-luxury': 'linear-gradient(135deg, #0A0806 0%, #1a0a0a 50%, #2d1a05 100%)',
+        'gradient-gold': 'linear-gradient(135deg, #D4AF37 0%, #F7E7CE 50%, #B76E79 100%)',
+        'gradient-hero': 'radial-gradient(ellipse at top, #2d1a05 0%, #1a0808 40%, #0A0806 100%)',
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'float-slow': 'float 9s ease-in-out infinite',
+        'float-fast': 'float 4s ease-in-out infinite',
+        'shimmer': 'shimmer 2s linear infinite',
+        'spin-slow': 'spin 20s linear infinite',
+        'pulse-gold': 'pulseGold 2s ease-in-out infinite',
+        'marquee': 'marquee 30s linear infinite',
+        'marquee2': 'marquee2 30s linear infinite',
+        'grain': 'grain 8s steps(10) infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        pulseGold: {
+          '0%, 100%': { opacity: '1', boxShadow: '0 0 0 0 rgba(212, 175, 55, 0.4)' },
+          '50%': { opacity: '0.8', boxShadow: '0 0 0 20px rgba(212, 175, 55, 0)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+        marquee2: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0%)' },
+        },
+        grain: {
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '10%': { transform: 'translate(-2%, -3%)' },
+          '20%': { transform: 'translate(3%, 1%)' },
+          '30%': { transform: 'translate(-1%, 2%)' },
+          '40%': { transform: 'translate(2%, -2%)' },
+          '50%': { transform: 'translate(-3%, 1%)' },
+          '60%': { transform: 'translate(1%, 3%)' },
+          '70%': { transform: 'translate(-2%, -1%)' },
+          '80%': { transform: 'translate(3%, 2%)' },
+          '90%': { transform: 'translate(-1%, -3%)' },
+        },
+      },
+      boxShadow: {
+        'gold': '0 0 40px rgba(212, 175, 55, 0.15)',
+        'gold-lg': '0 0 80px rgba(212, 175, 55, 0.25)',
+        'luxury': '0 25px 80px rgba(0,0,0,0.6)',
+        'card': '0 8px 32px rgba(0,0,0,0.3)',
+        'inner-gold': 'inset 0 1px 0 rgba(212, 175, 55, 0.2)',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+      },
+      transitionTimingFunction: {
+        'luxury': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      },
+    },
+  },
+  plugins: [require('tailwindcss-animate')],
+}

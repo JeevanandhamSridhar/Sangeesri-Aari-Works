@@ -1,0 +1,697 @@
+// This is your Prisma schema file for Sangee Sri Aari Works
+// Run: npx prisma generate && npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── AUTH MODELS ──────────────────────────────────────────────────────────────
+
+model User {
+  id               String        @id @default(cuid())
+  email            String?       @unique
+  phone            String?       @unique
+  name             String
+  avatarUrl        String?
+  googleId         String?       @unique
+  passwordHash     String?
+  isEmailVerified  Boolean       @default(false)
+  isPhoneVerified  Boolean       @default(false)
+  isActive         Boolean       @default(true)
+  
+  // Relations
+  cart             Cart?
+  orders           Order[]
+  quotations       Quotation[]
+  appointments     Appointment[]
+  reviews          Testimonial[]
+  productReviews   ProductReview[]
+  wishlistItems    WishlistItem[]
+  notifications    Notification[]
+  enquiries        Enquiry[]
+  savedAddresses   Address[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@index([email])
+}
+
+model Admin {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String
+  passwordHash String
+  role         AdminRole    @default(EDITOR)
+  isActive     Boolean      @default(true)
+  
+  // Relations
+  blogPosts    BlogPost[]
+  activityLogs ActivityLog[]
+  
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  STAFF
+  EDITOR
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String?
+  adminId   String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@index([token])
+}
+
+// ─── USER ADDRESSES ────────────────────────────────────────────────────────────
+
+model Address {
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  phone      String
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  pincode    String
+  isDefault  Boolean @default(false)
+  
+  orders     Order[]
+  
+  createdAt  DateTime @default(now())
+}
+
+// ─── E-COMMERCE: PRODUCTS ─────────────────────────────────────────────────────
+
+model ProductCategory {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  imageUrl  String?
+  icon      String?
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  
+  products  Product[]
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id            String          @id @default(cuid())
+  name          String
+  slug          String          @unique
+  description   String
+  shortDesc     String?
+  categoryId    String
+  category      ProductCategory @relation(fields: [categoryId], references: [id])
+  images        ProductImage[]
+  mrp           Decimal         @db.Decimal(10, 2)
+  salePrice     Decimal?        @db.Decimal(10, 2)
+  discountPct   Decimal?        @db.Decimal(5, 2)
+  gstPct        Decimal         @default(5) @db.Decimal(5, 2)
+  stock         Int             @default(0)
+  sku           String?         @unique
+  lowStockAlert Int             @default(5)
+  isFeatured    Boolean         @default(false)
+  isNewArrival  Boolean         @default(false)
+  isActive      Boolean         @default(true)
+  tags          String[]
+  specifications Json?          // JSON { key: value }
+  
+  // Relations
+  reviews       ProductReview[]
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
+  
+  // Computed via relations
+  totalSold     Int             @default(0)
+  viewCount     Int             @default(0)
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  @@index([categoryId])
+  @@index([slug])
+  @@index([isActive])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String  // Cloudinary URL
+  publicId  String  // Cloudinary public_id for deletion
+  altText   String?
+  sortOrder Int     @default(0)
+  
+  @@index([productId])
+}
+
+model ProductReview {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  rating     Int      // 1-5
+  title      String?
+  body       String
+  imageUrls  String[]
+  isVerified Boolean  @default(false) // verified purchase
+  isApproved Boolean  @default(false)
+  adminReply String?
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@unique([productId, userId])
+  @@index([productId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  addedAt   DateTime @default(now())
+  
+  @@unique([userId, productId])
+}
+
+// ─── E-COMMERCE: CART & ORDERS ────────────────────────────────────────────────
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id])
+  sessionId String?    // for guest carts
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  
+  @@unique([cartId, productId])
+}
+
+model Coupon {
+  id           String     @id @default(cuid())
+  code         String     @unique
+  description  String?
+  type         CouponType
+  value        Decimal    @db.Decimal(10, 2) // flat ₹ or %
+  minOrderAmt  Decimal?   @db.Decimal(10, 2)
+  maxDiscount  Decimal?   @db.Decimal(10, 2) // cap for % coupons
+  usageLimit   Int?       // total uses allowed
+  usedCount    Int        @default(0)
+  perUserLimit Int        @default(1)
+  expiresAt    DateTime?
+  startsAt     DateTime?  // for flash sales
+  isActive     Boolean    @default(true)
+  categoryIds  String[]   // empty = all
+  productIds   String[]   // empty = all
+  
+  orders       Order[]
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum CouponType {
+  FLAT
+  PERCENTAGE
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  status          OrderStatus   @default(PLACED)
+  
+  // Pricing
+  subtotal        Decimal       @db.Decimal(10, 2)
+  discountAmt     Decimal       @default(0) @db.Decimal(10, 2)
+  deliveryCharge  Decimal       @default(0) @db.Decimal(10, 2)
+  gstAmt          Decimal       @db.Decimal(10, 2)
+  total           Decimal       @db.Decimal(10, 2)
+  
+  // Coupon
+  couponId        String?
+  coupon          Coupon?       @relation(fields: [couponId], references: [id])
+  couponCode      String?
+  
+  // Payment
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  
+  // Shipping
+  addressId       String?
+  address         Address?      @relation(fields: [addressId], references: [id])
+  shippingSnapshot Json         // snapshot of address at time of order
+  trackingNumber  String?
+  courierName     String?
+  estimatedDelivery DateTime?
+  deliveredAt     DateTime?
+  
+  notes           String?
+  
+  transactions    PaymentTransaction[]
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([orderNumber])
+}
+
+enum OrderStatus {
+  PLACED
+  CONFIRMED
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  RAZORPAY
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model OrderItem {
+  id           String  @id @default(cuid())
+  orderId      String
+  order        Order   @relation(fields: [orderId], references: [id])
+  productId    String
+  product      Product @relation(fields: [productId], references: [id])
+  // Snapshot at time of purchase
+  productName  String
+  productImage String
+  productSku   String?
+  quantity     Int
+  mrp          Decimal @db.Decimal(10, 2)
+  salePrice    Decimal @db.Decimal(10, 2)
+  gstPct       Decimal @db.Decimal(5, 2)
+  
+  @@index([orderId])
+}
+
+model PaymentTransaction {
+  id                String        @id @default(cuid())
+  orderId           String
+  order             Order         @relation(fields: [orderId], references: [id])
+  gatewayOrderId    String?       // Razorpay order_id
+  gatewayPaymentId  String?       // Razorpay payment_id
+  gatewaySignature  String?       // Razorpay signature
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @default("INR")
+  status            PaymentStatus
+  method            String?       // upi, card, netbanking, etc.
+  errorCode         String?
+  errorDescription  String?
+  
+  createdAt         DateTime      @default(now())
+}
+
+// ─── GALLERY & COLLECTIONS ────────────────────────────────────────────────────
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  
+  gallery     Gallery[]
+  collections Collection[]
+  
+  createdAt   DateTime  @default(now())
+}
+
+model Gallery {
+  id          String    @id @default(cuid())
+  title       String
+  imageUrl    String    // Cloudinary URL
+  publicId    String
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  tags        String[]
+  isFeatured  Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  viewCount   Int       @default(0)
+  sortOrder   Int       @default(0)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([categoryId])
+}
+
+model Collection {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  coverImage  String?
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ThreeDModel {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  fileUrl     String   // Cloudinary URL
+  publicId    String
+  thumbnail   String?
+  isActive    Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+}
+
+// ─── BUSINESS FEATURES ────────────────────────────────────────────────────────
+
+model Quotation {
+  id              String          @id @default(cuid())
+  quotationNumber String          @unique
+  userId          String?
+  user            User?           @relation(fields: [userId], references: [id])
+  customerName    String
+  customerPhone   String
+  customerWhatsApp String?
+  customerEmail   String?
+  occasion        String
+  deadline        DateTime?
+  blouseType      String
+  material        String?
+  budget          String?
+  description     String
+  referenceImages String[]
+  preferredDelivery String?
+  status          QuotationStatus @default(PENDING)
+  adminNotes      String?
+  quotedAmount    Decimal?        @db.Decimal(10, 2)
+  pdfUrl          String?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([status])
+}
+
+enum QuotationStatus {
+  PENDING
+  REVIEWING
+  QUOTED
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model Appointment {
+  id              String            @id @default(cuid())
+  userId          String?
+  user            User?             @relation(fields: [userId], references: [id])
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  date            DateTime
+  timeSlot        String
+  serviceType     String
+  notes           String?
+  status          AppointmentStatus @default(PENDING)
+  adminNotes      String?
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  @@index([date])
+  @@index([status])
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model Enquiry {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  name        String
+  email       String?
+  phone       String
+  subject     String
+  message     String
+  isRead      Boolean  @default(false)
+  adminReply  String?
+  
+  createdAt   DateTime @default(now())
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  name        String
+  location    String?
+  rating      Int      // 1-5
+  occasion    String?
+  review      String
+  imageUrl    String?
+  videoUrl    String?
+  isVerified  Boolean  @default(false)
+  isApproved  Boolean  @default(false)
+  adminReply  String?
+  isFeatured  Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── BLOG ─────────────────────────────────────────────────────────────────────
+
+model BlogPost {
+  id          String     @id @default(cuid())
+  title       String
+  slug        String     @unique
+  excerpt     String?
+  content     String     // Rich text HTML
+  coverImage  String?
+  authorId    String
+  author      Admin      @relation(fields: [authorId], references: [id])
+  tags        String[]
+  category    String?
+  isPublished Boolean    @default(false)
+  publishedAt DateTime?
+  viewCount   Int        @default(0)
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  
+  comments    BlogComment[]
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  @@index([slug])
+  @@index([isPublished])
+}
+
+model BlogComment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  comment   String
+  isApproved Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+}
+
+// ─── CONTENT & CMS ────────────────────────────────────────────────────────────
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Counter {
+  id        String   @id @default(cuid())
+  label     String
+  value     Int
+  suffix    String   @default('+')
+  icon      String?
+  sortOrder Int      @default(0)
+  
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  type  String @default("string") // string, json, boolean, number
+  
+  updatedAt DateTime @updatedAt
+}
+
+model InstagramCache {
+  id        String   @id @default(cuid())
+  postId    String   @unique
+  mediaUrl  String
+  permalink String
+  caption   String?
+  mediaType String
+  timestamp DateTime
+  
+  cachedAt  DateTime @default(now())
+}
+
+// ─── ANALYTICS ────────────────────────────────────────────────────────────────
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  event      String   // page_view, product_view, whatsapp_click, etc.
+  page       String?
+  productId  String?
+  userId     String?
+  sessionId  String?
+  country    String?
+  device     String?
+  browser    String?
+  referrer   String?
+  metadata   Json?
+  
+  createdAt  DateTime @default(now())
+  
+  @@index([event])
+  @@index([createdAt])
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  link      String?
+  
+  createdAt DateTime         @default(now())
+  
+  @@index([userId, isRead])
+}
+
+enum NotificationType {
+  ORDER_UPDATE
+  QUOTATION_UPDATE
+  APPOINTMENT_CONFIRMED
+  PROMOTION
+  GENERAL
+}
+
+model ChatbotConversation {
+  id        String   @id @default(cuid())
+  sessionId String
+  messages  Json     // Array of { role, content, timestamp }
+  leadName  String?
+  leadPhone String?
+  leadEmail String?
+  resolved  Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── AUDIT LOG ────────────────────────────────────────────────────────────────
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id])
+  action    String
+  resource  String
+  resourceId String?
+  details   Json?
+  ipAddress String?
+  
+  createdAt DateTime @default(now())
+  
+  @@index([adminId])
+  @@index([createdAt])
+}
+
+model MediaLibrary {
+  id          String   @id @default(cuid())
+  name        String
+  url         String
+  publicId    String   @unique
+  resourceType String  // image, video, raw
+  format      String?
+  width       Int?
+  height      Int?
+  bytes       Int?
+  folder      String?
+  tags        String[]
+  uploadedBy  String?
+  
+  createdAt   DateTime @default(now())
+}
