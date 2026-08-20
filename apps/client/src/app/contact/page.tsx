@@ -87,7 +87,7 @@ export default function ContactPage() {
 
           {/* Quick Message Form (7 Cols) */}
           <div className="lg:col-span-7">
-            <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 md:p-10 border border-white/10 space-y-6">
+            <form onSubmit={handleSubmit} data-lenis-prevent className="glass rounded-3xl p-8 md:p-10 border border-white/10 space-y-6">
               <h2 className="font-playfair text-2xl font-bold text-cream mb-2">Send Us A Message</h2>
               <p className="font-inter text-xs text-cream/50 mb-6">
                 Have a question about blouse designing, materials, or delivery timelines? Write to us directly.
@@ -96,22 +96,22 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="font-inter text-xs text-cream/70 mb-2 block">Your Name *</label>
-                  <input type="text" required placeholder="Name" className="input-luxury" />
+                  <input type="text" required data-lenis-prevent placeholder="Name" className="input-luxury" />
                 </div>
                 <div>
                   <label className="font-inter text-xs text-cream/70 mb-2 block">Phone / WhatsApp *</label>
-                  <input type="tel" required placeholder="Phone" className="input-luxury" />
+                  <input type="tel" required data-lenis-prevent placeholder="Phone" className="input-luxury" />
                 </div>
               </div>
 
               <div>
                 <label className="font-inter text-xs text-cream/70 mb-2 block">Subject</label>
-                <input type="text" placeholder="e.g. Bridal Blouse Inquiry / Material Order" className="input-luxury" />
+                <input type="text" data-lenis-prevent placeholder="e.g. Bridal Blouse Inquiry / Material Order" className="input-luxury" />
               </div>
 
               <div>
                 <label className="font-inter text-xs text-cream/70 mb-2 block">Your Message *</label>
-                <textarea rows={4} required placeholder="Write your message here..." className="input-luxury" />
+                <textarea rows={4} required data-lenis-prevent placeholder="Write your message here..." className="input-luxury" />
               </div>
 
               <button type="submit" className="btn-luxury w-full justify-center py-4 text-sm">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -12,8 +12,29 @@ export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
   const { subtotal } = getTotal()
 
-  const freeDeliveryThreshold = 999
-  const deliveryCharge = subtotal >= freeDeliveryThreshold || subtotal === 0 ? 0 : 99
+  const [settings, setSettings] = useState({
+    freeShippingEnabled: false,
+    freeDeliveryThreshold: 999,
+    deliveryCharge: 99,
+  })
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          setSettings({
+            freeShippingEnabled: Boolean(data.freeShippingEnabled),
+            freeDeliveryThreshold: Number(data.freeDeliveryThreshold) || 999,
+            deliveryCharge: Number(data.deliveryCharge) || 99,
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const isFreeDeliveryEligible = settings.freeShippingEnabled && subtotal >= settings.freeDeliveryThreshold
+  const deliveryCharge = subtotal === 0 || isFreeDeliveryEligible ? 0 : settings.deliveryCharge
   const grandTotal = subtotal + deliveryCharge
 
   const [form, setForm] = useState({
@@ -95,6 +116,20 @@ Please confirm my order details & payment options. Thank you!`
         date: new Date().toISOString().split('T')[0],
       }
       localStorage.setItem('sangee_sri_orders', JSON.stringify([newOrder, ...existingOrders]))
+
+      const notifItem = {
+        id: `notif-ord-${Date.now()}`,
+        type: 'ORDER',
+        title: `New Order Received #${orderId}`,
+        description: `${form.name} placed order for ${items.length} items (₹${grandTotal}).`,
+        time: 'Just now',
+        read: false,
+        link: '/orders',
+      }
+      const existingNotifs = JSON.parse(localStorage.getItem('sangee_sri_notifications') || '[]')
+      localStorage.setItem('sangee_sri_notifications', JSON.stringify([notifItem, ...existingNotifs]))
+
+      window.dispatchEvent(new Event('storage'))
     } catch {}
 
     setOrderPlaced({ orderId, whatsappUrl })
@@ -158,7 +193,7 @@ Please confirm my order details & payment options. Thank you!`
             <Link href="/shop" className="btn-luxury text-xs">Return to Shop</Link>
           </div>
         ) : (
-          <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <form onSubmit={handlePlaceOrder} data-lenis-prevent className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Customer Information */}
             <div className="lg:col-span-7 glass-dark rounded-3xl p-6 sm:p-8 border border-white/5 space-y-6">
               <h2 className="font-playfair text-xl font-bold text-cream pb-3 border-b border-white/10">
@@ -170,6 +205,7 @@ Please confirm my order details & payment options. Thank you!`
                   <label className="text-cream/70 block mb-1 font-medium">Full Name *</label>
                   <input
                     type="text"
+                    data-lenis-prevent
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     placeholder="Priya Lakshmi"
@@ -182,6 +218,7 @@ Please confirm my order details & payment options. Thank you!`
                   <label className="text-cream/70 block mb-1 font-medium">WhatsApp Phone Number *</label>
                   <input
                     type="tel"
+                    data-lenis-prevent
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+91 98765 43210"
@@ -194,6 +231,7 @@ Please confirm my order details & payment options. Thank you!`
                   <label className="text-cream/70 block mb-1 font-medium">Full Delivery Address *</label>
                   <textarea
                     rows={3}
+                    data-lenis-prevent
                     value={form.address}
                     onChange={(e) => setForm({ ...form, address: e.target.value })}
                     placeholder="Door No, Street Name, Landmark..."
@@ -207,6 +245,7 @@ Please confirm my order details & payment options. Thank you!`
                     <label className="text-cream/70 block mb-1 font-medium">City / District</label>
                     <input
                       type="text"
+                      data-lenis-prevent
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
                       placeholder="Kaveripakkam / Ranipet"
@@ -218,6 +257,7 @@ Please confirm my order details & payment options. Thank you!`
                     <label className="text-cream/70 block mb-1 font-medium">PIN Code</label>
                     <input
                       type="text"
+                      data-lenis-prevent
                       value={form.pincode}
                       onChange={(e) => setForm({ ...form, pincode: e.target.value })}
                       placeholder="632508"
@@ -230,6 +270,7 @@ Please confirm my order details & payment options. Thank you!`
                   <label className="text-cream/70 block mb-1 font-medium">Special Instructions / Customization Notes (Optional)</label>
                   <textarea
                     rows={2}
+                    data-lenis-prevent
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     placeholder="Blouse size, color preference, urgent delivery..."

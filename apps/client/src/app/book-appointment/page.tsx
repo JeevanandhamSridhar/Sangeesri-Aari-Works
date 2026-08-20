@@ -85,7 +85,7 @@ export default function BookAppointmentPage() {
             </button>
           </motion.div>
         ) : (
-          <form onSubmit={handleBooking} className="glass rounded-4xl p-8 md:p-12 border border-white/10 space-y-8">
+          <form onSubmit={handleBooking} data-lenis-prevent className="glass rounded-4xl p-8 md:p-12 border border-white/10 space-y-8">
             {/* Consultation Type */}
             <div>
               <label className="font-inter text-xs text-cream/70 mb-3 block">Consultation Type</label>
@@ -114,6 +114,7 @@ export default function BookAppointmentPage() {
                 <input
                   type="text"
                   required
+                  data-lenis-prevent
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Anitha Kumar"
@@ -125,6 +126,7 @@ export default function BookAppointmentPage() {
                 <input
                   type="tel"
                   required
+                  data-lenis-prevent
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="e.g. 7604887356"
@@ -139,6 +141,7 @@ export default function BookAppointmentPage() {
               <input
                 type="date"
                 required
+                data-lenis-prevent
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                 className="input-luxury"
@@ -171,6 +174,7 @@ export default function BookAppointmentPage() {
               <label className="font-inter text-xs text-cream/70 mb-2 block">Notes / Special Requests</label>
               <textarea
                 rows={3}
+                data-lenis-prevent
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Mention any specific sarees or blouse models you will bring..."

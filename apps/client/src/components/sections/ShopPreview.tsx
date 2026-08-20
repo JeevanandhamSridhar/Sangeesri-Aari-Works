@@ -9,68 +9,9 @@ import { useCartStore } from '@/store/cartStore'
 import { formatCurrency, calculateDiscount } from '@/lib/utils'
 import { toast } from 'sonner'
 
-const featuredProducts = [
-  {
-    id: 'p1',
-    productId: 'prod-1',
-    name: 'Premium Aari Needle Set (12 pcs)',
-    slug: 'premium-aari-needle-set',
-    category: 'Needles',
-    image: 'https://picsum.photos/seed/prod1/400/500',
-    mrp: 399,
-    salePrice: 249,
-    rating: 4.8,
-    reviewCount: 124,
-    inStock: true,
-    isNew: false,
-    isBestSeller: true,
-  },
-  {
-    id: 'p2',
-    productId: 'prod-2',
-    name: 'Silk Aari Embroidery Thread — Gold',
-    slug: 'silk-aari-thread-gold',
-    category: 'Thread',
-    image: 'https://picsum.photos/seed/prod2/400/500',
-    mrp: 299,
-    salePrice: 199,
-    rating: 4.9,
-    reviewCount: 89,
-    inStock: true,
-    isNew: true,
-    isBestSeller: false,
-  },
-  {
-    id: 'p3',
-    productId: 'prod-3',
-    name: 'Round Aari Frame — 12 inch',
-    slug: 'round-aari-frame-12',
-    category: 'Frames',
-    image: 'https://picsum.photos/seed/prod3/400/500',
-    mrp: 699,
-    salePrice: 499,
-    rating: 4.7,
-    reviewCount: 56,
-    inStock: true,
-    isNew: false,
-    isBestSeller: false,
-  },
-  {
-    id: 'p4',
-    productId: 'prod-4',
-    name: 'Beginner Aari Work Complete Kit',
-    slug: 'beginner-aari-kit',
-    category: 'Kits',
-    image: 'https://picsum.photos/seed/prod4/400/500',
-    mrp: 1499,
-    salePrice: 999,
-    rating: 4.9,
-    reviewCount: 203,
-    inStock: true,
-    isNew: false,
-    isBestSeller: true,
-  },
-]
+import { products } from '@/data/products'
+
+const featuredProducts = products.filter((p) => p.isBestSeller || p.isNew).slice(0, 4)
 
 function ProductCard({ product, index }: { product: typeof featuredProducts[0]; index: number }) {
   const addItem = useCartStore((s) => s.addItem)
@@ -80,7 +21,7 @@ function ProductCard({ product, index }: { product: typeof featuredProducts[0]; 
   const handleAddToCart = () => {
     addItem({
       id: product.id,
-      productId: product.productId,
+      productId: product.id,
       name: product.name,
       slug: product.slug,
       image: product.image,
@@ -245,27 +186,7 @@ export function ShopPreview() {
           ))}
         </div>
 
-        {/* Free shipping banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6 }}
-          className="mt-10 glass-gold rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4"
-        >
-          <div className="flex flex-wrap items-center gap-8">
-            {[
-              { icon: '🚚', text: 'Free delivery above ₹999' },
-              { icon: '📦', text: 'Genuine materials only' },
-              { icon: '↩️', text: '7-day easy returns' },
-              { icon: '💳', text: 'UPI · Cards · COD' },
-            ].map((item) => (
-              <div key={item.text} className="flex items-center gap-2 font-inter text-sm text-cream/70">
-                <span>{item.icon}</span>
-                <span>{item.text}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+        {/* End of product grid */}
       </div>
     </section>
   )

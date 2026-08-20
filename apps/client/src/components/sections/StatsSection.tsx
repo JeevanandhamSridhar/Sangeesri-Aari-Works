@@ -7,21 +7,21 @@ import gsap from 'gsap'
 
 const counters = [
   {
-    value: 700,
+    value: 1000,
     suffix: '+',
-    label: 'Completed Aari Projects',
+    label: 'Aari Blouses Crafted',
     image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80',
     alt: 'Aari embroidery threadwork',
   },
   {
-    value: 100,
+    value: 200,
     suffix: '+',
     label: 'Bridal Blouses',
     image: 'https://images.unsplash.com/photo-1594938298603-c8148c4b4f7b?w=800&q=80',
     alt: 'Bridal blouse detail',
   },
   {
-    value: 8,
+    value: 10,
     suffix: '+',
     label: 'Years of Experience',
     image: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?w=800&q=80',

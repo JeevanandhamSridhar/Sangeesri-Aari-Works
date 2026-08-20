@@ -9,7 +9,7 @@ import { useCartStore } from '@/store/cartStore'
 import { formatCurrency, calculateDiscount } from '@/lib/utils'
 import { toast } from 'sonner'
 
-const categories = ['All', 'Needles', 'Thread', 'Frames', 'Fabric', 'Tools', 'Kits', 'Accessories']
+import { categories, products } from '@/data/products'
 
 const sortOptions = [
   { label: 'Popular', value: 'popular' },
@@ -19,23 +19,12 @@ const sortOptions = [
   { label: 'Best Rated', value: 'rating' },
 ]
 
-const products = [
-  { id: 'p1', name: 'Premium Aari Needle Set (12 pcs)', slug: 'premium-aari-needle-set', category: 'Needles', image: 'https://picsum.photos/seed/prod1/400/500', images: ['https://picsum.photos/seed/prod1/400/500', 'https://picsum.photos/seed/prod1b/400/500'], mrp: 399, salePrice: 249, rating: 4.8, reviewCount: 124, inStock: true, isNew: false, isBestSeller: true, description: 'Professional grade Aari needles for all fabric types' },
-  { id: 'p2', name: 'Silk Aari Thread — Gold (10 reels)', slug: 'silk-aari-thread-gold', category: 'Thread', image: 'https://picsum.photos/seed/prod2/400/500', images: ['https://picsum.photos/seed/prod2/400/500'], mrp: 599, salePrice: 399, rating: 4.9, reviewCount: 89, inStock: true, isNew: true, isBestSeller: false, description: '100% pure silk gold thread for Aari embroidery' },
-  { id: 'p3', name: 'Round Aari Embroidery Frame — 12"', slug: 'round-aari-frame-12', category: 'Frames', image: 'https://picsum.photos/seed/prod3/400/500', images: ['https://picsum.photos/seed/prod3/400/500'], mrp: 699, salePrice: 499, rating: 4.7, reviewCount: 56, inStock: true, isNew: false, isBestSeller: false, description: 'Sturdy wooden frame for precise embroidery work' },
-  { id: 'p4', name: 'Beginner Aari Work Complete Kit', slug: 'beginner-aari-kit', category: 'Kits', image: 'https://picsum.photos/seed/prod4/400/500', images: ['https://picsum.photos/seed/prod4/400/500'], mrp: 1499, salePrice: 999, rating: 4.9, reviewCount: 203, inStock: true, isNew: false, isBestSeller: true, description: 'Everything you need to start Aari embroidery' },
-  { id: 'p5', name: 'Pure Silk Fabric — 1 Meter', slug: 'pure-silk-fabric', category: 'Fabric', image: 'https://picsum.photos/seed/prod5/400/500', images: ['https://picsum.photos/seed/prod5/400/500'], mrp: 899, salePrice: 749, rating: 4.6, reviewCount: 34, inStock: true, isNew: false, isBestSeller: false, description: 'Premium silk fabric ideal for blouse embroidery' },
-  { id: 'p6', name: 'Aari Hook Tool — Professional Grade', slug: 'aari-hook-tool', category: 'Tools', image: 'https://picsum.photos/seed/prod6/400/500', images: ['https://picsum.photos/seed/prod6/400/500'], mrp: 249, salePrice: 179, rating: 4.5, reviewCount: 78, inStock: true, isNew: false, isBestSeller: false, description: 'Ergonomic Aari hook for smooth thread work' },
-  { id: 'p7', name: 'Stone Work Kit — Crystal & Pearl', slug: 'stone-work-kit', category: 'Accessories', image: 'https://picsum.photos/seed/prod7/400/500', images: ['https://picsum.photos/seed/prod7/400/500'], mrp: 799, salePrice: 549, rating: 4.8, reviewCount: 45, inStock: true, isNew: true, isBestSeller: false, description: 'Premium crystal and pearl stones for blouse embellishment' },
-  { id: 'p8', name: 'Zari Thread Combo Pack (5 colors)', slug: 'zari-thread-combo', category: 'Thread', image: 'https://picsum.photos/seed/prod8/400/500', images: ['https://picsum.photos/seed/prod8/400/500'], mrp: 449, salePrice: 299, rating: 4.7, reviewCount: 92, inStock: false, isNew: false, isBestSeller: true, description: 'High-quality zari threads in 5 rich metallic colors' },
-]
-
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('popular')
   const [filterOpen, setFilterOpen] = useState(false)
-  const [priceRange, setPriceRange] = useState([0, 2000])
+  const [priceRange, setPriceRange] = useState([0, 20000])
   const [onlyInStock, setOnlyInStock] = useState(false)
   const [onlySale, setOnlySale] = useState(false)
   const [sortOpen, setSortOpen] = useState(false)

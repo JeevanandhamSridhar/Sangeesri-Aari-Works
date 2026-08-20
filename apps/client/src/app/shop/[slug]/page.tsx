@@ -24,134 +24,14 @@ import { FaWhatsapp } from 'react-icons/fa'
 import { useCartStore } from '@/store/cartStore'
 import { formatCurrency, calculateDiscount } from '@/lib/utils'
 import { toast } from 'sonner'
-
-// Mock products database for detailed view
-const productsData: Record<string, {
-  id: string
-  name: string
-  slug: string
-  category: string
-  mrp: number
-  salePrice: number
-  rating: number
-  reviewCount: number
-  inStock: boolean
-  stockCount: number
-  sku: string
-  isBestSeller?: boolean
-  isNew?: boolean
-  images: string[]
-  description: string
-  features: string[]
-  specifications: Record<string, string>
-  reviews: {
-    id: string
-    author: string
-    date: string
-    rating: number
-    comment: string
-    verified: boolean
-  }[]
-}> = {
-  'premium-aari-needle-set': {
-    id: 'p1',
-    name: 'Premium Aari Needle Set (12 pcs)',
-    slug: 'premium-aari-needle-set',
-    category: 'Needles',
-    mrp: 399,
-    salePrice: 249,
-    rating: 4.8,
-    reviewCount: 124,
-    inStock: true,
-    stockCount: 45,
-    sku: 'SN-AARI-NDL-12',
-    isBestSeller: true,
-    images: [
-      'https://picsum.photos/seed/prod1/600/750',
-      'https://picsum.photos/seed/prod1b/600/750',
-      'https://picsum.photos/seed/prod1c/600/750',
-    ],
-    description:
-      'Engineered for ultimate precision and smooth stitching. This 12-piece professional Aari needle set is crafted from hardened high-carbon steel with micro-polished hook points, ensuring thread does not catch or fray on silk, cotton, or velvet fabrics.',
-    features: [
-      '12 Assorted Hook Sizes (0.5mm to 1.2mm) for all thread thicknesses',
-      'Micro-grooved wooden handles for fatigue-free extended work',
-      'Corrosion-resistant gold alloy coating',
-      'Includes compact velvet storage pouch',
-    ],
-    specifications: {
-      Material: 'Hardened Carbon Steel & Teak Wood',
-      Quantity: '12 Needles',
-      'Made For': 'Silk thread, Zari thread, Bead work & Stone loading',
-      Origin: 'Tamil Nadu, India',
-    },
-    reviews: [
-      {
-        id: 'r1',
-        author: 'Lakshmi R.',
-        date: '2 weeks ago',
-        rating: 5,
-        comment: 'Best quality Aari needles I have used. Very smooth hook and doesn\'t break silk threads at all.',
-        verified: true,
-      },
-      {
-        id: 'r2',
-        author: 'Divya M.',
-        date: '1 month ago',
-        rating: 5,
-        comment: 'Fast delivery to Vellore. Pouch is very handy for storage.',
-        verified: true,
-      },
-    ],
-  },
-  'silk-aari-thread-gold': {
-    id: 'p2',
-    name: 'Silk Aari Embroidery Thread — Gold (10 reels)',
-    slug: 'silk-aari-thread-gold',
-    category: 'Thread',
-    mrp: 599,
-    salePrice: 399,
-    rating: 4.9,
-    reviewCount: 89,
-    inStock: true,
-    stockCount: 28,
-    sku: 'SN-THRD-GLD-10',
-    isNew: true,
-    images: [
-      'https://picsum.photos/seed/prod2/600/750',
-      'https://picsum.photos/seed/prod2b/600/750',
-    ],
-    description:
-      'Ultra-lustrous 100% mulberry silk golden embroidery threads designed specifically for heavy Aari and Maggam bridal work. Colorfast and tear-resistant under high needle tension.',
-    features: [
-      '10 reels pack (1000m total length)',
-      'High tensile strength prevents snaps during rapid stitching',
-      'Rich metallic shimmer that lasts through dry cleans',
-    ],
-    specifications: {
-      Material: '100% Mulberry Silk with Metallic Coating',
-      Reels: '10 Spools',
-      Color: 'Royal Antique Gold',
-    },
-    reviews: [
-      {
-        id: 'r3',
-        author: 'Saraswathi K.',
-        date: '3 weeks ago',
-        rating: 5,
-        comment: 'Color is so vibrant and shiny on my silk blouse project.',
-        verified: true,
-      },
-    ],
-  },
-}
+import { getProductBySlug, products } from '@/data/products'
 
 export default function ProductDetailPage() {
   const params = useParams()
   const slug = (params?.slug as string) || 'premium-aari-needle-set'
   
   // Fallback to first product if slug not found in mock
-  const product = productsData[slug] || productsData['premium-aari-needle-set']
+  const product = getProductBySlug(slug) || products[0]
   
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
@@ -321,18 +201,14 @@ export default function ProductDetailPage() {
               </a>
 
               {/* Value Props */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-white/10">
                 <div className="flex items-center gap-3">
                   <Truck size={20} className="text-gold-400 shrink-0" />
-                  <span className="font-inter text-xs text-cream/70">Fast Delivery Tamil Nadu</span>
+                  <span className="font-inter text-xs text-cream/70">Fast Delivery Across Tamil Nadu</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <ShieldCheck size={20} className="text-gold-400 shrink-0" />
-                  <span className="font-inter text-xs text-cream/70">100% Original Quality</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <RotateCcw size={20} className="text-gold-400 shrink-0" />
-                  <span className="font-inter text-xs text-cream/70">Easy 7-Day Replacement</span>
+                  <span className="font-inter text-xs text-cream/70">100% Original Craft Quality</span>
                 </div>
               </div>
             </div>

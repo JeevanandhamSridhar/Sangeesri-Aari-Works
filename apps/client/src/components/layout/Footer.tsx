@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Phone, MapPin, Mail, Instagram, Facebook, Youtube } from 'lucide-react'
+import { Phone, MapPin, Mail, Instagram } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 
 const footerLinks = {
@@ -96,23 +96,29 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center gap-3 mt-6">
-              {[
-                { icon: Instagram, href: 'https://instagram.com', label: 'Instagram', color: 'from-pink-500 to-orange-400' },
-                { icon: Facebook, href: 'https://facebook.com', label: 'Facebook', color: 'from-blue-500 to-blue-600' },
-                { icon: Youtube, href: 'https://youtube.com', label: 'YouTube', color: 'from-red-500 to-red-600' },
-              ].map(({ icon: Icon, href, label, color }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  aria-label={label}
-                  className={`w-9 h-9 rounded-full bg-gradient-to-br ${color} opacity-70 hover:opacity-100 flex items-center justify-center transition-all duration-300 hover:scale-110`}
-                >
-                  <Icon size={16} className="text-white" />
-                </a>
-              ))}
+            {/* Social Links — Instagram & WhatsApp */}
+            <div className="flex flex-wrap items-center gap-3 mt-6">
+              <a
+                href="https://www.instagram.com/sangeesri_aari_works"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white font-inter text-xs font-semibold shadow-lg hover:scale-105 transition-all duration-300 group"
+              >
+                <Instagram size={16} />
+                <span>@sangeesri_aari_works</span>
+              </a>
+
+              <a
+                href="https://wa.me/917604887356"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="WhatsApp Studio"
+                className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-inter text-xs font-semibold shadow-lg hover:scale-105 transition-all duration-300 group"
+              >
+                <FaWhatsapp size={16} />
+                <span>WhatsApp Studio (+91 76048 87356)</span>
+              </a>
             </div>
           </div>
 

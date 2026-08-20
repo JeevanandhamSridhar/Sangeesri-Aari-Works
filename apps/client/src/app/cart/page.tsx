@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -10,8 +11,29 @@ export default function CartPage() {
   const { items, updateQuantity, removeItem, clearCart, getTotal } = useCartStore()
   const { subtotal, itemCount } = getTotal()
 
-  const freeDeliveryThreshold = 999
-  const deliveryCharge = subtotal >= freeDeliveryThreshold || subtotal === 0 ? 0 : 99
+  const [settings, setSettings] = useState({
+    freeShippingEnabled: false,
+    freeDeliveryThreshold: 999,
+    deliveryCharge: 99,
+  })
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          setSettings({
+            freeShippingEnabled: Boolean(data.freeShippingEnabled),
+            freeDeliveryThreshold: Number(data.freeDeliveryThreshold) || 999,
+            deliveryCharge: Number(data.deliveryCharge) || 99,
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const isFreeDeliveryEligible = settings.freeShippingEnabled && subtotal >= settings.freeDeliveryThreshold
+  const deliveryCharge = subtotal === 0 || isFreeDeliveryEligible ? 0 : settings.deliveryCharge
   const grandTotal = subtotal + deliveryCharge
 
   return (
@@ -141,9 +163,9 @@ export default function CartPage() {
                     )}
                   </div>
 
-                  {subtotal < freeDeliveryThreshold && (
+                  {settings.freeShippingEnabled && subtotal < settings.freeDeliveryThreshold && (
                     <div className="text-[11px] text-gold-400/80 p-2.5 rounded-xl bg-gold-500/10 border border-gold-500/20">
-                      Add ₹{freeDeliveryThreshold - subtotal} more for FREE Delivery!
+                      Add ₹{settings.freeDeliveryThreshold - subtotal} more for FREE Delivery!
                     </div>
                   )}
 

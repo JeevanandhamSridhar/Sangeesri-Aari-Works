@@ -18,6 +18,12 @@ export default function QuotationPage() {
     deadline: '',
     notes: '',
   })
+  const [submittedData, setSubmittedData] = useState<{
+    quoId: string
+    name: string
+    phone: string
+    waUrl: string
+  } | null>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,8 +31,79 @@ export default function QuotationPage() {
       toast.error('Please enter your name and phone number')
       return
     }
+
+    const quoId = `QUO-${Math.floor(1000 + Math.random() * 9000)}`
+    const dateStr = new Date().toLocaleDateString('en-IN')
+
+    const newQuotation = {
+      id: String(Date.now()),
+      quotationNumber: quoId,
+      customerName: formData.name,
+      customerPhone: formData.phone,
+      occasion: formData.occasion,
+      blouseType: formData.blouseType,
+      budget: formData.budget,
+      deadline: formData.deadline || 'Flexible',
+      notes: formData.notes || 'No specific notes',
+      status: 'PENDING',
+      date: dateStr,
+    }
+
+    // Save quotation & notification to localStorage for instant Admin alert
+    try {
+      const existingQuos = JSON.parse(localStorage.getItem('sangee_sri_quotations') || '[]')
+      localStorage.setItem('sangee_sri_quotations', JSON.stringify([newQuotation, ...existingQuos]))
+
+      const notifItem = {
+        id: `notif-${Date.now()}`,
+        type: 'QUOTATION',
+        title: `New Custom Design Request #${quoId}`,
+        description: `${formData.name} requested quote for ${formData.blouseType} (${formData.budget}).`,
+        time: 'Just now',
+        read: false,
+        link: '/quotations',
+      }
+      const existingNotifs = JSON.parse(localStorage.getItem('sangee_sri_notifications') || '[]')
+      localStorage.setItem('sangee_sri_notifications', JSON.stringify([notifItem, ...existingNotifs]))
+
+      window.dispatchEvent(new Event('storage'))
+
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const bc = new BroadcastChannel('sangee_sri_channel')
+        bc.postMessage({ type: 'NEW_QUOTATION', quoId, customerName: formData.name })
+        bc.close()
+      }
+    } catch (err) {
+      console.error('Failed to save quotation / notification:', err)
+    }
+
+    // Build automated WhatsApp message for 7604887356
+    const message = `🌸 *NEW CUSTOM DESIGN QUOTATION REQUEST* 🌸
+*Quotation ID:* #${quoId}
+*Date:* ${dateStr}
+
+*CLIENT DETAILS:*
+• *Name:* ${formData.name}
+• *Phone:* ${formData.phone}
+
+*DESIGN SPECIFICATIONS:*
+• *Occasion:* ${formData.occasion}
+• *Work Type:* ${formData.blouseType}
+• *Estimated Budget:* ${formData.budget}
+• *Target Date:* ${formData.deadline || 'As per designer availability'}
+${formData.notes ? `• *Design Notes:* ${formData.notes}\n` : ''}
+Hi Sangee Sri Aari Works! I submitted a quotation request on the website. Please review my details and send an estimate.`
+
+    const waUrl = `https://wa.me/917604887356?text=${encodeURIComponent(message)}`
+
+    setSubmittedData({
+      quoId,
+      name: formData.name,
+      phone: formData.phone,
+      waUrl,
+    })
     setSubmitted(true)
-    toast.success('Quotation request submitted! We will contact you on WhatsApp shortly.')
+    toast.success('Quotation request submitted! Admin dashboard updated.')
   }
 
   return (
@@ -42,31 +119,32 @@ export default function QuotationPage() {
             <span className="text-gradient-gold">Design Quotation</span>
           </h1>
           <p className="font-inter text-cream/60 max-w-xl mx-auto text-sm leading-relaxed">
-            Fill out your blouse design preferences below. Our design team will review your requirements and provide an accurate cost & timeframe estimate within 2 hours.
+            Fill out your blouse design preferences below. Our design team led by Fashion Designer Sangee Sri will review your requirements and provide an accurate cost & timeframe estimate within 2 hours.
           </p>
         </div>
 
-        {submitted ? (
+        {submitted && submittedData ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-gold rounded-4xl p-12 text-center border border-gold-500/30"
+            className="glass-gold rounded-4xl p-12 text-center border border-gold-500/30 shadow-2xl"
           >
             <CheckCircle2 size={64} className="text-gold-400 mx-auto mb-6" />
+            <span className="badge-gold text-xs mb-3 inline-block">Quotation Registered #{submittedData.quoId}</span>
             <h2 className="font-playfair text-3xl font-bold text-cream mb-4">
               Quotation Request Received!
             </h2>
             <p className="font-inter text-cream/70 max-w-md mx-auto mb-8">
-              Thank you, <span className="text-gold-400 font-semibold">{formData.name}</span>. Our designer will analyze your details and contact you at <span className="text-gold-400 font-semibold">{formData.phone}</span>.
+              Thank you, <span className="text-gold-400 font-semibold">{submittedData.name}</span>. Your request has been logged in our studio system. Fashion Designer Sangee Sri will review your details and contact you at <span className="text-gold-400 font-semibold">{submittedData.phone}</span>.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
-                href={`https://wa.me/917604887356?text=Hi! I submitted a quotation request for a ${formData.blouseType} blouse (${formData.occasion}). Name: ${formData.name}`}
+                href={submittedData.waUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-luxury text-sm"
+                className="btn-luxury text-sm flex items-center gap-2 py-4 px-6"
               >
-                <FaWhatsapp size={18} /> Chat Directly on WhatsApp
+                <FaWhatsapp size={20} className="text-green-400" /> Chat Directly on WhatsApp
               </a>
               <button
                 onClick={() => setSubmitted(false)}
@@ -77,7 +155,7 @@ export default function QuotationPage() {
             </div>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="glass rounded-4xl p-8 md:p-12 border border-white/10 space-y-8">
+          <form onSubmit={handleSubmit} data-lenis-prevent className="glass rounded-4xl p-8 md:p-12 border border-white/10 space-y-8">
             {/* Personal Details */}
             <div>
               <h3 className="font-playfair text-xl font-bold text-gold-400 mb-6 flex items-center gap-2">
@@ -89,6 +167,7 @@ export default function QuotationPage() {
                   <input
                     type="text"
                     required
+                    data-lenis-prevent
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Sangeetha Priya"
@@ -100,6 +179,7 @@ export default function QuotationPage() {
                   <input
                     type="tel"
                     required
+                    data-lenis-prevent
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="e.g. 9876543210"
@@ -118,6 +198,7 @@ export default function QuotationPage() {
                 <div>
                   <label className="font-inter text-xs text-cream/70 mb-2 block">Occasion</label>
                   <select
+                    data-lenis-prevent
                     value={formData.occasion}
                     onChange={(e) => setFormData({ ...formData, occasion: e.target.value })}
                     className="input-luxury bg-darkbase"
@@ -132,6 +213,7 @@ export default function QuotationPage() {
                 <div>
                   <label className="font-inter text-xs text-cream/70 mb-2 block">Work Type</label>
                   <select
+                    data-lenis-prevent
                     value={formData.blouseType}
                     onChange={(e) => setFormData({ ...formData, blouseType: e.target.value })}
                     className="input-luxury bg-darkbase"
@@ -146,6 +228,7 @@ export default function QuotationPage() {
                 <div>
                   <label className="font-inter text-xs text-cream/70 mb-2 block">Estimated Budget</label>
                   <select
+                    data-lenis-prevent
                     value={formData.budget}
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                     className="input-luxury bg-darkbase"
@@ -160,6 +243,7 @@ export default function QuotationPage() {
                   <label className="font-inter text-xs text-cream/70 mb-2 block">Target Completion Date</label>
                   <input
                     type="date"
+                    data-lenis-prevent
                     value={formData.deadline}
                     onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                     className="input-luxury"
@@ -173,6 +257,7 @@ export default function QuotationPage() {
               <label className="font-inter text-xs text-cream/70 mb-2 block">Design Notes & Specific Ideas</label>
               <textarea
                 rows={4}
+                data-lenis-prevent
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Mention neck pattern, sleeve length, saree color, or special motif preferences (e.g. peacock, temple bell, floral)..."

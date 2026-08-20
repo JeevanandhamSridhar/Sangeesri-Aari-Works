@@ -63,145 +63,217 @@ export default function AdminSettingsPage() {
     { type: 'gif' as HeroMediaType, icon: Film, label: 'GIF', desc: 'Animated GIF' },
   ]
 
+  const [studioStatus, setStudioStatus] = useState<'available' | 'busy_bridal' | 'paused'>('available')
+  const [statusNote, setStatusNote] = useState('Slots open for upcoming wedding season orders')
+  const [statusSaving, setStatusSaving] = useState(false)
+
+  const handleSaveStatus = async () => {
+    setStatusSaving(true)
+    try {
+      await fetch('/api/studio-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: studioStatus, note: statusNote }),
+      })
+      toast.success('Studio activity status updated! Live website badge updated.')
+    } catch {
+      toast.error('Failed to update status.')
+    } finally {
+      setStatusSaving(false)
+    }
+  }
+
+  const [freeShippingEnabled, setFreeShippingEnabled] = useState(false)
+  const [shippingSaving, setShippingSaving] = useState(false)
+
+  const handleSaveShippingSettings = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setShippingSaving(true)
+    try {
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          freeShippingEnabled,
+          freeDeliveryThreshold: Number(settings.freeDeliveryThreshold),
+          deliveryCharge: Number(settings.deliveryCharge),
+          gstRate: Number(settings.gstRate),
+        }),
+      })
+      toast.success('Store shipping & free delivery policy updated successfully!')
+    } catch {
+      toast.error('Failed to update shipping settings.')
+    } finally {
+      setShippingSaving(false)
+    }
+  }
+
   return (
     <div className="space-y-8 max-w-3xl">
       <div>
         <h1 className="font-playfair text-3xl font-bold text-cream">Store &amp; Studio Settings</h1>
-        <p className="font-inter text-xs text-cream/50 mt-1">Configure business details, delivery rates, hero section, and taxes.</p>
+        <p className="font-inter text-xs text-cream/50 mt-1">Configure business details, order availability status, hero section, and delivery rates.</p>
       </div>
 
-      {/* ── Hero Section Control ─────────────────────────────── */}
-      <div className="glass-admin rounded-3xl p-8 border border-gold-500/15 space-y-6">
+      {/* ── Free Shipping Promotion Control ────────────────── */}
+      <div className="glass-admin rounded-3xl p-8 border border-gold-500/20 space-y-6 bg-gradient-to-b from-darkcard to-darkbase">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+          <div>
+            <h2 className="font-playfair text-xl font-bold text-gold-400 flex items-center gap-2">
+              🚚 Free Shipping Promotion Control
+            </h2>
+            <p className="font-inter text-xs text-cream/60 mt-1">
+              Enable or disable free shipping promotions across the user storefront.
+            </p>
+          </div>
+
+          {/* Status Pill */}
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${
+            freeShippingEnabled
+              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+              : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+          }`}>
+            {freeShippingEnabled ? '🟢 Free Shipping ON' : '🔴 Free Shipping OFF'}
+          </span>
+        </div>
+
+        {/* Interactive Toggle Card */}
+        <div className="p-5 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-4">
+          <div>
+            <div className="font-inter text-sm font-semibold text-cream">
+              {freeShippingEnabled ? 'Free Shipping Enabled for Orders Above Threshold' : 'Free Shipping Disabled (Standard Delivery Applies to All Orders)'}
+            </div>
+            <div className="font-inter text-xs text-cream/50 mt-0.5">
+              {freeShippingEnabled
+                ? `Customers ordering above ₹${settings.freeDeliveryThreshold} receive 100% free delivery.`
+                : `All orders will charge the standard ₹${settings.deliveryCharge} shipping fee.`}
+            </div>
+          </div>
+
+          {/* Toggle Switch */}
+          <button
+            type="button"
+            onClick={() => setFreeShippingEnabled(!freeShippingEnabled)}
+            className={`w-14 h-8 rounded-full transition-colors duration-300 relative shrink-0 p-1 ${
+              freeShippingEnabled ? 'bg-emerald-500' : 'bg-white/20'
+            }`}
+          >
+            <div className={`w-6 h-6 rounded-full bg-white transition-transform duration-300 shadow-md ${
+              freeShippingEnabled ? 'translate-x-6' : 'translate-x-0'
+            }`} />
+          </button>
+        </div>
+      </div>
+
+      {/* ── Studio Order Activity & Booking Status ──────────────── */}
+      <div className="glass-admin rounded-3xl p-8 border border-gold-500/20 space-y-6 bg-gradient-to-b from-darkcard to-darkbase">
         <div>
-          <h2 className="font-playfair text-xl font-bold text-gold-400 pb-2 border-b border-white/10 mb-4">
-            🎨 Hero Section Background
-          </h2>
-          <p className="font-inter text-xs text-cream/50 mb-6">
-            Set a custom image, video, or GIF as the hero section background. Leave empty to use the default luxury design.
+          <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+            <h2 className="font-playfair text-xl font-bold text-gold-400 flex items-center gap-2">
+              ⚡ Studio Order Activity &amp; Availability Status
+            </h2>
+            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+              studioStatus === 'available'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                : studioStatus === 'busy_bridal'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+            }`}>
+              {studioStatus === 'available' && '🟢 Available for Orders'}
+              {studioStatus === 'busy_bridal' && '🧵 Working on Bridal Orders'}
+              {studioStatus === 'paused' && '🔴 Orders Paused'}
+            </span>
+          </div>
+          <p className="font-inter text-xs text-cream/60">
+            Control the real-time order acceptance indicator shown to customers on the studio website.
           </p>
         </div>
 
-        {/* Type picker */}
-        <div>
-          <label className="font-inter text-xs text-cream/70 mb-3 block">Background Type</label>
-          <div className="grid grid-cols-3 gap-3">
-            {mediaTypeConfig.map(({ type, icon: Icon, label, desc }) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setHeroMedia({ ...heroMedia, type })}
-                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-200
-                  ${heroMedia.type === type
-                    ? 'bg-gold-500/10 border-gold-500/40 text-gold-400'
-                    : 'bg-white/3 border-white/10 text-cream/50 hover:border-gold-500/20 hover:text-cream/70'
-                  }`}
-              >
-                <Icon size={22} />
-                <div>
-                  <div className="font-inter text-xs font-semibold">{label}</div>
-                  <div className="font-inter text-[10px] opacity-60">{desc}</div>
-                </div>
-              </button>
-            ))}
-          </div>
+        {/* Status Selection Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            {
+              key: 'available' as const,
+              title: '🟢 Taking New Orders',
+              subtitle: 'Open for custom Aari & bridal blouse orders',
+              accent: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400',
+            },
+            {
+              key: 'busy_bridal' as const,
+              title: '🧵 Working on Bridal Orders',
+              subtitle: 'Currently crafting bridal orders (Limited slots)',
+              accent: 'border-amber-500/40 bg-amber-500/10 text-amber-400',
+            },
+            {
+              key: 'paused' as const,
+              title: '🔴 Orders Paused',
+              subtitle: 'Full capacity — not accepting new orders currently',
+              accent: 'border-rose-500/40 bg-rose-500/10 text-rose-400',
+            },
+          ].map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setStudioStatus(item.key)}
+              className={`p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between ${
+                studioStatus === item.key
+                  ? item.accent
+                  : 'bg-white/5 border-white/10 text-cream/60 hover:border-gold-500/30 hover:text-cream'
+              }`}
+            >
+              <div>
+                <div className="font-inter text-xs font-bold mb-1">{item.title}</div>
+                <div className="font-inter text-[11px] opacity-75">{item.subtitle}</div>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-[10px] font-semibold tracking-wider uppercase opacity-60">Status Pill</span>
+                <input
+                  type="radio"
+                  name="studioStatus"
+                  checked={studioStatus === item.key}
+                  onChange={() => setStudioStatus(item.key)}
+                  className="accent-gold-400"
+                />
+              </div>
+            </button>
+          ))}
         </div>
 
-        {/* URL input */}
+        {/* Note input */}
         <div>
           <label className="font-inter text-xs text-cream/70 mb-1.5 block">
-            {heroMedia.type === 'video' ? 'Video URL (MP4/WebM)' : heroMedia.type === 'gif' ? 'GIF URL' : 'Image URL'}
+            Customer Announcement Note (Optional)
           </label>
-          <div className="flex gap-2">
-            <input
-              type="url"
-              value={heroMedia.url}
-              onChange={(e) => setHeroMedia({ ...heroMedia, url: e.target.value })}
-              placeholder={
-                heroMedia.type === 'video'
-                  ? 'https://example.com/hero-video.mp4'
-                  : heroMedia.type === 'gif'
-                  ? 'https://example.com/animation.gif'
-                  : 'https://example.com/hero-image.jpg'
-              }
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5
-                font-inter text-sm text-cream placeholder:text-cream/20
-                focus:outline-none focus:border-gold-500/40 transition-colors"
-            />
-            {heroMedia.url && (
-              <button
-                type="button"
-                onClick={() => setHeroPreview(!heroPreview)}
-                className="px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-cream/60
-                  hover:text-gold-400 hover:border-gold-500/20 transition-all font-inter text-xs flex items-center gap-1.5"
-              >
-                <Eye size={14} /> Preview
-              </button>
-            )}
-          </div>
-
-          {/* Tip */}
-          <p className="font-inter text-[11px] text-cream/30 mt-2 flex items-center gap-1.5">
-            <AlertCircle size={11} />
-            You can use a Cloudinary URL, Google Drive direct link, or any public image/video URL.
-          </p>
+          <input
+            type="text"
+            value={statusNote}
+            onChange={(e) => setStatusNote(e.target.value)}
+            placeholder="e.g. Booking open for October bridal season..."
+            className="input-admin text-xs"
+          />
         </div>
 
-        {/* Mini preview */}
-        {heroPreview && heroMedia.url && (
-          <div className="relative rounded-2xl overflow-hidden aspect-[16/6] border border-white/10">
-            {heroMedia.type === 'video' ? (
-              <video src={heroMedia.url} autoPlay muted loop playsInline className="w-full h-full object-cover opacity-70" />
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={heroMedia.url} alt="Hero preview" className="w-full h-full object-cover opacity-70" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-r from-darkbase/80 to-transparent flex items-center px-6">
-              <div>
-                <div className="font-playfair text-2xl font-bold text-cream mb-1">Where Thread Meets Artistry</div>
-                <div className="font-inter text-xs text-cream/60">Hero preview</div>
-              </div>
-            </div>
-            <button
-              onClick={() => setHeroPreview(false)}
-              className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 flex items-center justify-center text-white"
-            >
-              <X size={13} />
-            </button>
-          </div>
-        )}
-
-        {/* Save / Clear */}
-        <div className="flex gap-3 pt-2">
-          <button
-            type="button"
-            onClick={handleSaveHero}
-            disabled={heroSaving || !heroMedia.url}
-            className="btn-admin-gold flex-1 justify-center"
-          >
-            {heroSaving ? (
-              <span className="flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Saving...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Check size={15} /> Apply Hero Background
-              </span>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={clearHero}
-            className="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-cream/50
-              hover:text-red-400 hover:border-red-500/30 transition-all font-inter text-xs"
-          >
-            Clear
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleSaveStatus}
+          disabled={statusSaving}
+          className="btn-admin-gold w-full justify-center"
+        >
+          {statusSaving ? (
+            <span className="flex items-center gap-2">
+              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              Updating Status...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              <Check size={16} /> Save Studio Order Availability Status
+            </span>
+          )}
+        </button>
       </div>
 
       {/* ── Business Details ─────────────────────────────────── */}
-      <form onSubmit={handleSave} className="glass-admin rounded-3xl p-8 border border-white/10 space-y-8">
+      <form onSubmit={handleSaveShippingSettings} className="glass-admin rounded-3xl p-8 border border-white/10 space-y-8">
         <div className="space-y-4">
           <h2 className="font-playfair text-xl font-bold text-gold-400 pb-2 border-b border-white/10">
             Business Details
@@ -260,8 +332,8 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        <button type="submit" className="btn-admin-gold w-full justify-center py-4">
-          <Save size={16} /> Save Business Settings
+        <button type="submit" disabled={shippingSaving} className="btn-admin-gold w-full justify-center py-4">
+          <Save size={16} /> Save Business &amp; Shipping Settings
         </button>
       </form>
     </div>

@@ -18,12 +18,16 @@ const faqs = [
     a: 'Basic neck & sleeve thread work starts from ₹1,500. Heavy bridal blouses range from ₹3,500 to ₹12,000 depending on stone work, zardosi, and pattern complexity.',
   },
   {
+    q: 'What is the policy for custom bridal blouse orders?',
+    a: 'Since all custom Aari embroidery and bridal blouses are crafted to your exact individual measurements and saree design, custom orders are personalized and finalized upon stitch approval.',
+  },
+  {
     q: 'Can I order raw Aari materials & tools from your shop?',
-    a: 'Yes! We sell premium Aari needles, silk thread reels, gold zari, round embroidery frames, and beginner kits directly on our website with shipping across India.',
+    a: 'Yes! We sell premium Aari needles, silk thread reels, gold zari, round embroidery frames, and beginner kits directly on our website with shipping across Tamil Nadu & India.',
   },
   {
     q: 'Where is your studio located?',
-    a: 'Our studio SS Collection is located at No. 6, Bazaar Street, Kaveripakkam, Ranipet District, Tamil Nadu — PIN 632508. You can also get direct directions using the Google Maps section on our home page.',
+    a: 'Our studio is located at No. 6, Bazaar Street, Kaveripakkam, Ranipet District, Tamil Nadu — PIN 632508. You can also get direct directions using the Google Maps section on our home page.',
   },
 ]
 

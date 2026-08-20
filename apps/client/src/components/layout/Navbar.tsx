@@ -22,6 +22,7 @@ const navLinks = [
       { label: 'Custom Design', href: '/collections/custom' },
     ],
   },
+  { label: 'Academy', href: '/academy' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Shop', href: '/shop' },
   { label: 'About', href: '/about' },
@@ -36,6 +37,29 @@ export function Navbar() {
   const pathname = usePathname()
   const cartCount = useCartStore((s) => s.items.reduce((acc, i) => acc + i.quantity, 0))
 
+  const [studioStatus, setStudioStatus] = useState<{
+    badgeText: string
+    note: string
+    color: string
+    dotColor: string
+  }>({
+    badgeText: '🟢 Taking New Orders',
+    note: 'Slots open for upcoming wedding season orders',
+    color: 'emerald',
+    dotColor: '#10b981',
+  })
+
+  useEffect(() => {
+    fetch('/api/studio-status')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.badgeText) {
+          setStudioStatus(data)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -48,12 +72,25 @@ export function Navbar() {
 
   return (
     <>
+      {/* Top Studio Order Availability Banner */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0c0805] border-b border-gold-500/10 py-1.5 px-4 text-center font-inter text-xs text-cream/70 flex items-center justify-center gap-3">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gold-500/10 border border-gold-500/20 text-gold-400">
+          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: studioStatus.dotColor || '#10b981' }} />
+          {studioStatus.badgeText}
+        </span>
+        {studioStatus.note && (
+          <span className="hidden sm:inline text-cream/50 text-[11px] border-l border-white/10 pl-3">
+            {studioStatus.note}
+          </span>
+        )}
+      </div>
+
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+          'fixed top-7 left-0 right-0 z-50 transition-all duration-500',
           scrolled
             ? 'glass-dark shadow-luxury border-b border-gold-500/10'
             : 'bg-transparent'

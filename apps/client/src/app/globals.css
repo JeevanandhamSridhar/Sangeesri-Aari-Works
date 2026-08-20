@@ -131,11 +131,17 @@
     text-transform: uppercase;
     transition: all 0.5s ease;
     background: linear-gradient(135deg, #D4AF37, #B76E79);
-    color: var(--dark-base);
+    color: #0A0806 !important;
     box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
     cursor: pointer;
     border: none;
     text-decoration: none;
+    isolation: isolate;
+  }
+
+  .btn-luxury > * {
+    position: relative;
+    z-index: 1;
   }
 
   .btn-luxury::before {
@@ -143,17 +149,31 @@
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease;
     background: linear-gradient(135deg, #F7E7CE, #D4AF37);
+    z-index: -1;
   }
 
-  .btn-luxury:hover::before { opacity: 1; }
-  .btn-luxury:hover { 
+  .btn-luxury:hover::before,
+  .btn-luxury:focus::before,
+  .btn-luxury:active::before { 
+    opacity: 1; 
+  }
+
+  .btn-luxury:hover,
+  .btn-luxury:focus,
+  .btn-luxury:active { 
+    color: #0A0806 !important;
     box-shadow: 0 0 60px rgba(212, 175, 55, 0.5);
     transform: translateY(-2px);
   }
 
+  .btn-luxury:active {
+    transform: translateY(0px);
+  }
+
   .btn-outline-gold {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -171,13 +191,26 @@
     text-decoration: none;
     cursor: pointer;
     background: transparent;
+    isolation: isolate;
   }
-  .btn-outline-gold:hover {
+
+  .btn-outline-gold > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-outline-gold:hover,
+  .btn-outline-gold:focus,
+  .btn-outline-gold:active {
     border-color: #D4AF37;
-    background: rgba(212, 175, 55, 0.1);
-    color: #F7E7CE;
+    background: rgba(212, 175, 55, 0.15);
+    color: #F7E7CE !important;
     box-shadow: 0 0 40px rgba(212, 175, 55, 0.2);
     transform: translateY(-2px);
+  }
+
+  .btn-outline-gold:active {
+    transform: translateY(0px);
   }
 
   /* Section wrappers */
@@ -290,7 +323,7 @@
   .input-luxury {
     width: 100%;
     border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.05);
     padding: 1rem 1.25rem;
     color: var(--cream);
@@ -298,11 +331,21 @@
     font-size: 0.875rem;
     transition: all 0.3s ease;
     outline: none;
+    color-scheme: dark;
   }
-  .input-luxury::placeholder { color: rgba(253, 248, 240, 0.3); }
+  .input-luxury::placeholder { color: rgba(253, 248, 240, 0.35); }
   .input-luxury:focus {
-    border-color: rgba(212, 175, 55, 0.5);
-    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.6);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .input-luxury::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
+    opacity: 0.8;
+  }
+  .input-luxury::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
   }
 
   /* Embroidery pattern bg */

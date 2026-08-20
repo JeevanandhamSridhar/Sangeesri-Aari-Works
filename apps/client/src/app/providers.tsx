@@ -19,6 +19,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       touchMultiplier: 1.5,
       infinite: false,
+      prevent: (node) => {
+        if (!node) return false
+        const tag = node.tagName?.toUpperCase()
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true
+        if (node.hasAttribute?.('data-lenis-prevent')) return true
+        if (node.closest?.('form, input, textarea, select, [data-lenis-prevent]')) return true
+        return false
+      },
     })
 
     lenisRef.current = lenis

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FileText, CheckCircle2, Clock, DollarSign, Send, MessageSquare } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 import { toast } from 'sonner'
@@ -30,6 +30,43 @@ export default function AdminQuotationsPage() {
   const [activeQuo, setActiveQuo] = useState<Quotation | null>(null)
   const [quoteInput, setQuoteInput] = useState('')
 
+  const loadQuotations = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('sangee_sri_quotations') || '[]')
+      if (Array.isArray(stored) && stored.length > 0) {
+        // Merge stored with initial sample data, avoiding duplicate IDs
+        const storedIds = new Set(stored.map((q: Quotation) => q.id))
+        const filteredInitial = initialQuotations.filter((q) => !storedIds.has(q.id))
+        setQuotations([...stored, ...filteredInitial])
+      }
+    } catch (err) {
+      console.error('Failed to load quotations:', err)
+    }
+  }
+
+  useEffect(() => {
+    loadQuotations()
+    window.addEventListener('storage', loadQuotations)
+
+    let channel: BroadcastChannel | null = null
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        channel = new BroadcastChannel('sangee_sri_channel')
+        channel.onmessage = () => loadQuotations()
+      }
+    } catch {}
+
+    const timer = setInterval(() => {
+      loadQuotations()
+    }, 1500)
+
+    return () => {
+      window.removeEventListener('storage', loadQuotations)
+      if (channel) channel.close()
+      clearInterval(timer)
+    }
+  }, [])
+
   const handleSendQuote = (quo: Quotation) => {
     const amt = parseFloat(quoteInput)
     if (!amt || amt <= 0) {
@@ -37,11 +74,15 @@ export default function AdminQuotationsPage() {
       return
     }
 
-    setQuotations(
-      quotations.map((q) =>
-        q.id === quo.id ? { ...q, status: 'QUOTED', quotedAmount: amt } : q
-      )
+    const updated = quotations.map((q) =>
+      q.id === quo.id ? { ...q, status: 'QUOTED' as const, quotedAmount: amt } : q
     )
+
+    setQuotations(updated)
+    try {
+      localStorage.setItem('sangee_sri_quotations', JSON.stringify(updated))
+      window.dispatchEvent(new Event('storage'))
+    } catch {}
 
     toast.success(`Quotation of ₹${amt} generated for ${quo.customerName}!`)
     

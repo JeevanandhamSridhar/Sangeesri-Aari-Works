@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import {
@@ -36,6 +37,86 @@ const pendingQuotations = [
 ]
 
 export default function AdminDashboard() {
+  const [orders, setOrders] = useState(recentOrders)
+  const [quotations, setQuotations] = useState(pendingQuotations)
+  const [metrics, setMetrics] = useState({
+    revenue: '₹1,42,850',
+    totalOrders: 184,
+    activeProducts: 36,
+    pendingQuotations: 12,
+  })
+
+  const loadLiveData = () => {
+    try {
+      // Load quotations
+      const storedQuos = JSON.parse(localStorage.getItem('sangee_sri_quotations') || '[]')
+      let mergedQuos = pendingQuotations
+      if (Array.isArray(storedQuos) && storedQuos.length > 0) {
+        const mappedStoredQuos = storedQuos.map((q: any) => ({
+          id: q.quotationNumber || q.id,
+          name: q.customerName,
+          work: q.blouseType,
+          budget: q.budget,
+          deadline: q.deadline,
+        }))
+        const storedIds = new Set(mappedStoredQuos.map((q: any) => q.id))
+        mergedQuos = [...mappedStoredQuos, ...pendingQuotations.filter((q) => !storedIds.has(q.id))]
+      }
+      setQuotations(mergedQuos)
+
+      // Load orders
+      const storedOrders = JSON.parse(localStorage.getItem('sangee_sri_orders') || '[]')
+      let mergedOrders = recentOrders
+      if (Array.isArray(storedOrders) && storedOrders.length > 0) {
+        const mappedOrders = storedOrders.map((o: any) => ({
+          id: o.orderNumber || o.id,
+          customer: o.customerName,
+          items: `${o.itemsCount || 1} items`,
+          total: o.totalAmount || 0,
+          status: o.orderStatus || 'PLACED',
+          date: o.date || 'Today',
+        }))
+        const orderIds = new Set(mappedOrders.map((o: any) => o.id))
+        mergedOrders = [...mappedOrders, ...recentOrders.filter((o) => !orderIds.has(o.id))]
+      }
+      setOrders(mergedOrders)
+
+      // Calculate total metrics
+      const addedRevenue = (storedOrders || []).reduce((acc: number, curr: any) => acc + (Number(curr.totalAmount) || 0), 0)
+      setMetrics({
+        revenue: `₹${(142850 + addedRevenue).toLocaleString('en-IN')}`,
+        totalOrders: 184 + (storedOrders?.length || 0),
+        activeProducts: 36,
+        pendingQuotations: 12 + (storedQuos?.length || 0),
+      })
+    } catch (err) {
+      console.error('Failed to load admin live data:', err)
+    }
+  }
+
+  useEffect(() => {
+    loadLiveData()
+    window.addEventListener('storage', loadLiveData)
+
+    let channel: BroadcastChannel | null = null
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        channel = new BroadcastChannel('sangee_sri_channel')
+        channel.onmessage = () => loadLiveData()
+      }
+    } catch {}
+
+    const timer = setInterval(() => {
+      loadLiveData()
+    }, 1500)
+
+    return () => {
+      window.removeEventListener('storage', loadLiveData)
+      if (channel) channel.close()
+      clearInterval(timer)
+    }
+  }, [])
+
   return (
     <div className="space-y-8">
       {/* Top Banner */}
@@ -54,7 +135,12 @@ export default function AdminDashboard() {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {stats.map((stat, i) => {
+        {[
+          { label: 'Total Revenue', value: metrics.revenue, change: '+14.2%', icon: DollarSign, color: '#D4AF37' },
+          { label: 'Total Orders', value: String(metrics.totalOrders), change: '+8.5%', icon: ShoppingBag, color: '#B76E79' },
+          { label: 'Active Products', value: String(metrics.activeProducts), change: '+4 New', icon: Package, color: '#e8bb18' },
+          { label: 'Pending Quotations', value: String(metrics.pendingQuotations), change: 'Action Required', icon: FileText, color: '#ff6464' },
+        ].map((stat, i) => {
           const Icon = stat.icon
           return (
             <motion.div
@@ -104,7 +190,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {recentOrders.map((ord) => (
+                {orders.map((ord: any) => (
                   <tr key={ord.id} className="hover:bg-white/5 transition-colors">
                     <td className="py-4 font-mono font-semibold text-gold-400">{ord.id}</td>
                     <td className="py-4 font-medium text-cream">{ord.customer}</td>
@@ -136,7 +222,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="space-y-4">
-            {pendingQuotations.map((quo) => (
+            {quotations.map((quo: any) => (
               <div key={quo.id} className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-playfair font-bold text-cream text-sm">{quo.name}</span>
@@ -145,7 +231,7 @@ export default function AdminDashboard() {
                 <p className="font-inter text-xs text-cream/70">{quo.work}</p>
                 <div className="flex items-center justify-between pt-2 border-t border-white/5 font-inter text-[11px]">
                   <span className="text-cream/40">Budget: {quo.budget}</span>
-                  <Link href={`/quotations/${quo.id}`} className="text-gold-400 hover:underline font-semibold">
+                  <Link href="/quotations" className="text-gold-400 hover:underline font-semibold">
                     Provide Estimate →
                   </Link>
                 </div>

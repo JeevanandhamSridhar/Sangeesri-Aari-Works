@@ -82,6 +82,30 @@ const galleryImages = [
     priceEstimate: '₹4,800 – ₹8,200',
     tags: ['Bridal', 'Kundan', 'Mirror Work'],
   },
+  {
+    id: 10,
+    src: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=800&q=80',
+    title: 'Floral Silk Thread Sleeve Embroidery',
+    category: 'Aari Work',
+    priceEstimate: '₹2,600 – ₹4,200',
+    tags: ['Aari Work', 'Silk Thread', 'Sleeve Design'],
+  },
+  {
+    id: 11,
+    src: 'https://images.unsplash.com/photo-1594938298603-c8148c4b4f7b?w=800&q=80',
+    title: 'Heritage Bridal Emerald Stone Blouse',
+    category: 'Bridal',
+    priceEstimate: '₹5,800 – ₹9,500',
+    tags: ['Bridal', 'Emerald', 'Heavy Kundan'],
+  },
+  {
+    id: 12,
+    src: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80',
+    title: 'Traditional Kasu Mala Motif Blouse',
+    category: 'Traditional',
+    priceEstimate: '₹3,400 – ₹5,600',
+    tags: ['Traditional', 'Kasu Work', 'Gold Zari'],
+  },
 ]
 
 export default function GalleryPage() {
@@ -110,7 +134,7 @@ export default function GalleryPage() {
             <span className="text-gradient-gold">Gallery</span>
           </h1>
           <p className="font-cormorant text-xl text-cream/60 max-w-xl mx-auto">
-            Explore 700+ custom Aari embroidery creations crafted at Sangee Sri Aari Works studio.
+            Explore 1000+ custom Aari embroidery creations crafted at Sangee Sri Aari Works studio.
           </p>
         </div>
       </div>
@@ -145,13 +169,13 @@ export default function GalleryPage() {
           ))}
         </div>
 
-        {/* Masonry gallery grid */}
+        {/* 3-Column Balanced Gallery Grid */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory + searchQuery}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
           >
             {filtered.map((img, i) => (
               <motion.div
@@ -159,39 +183,40 @@ export default function GalleryPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="break-inside-avoid relative group cursor-pointer rounded-2xl overflow-hidden border border-white/5 hover:border-gold-500/30 transition-all duration-500"
+                className="relative group cursor-pointer rounded-2xl overflow-hidden border border-white/10 hover:border-gold-500/40 transition-all duration-500 bg-[#0d0906] shadow-lg"
                 onClick={() => setLightboxImage(img)}
               >
-                <div className="relative aspect-[3/4] w-full">
+                <div className="relative aspect-[4/5] w-full">
                   <Image
                     src={img.src}
                     alt={img.title}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    unoptimized
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   {/* Subtle dark gradient on bottom */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-darkbase/90 via-darkbase/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-darkbase via-darkbase/30 to-transparent opacity-85 group-hover:opacity-95 transition-opacity" />
 
                   {/* Category badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className="badge-gold text-[10px]">{img.category}</span>
+                  <div className="absolute top-3 left-3 z-10">
+                    <span className="badge-gold text-[10px] shadow-sm">{img.category}</span>
                   </div>
 
                   {/* Zoom icon */}
-                  <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-cream/80 group-hover:text-gold-400 group-hover:scale-110 transition-all">
+                  <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-cream/80 group-hover:text-gold-400 group-hover:scale-110 transition-all">
                     <ZoomIn size={14} />
                   </div>
 
                   {/* Info footer */}
-                  <div className="absolute bottom-0 inset-x-0 p-4">
-                    <p className="font-playfair text-sm font-bold text-cream mb-1">{img.title}</p>
+                  <div className="absolute bottom-0 inset-x-0 p-5 z-10">
+                    <p className="font-playfair text-base font-bold text-cream mb-1">{img.title}</p>
                     <p className="font-inter text-xs text-gold-400 font-semibold mb-2">
                       Estimate: {img.priceEstimate}
                     </p>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {img.tags.map((t) => (
-                        <span key={t} className="text-[9px] px-2 py-0.5 rounded-full bg-white/10 text-cream/60">
+                        <span key={t} className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-cream/70 border border-white/5">
                           {t}
                         </span>
                       ))}

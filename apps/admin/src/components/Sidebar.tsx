@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { VideoLogo } from '@/components/ui/VideoLogo'
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -15,6 +16,8 @@ import {
   LogOut,
   ExternalLink,
   MessageSquare,
+  GraduationCap,
+  BookOpen,
 } from 'lucide-react'
 
 const navItems = [
@@ -22,6 +25,8 @@ const navItems = [
   { label: 'Products', href: '/products', icon: Package },
   { label: 'Orders', href: '/orders', icon: ShoppingBag },
   { label: 'Quotations', href: '/quotations', icon: FileText },
+  { label: 'Academy Students', href: '/academy/students', icon: GraduationCap },
+  { label: 'Academy Courses', href: '/academy/courses', icon: BookOpen },
   { label: 'Appointments', href: '/appointments', icon: Calendar },
   { label: 'Gallery', href: '/gallery', icon: ImageIcon },
   { label: 'Reviews', href: '/reviews', icon: MessageSquare },
@@ -35,17 +40,11 @@ export function Sidebar() {
   return (
     <aside className="w-64 bg-[#0e0a07] border-r border-gold-500/15 flex flex-col justify-between h-screen sticky top-0 shrink-0">
       <div>
-        {/* Brand */}
-        <div className="p-6 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center font-bold text-darkbase text-sm">
-              S
-            </div>
-            <div>
-              <p className="font-playfair text-base font-bold text-cream">Sangee Sri</p>
-              <p className="font-inter text-[10px] text-gold-400 tracking-wider uppercase">Admin Portal</p>
-            </div>
-          </div>
+        {/* Brand Header */}
+        <div className="p-5 border-b border-white/5">
+          <Link href="/">
+            <VideoLogo size="md" showText={true} />
+          </Link>
         </div>
 
         {/* Navigation */}
