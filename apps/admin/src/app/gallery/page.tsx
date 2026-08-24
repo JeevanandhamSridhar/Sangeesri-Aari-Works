@@ -47,6 +47,14 @@ export default function AdminGalleryPage() {
     loadGalleryFromStore()
   }, [])
 
+  const broadcastSync = () => {
+    try {
+      const channel = new BroadcastChannel('sangee_sri_gallery_sync')
+      channel.postMessage('update')
+      channel.close()
+    } catch {}
+  }
+
   const syncWithServerStore = async (payload: any) => {
     try {
       const res = await fetch('/api/gallery-store', {
@@ -57,6 +65,7 @@ export default function AdminGalleryPage() {
       const data = await res.json()
       if (data.success && Array.isArray(data.designs)) {
         setItems(data.designs)
+        broadcastSync()
         return data.designs
       }
     } catch {
@@ -69,6 +78,7 @@ export default function AdminGalleryPage() {
         const data = await res.json()
         if (data.success && Array.isArray(data.designs)) {
           setItems(data.designs)
+          broadcastSync()
           return data.designs
         }
       } catch (e) {

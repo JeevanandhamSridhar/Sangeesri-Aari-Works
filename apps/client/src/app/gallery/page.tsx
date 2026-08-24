@@ -23,9 +23,9 @@ export default function GalleryPage() {
 
   const { isInWishlist, toggleItem } = useWishlistStore()
 
-  // Load single-source gallery database from server storage
-  useEffect(() => {
-    fetch('/api/gallery-store')
+  // Load single-source gallery database with real-time sync & no-cache
+  const loadGalleryFromStore = () => {
+    fetch('/api/gallery-store', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.designs)) {
@@ -34,6 +34,27 @@ export default function GalleryPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadGalleryFromStore()
+
+    // 1. Listen to BroadcastChannel for real-time deletions/edits from Admin
+    let channel: BroadcastChannel | null = null
+    try {
+      channel = new BroadcastChannel('sangee_sri_gallery_sync')
+      channel.onmessage = () => loadGalleryFromStore()
+    } catch {}
+
+    // 2. 2-Second Polling fallback for cross-port sync
+    const timer = setInterval(() => {
+      loadGalleryFromStore()
+    }, 2000)
+
+    return () => {
+      if (channel) channel.close()
+      clearInterval(timer)
+    }
   }, [])
 
   const handleCopyCode = (code: string, e?: React.MouseEvent) => {
@@ -179,6 +200,10 @@ export default function GalleryPage() {
                         unoptimized
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement
+                          if (target) target.src = '/gallery/0021292954d624910413c938e24cf6eb.jpg'
+                        }}
                       />
                       {/* Dark gradient on bottom */}
                       <div className="absolute inset-0 bg-gradient-to-t from-darkbase via-darkbase/30 to-transparent opacity-85 group-hover:opacity-95 transition-opacity" />
