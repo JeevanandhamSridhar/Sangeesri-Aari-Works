@@ -11,20 +11,21 @@ const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
   display: 'swap',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  preload: false,
 })
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+  preload: false,
 })
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   variable: '--font-cormorant',
   display: 'swap',
-  weight: ['300', '400', '500', '600', '700'],
+  preload: false,
 })
 
 export const metadata: Metadata = {
@@ -86,12 +87,13 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${playfair.variable} ${inter.variable} ${cormorant.variable}`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
-      <body className="bg-darkbase text-cream antialiased overflow-x-hidden">
+      <body className="bg-darkbase text-cream antialiased overflow-x-hidden" suppressHydrationWarning>
         <Providers>
           <Navbar />
-          <main>{children}</main>
+          <main suppressHydrationWarning>{children}</main>
           <Footer />
           <CartDrawer />
           <Toaster

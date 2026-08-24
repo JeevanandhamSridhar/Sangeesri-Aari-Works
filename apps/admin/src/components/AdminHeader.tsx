@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Bell, FileText, ShoppingBag, Calendar, GraduationCap, X } from 'lucide-react'
+import { Bell, FileText, ShoppingBag, Calendar, GraduationCap, X, Menu } from 'lucide-react'
 import { toast } from 'sonner'
 
 export interface NotificationItem {
@@ -20,7 +20,11 @@ const initialNotifications: NotificationItem[] = [
   { id: 'sample-2', type: 'ORDER', title: 'New Store Order Received #ORD-9021', description: 'Order placed by Priya Lakshmi (₹648).', time: '25 mins ago', read: false, link: '/orders' },
 ]
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  onMenuClick?: () => void
+}
+
+export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [isOpen, setIsOpen] = useState(false)
 
@@ -173,8 +177,22 @@ export function AdminHeader() {
   }
 
   return (
-    <header className="h-16 border-b border-gold-500/15 px-8 flex items-center justify-between sticky top-0 bg-[#0A0806] z-50">
-      <h1 className="font-playfair text-lg font-bold text-cream">Sangee Sri Aari Works — Store &amp; Studio CMS</h1>
+    <header className="h-16 border-b border-gold-500/15 px-4 md:px-8 flex items-center justify-between sticky top-0 bg-[#0A0806] z-40">
+      <div className="flex items-center gap-3">
+        {onMenuClick && (
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-cream hover:text-gold-400"
+            aria-label="Toggle Mobile Menu"
+            suppressHydrationWarning
+          >
+            <Menu size={20} />
+          </button>
+        )}
+        <h1 className="font-playfair text-sm md:text-lg font-bold text-cream truncate">
+          Sangee Sri Aari Works <span className="hidden sm:inline">— Store &amp; Studio CMS</span>
+        </h1>
+      </div>
 
       <div className="flex items-center gap-4">
         {/* Live Sync Status */}
@@ -189,6 +207,7 @@ export function AdminHeader() {
             onClick={() => setIsOpen(!isOpen)}
             className="relative w-10 h-10 rounded-full border border-gold-500/30 bg-[#120C08] flex items-center justify-center text-cream/80 hover:text-gold-400 hover:border-gold-400 transition-all shadow-lg"
             aria-label="Open Notifications"
+            suppressHydrationWarning
           >
             <Bell size={18} />
             {unreadCount > 0 && (

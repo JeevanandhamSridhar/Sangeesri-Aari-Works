@@ -25,7 +25,7 @@ const BRIDAL_FEATURED = [
     title: 'Royal Gold Zari Bridal Blouse',
     category: 'Heavy Bridal Work',
     estimate: '₹4,500 – ₹7,500',
-    src: 'https://images.unsplash.com/photo-1594938298603-c8148c4b4f7b?auto=format&fit=crop&w=1000&q=85',
+    src: '/gallery/88d922362499a71835583f04df9bf97a.jpg',
     desc: 'Intricate gold threadwork with hand-embroidered floral motifs along neck and sleeve borders.',
   },
   {
@@ -33,7 +33,7 @@ const BRIDAL_FEATURED = [
     title: 'Grand Kundan Peacock Motif',
     category: 'Maggam & Stone Work',
     estimate: '₹5,200 – ₹8,800',
-    src: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85',
+    src: '/gallery/6f817a312dab16b83919340a31c8f863.jpg',
     desc: 'Heritage temple design embellished with genuine Kundan stones and silk thread accents.',
   },
   {
@@ -41,7 +41,7 @@ const BRIDAL_FEATURED = [
     title: 'Traditional Zardosi Velvet Blouse',
     category: 'Zardosi Special',
     estimate: '₹4,800 – ₹7,200',
-    src: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1000&q=85',
+    src: '/gallery/3c5193ce7c639a340f1917dea3d31a26.jpg',
     desc: 'Deep maroon velvet base crafted with metallic zardosi embroidery for grand wedding receptions.',
   },
   {
@@ -49,7 +49,7 @@ const BRIDAL_FEATURED = [
     title: 'Cutwork Heritage Silk Blouse',
     category: 'Designer Cutwork',
     estimate: '₹3,600 – ₹5,800',
-    src: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=1000&q=85',
+    src: '/gallery/532a7fed4e07f55b76ad497abe48dddb.jpg',
     desc: 'Precision hand-cut border embroidery with delicate pearl drop bead accents.',
   },
 ]
@@ -83,7 +83,7 @@ function GoldParticles() {
 }
 
 export function HeroSection() {
-  const heroRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])

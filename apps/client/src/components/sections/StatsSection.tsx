@@ -10,29 +10,29 @@ const counters = [
     value: 1000,
     suffix: '+',
     label: 'Aari Blouses Crafted',
-    image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80',
-    alt: 'Aari embroidery threadwork',
+    image: '/gallery/88d922362499a71835583f04df9bf97a.jpg',
+    alt: 'Royal Gold & Bead Aari Blouse Crafted',
   },
   {
     value: 200,
     suffix: '+',
     label: 'Bridal Blouses',
-    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4b4f7b?w=800&q=80',
-    alt: 'Bridal blouse detail',
+    image: '/gallery/6f817a312dab16b83919340a31c8f863.jpg',
+    alt: 'Bridal Zardosi Blouse Detail',
   },
   {
     value: 10,
     suffix: '+',
     label: 'Years of Experience',
-    image: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?w=800&q=80',
-    alt: 'Embroidery craftsmanship',
+    image: '/gallery/3c5193ce7c639a340f1917dea3d31a26.jpg',
+    alt: 'Handcrafted Aari Artisan Embroidery',
   },
   {
     value: 100,
     suffix: '%',
     label: 'Customer Satisfaction',
-    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80',
-    alt: 'Happy brides',
+    image: '/gallery/bb2728a18167c06fa525423bd048ddcf.jpg',
+    alt: 'Royal Velvet Bridal Aari Design',
   },
 ]
 
@@ -90,6 +90,7 @@ function CounterItem({
         src={image}
         alt={alt}
         fill
+        unoptimized
         sizes="(max-width: 768px) 50vw, 25vw"
         className="object-cover transition-transform duration-700 group-hover:scale-110"
       />

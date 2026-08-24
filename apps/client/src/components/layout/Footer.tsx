@@ -1,111 +1,140 @@
+'use client'
+
 import Link from 'next/link'
-import { Phone, MapPin, Mail, Instagram } from 'lucide-react'
+import { Phone, MapPin, Instagram, ArrowUpRight, Sparkles, ExternalLink } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
+import { VideoLogo } from '@/components/ui/VideoLogo'
 
 const footerLinks = {
   Services: [
-    { label: 'Aari Work', href: '/services#aari-work' },
+    { label: 'Aari Embroidery Work', href: '/services#aari-work' },
     { label: 'Bridal Blouse Design', href: '/services#bridal' },
-    { label: 'Designer Blouses', href: '/services#designer' },
-    { label: 'Tailoring', href: '/services#tailoring' },
-    { label: 'Custom Design', href: '/collections/custom' },
-    { label: 'Express Orders', href: '/services#express' },
+    { label: 'Designer Cutwork', href: '/services#designer' },
+    { label: 'Tailoring & Fitting', href: '/services#tailoring' },
+    { label: 'Custom Saree Matching', href: '/collections/custom' },
+    { label: 'Express Order Slots', href: '/services#express' },
   ],
   Collections: [
     { label: 'Bridal Collection', href: '/collections/bridal' },
-    { label: 'Designer Collection', href: '/collections/designer' },
-    { label: 'Traditional', href: '/collections/traditional' },
-    { label: 'Modern Collection', href: '/collections/modern' },
-    { label: 'Stone Work', href: '/collections/stone' },
-    { label: 'Maggam Work', href: '/collections/maggam' },
+    { label: 'Designer Cutwork', href: '/collections/designer' },
+    { label: 'Traditional Motifs', href: '/collections/traditional' },
+    { label: 'Modern Patterns', href: '/collections/modern' },
+    { label: 'Stone & Pearl Work', href: '/collections/stone' },
+    { label: 'Maggam & Zardosi', href: '/collections/maggam' },
   ],
   Shop: [
-    { label: 'Aari Materials', href: '/shop' },
+    { label: 'Aari Materials Shop', href: '/shop' },
     { label: 'Aari Needles', href: '/shop?category=needles' },
-    { label: 'Embroidery Thread', href: '/shop?category=thread' },
-    { label: 'Frames & Hoops', href: '/shop?category=frames' },
-    { label: 'Fabric', href: '/shop?category=fabric' },
-    { label: 'Tool Kits', href: '/shop?category=kits' },
+    { label: 'Silk Threads', href: '/shop?category=thread' },
+    { label: 'Embroidery Frames', href: '/shop?category=frames' },
+    { label: 'Velvet & Raw Silk', href: '/shop?category=fabric' },
+    { label: 'Beginner Tool Kits', href: '/shop?category=kits' },
   ],
   Company: [
-    { label: 'About Us', href: '/about' },
-    { label: 'Gallery', href: '/gallery' },
-    { label: 'Works & Posters', href: '/blog' },
-    { label: 'Reviews', href: '/#reviews' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'About Kaviya S', href: '/about' },
+    { label: 'Design Gallery', href: '/gallery' },
+    { label: 'Academy Courses', href: '/academy' },
+    { label: 'Trending Stories', href: '/blog' },
+    { label: 'Customer Wishlist', href: '/account/wishlist' },
+    { label: 'Contact Studio', href: '/contact' },
   ],
 }
 
 export function Footer() {
   return (
-    <footer className="relative bg-[#060402] border-t border-gold-500/10 overflow-hidden">
-      {/* Mesh gradient bg */}
-      <div className="absolute inset-0 bg-mesh-gold opacity-40 pointer-events-none" />
+    <footer className="relative bg-[#050302] border-t border-gold-500/20 overflow-hidden">
+      {/* Dynamic ambient background mesh glow */}
+      <div className="absolute inset-0 bg-mesh-gold opacity-30 pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-gold-500/5 blur-[120px] pointer-events-none" />
 
-      {/* Main Footer */}
-      <div className="container-luxury py-20 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12">
-          {/* Brand Column */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-6">
-              <div className="font-playfair text-3xl font-bold text-gradient-gold">
-                Sangee Sri
-              </div>
-              <div className="font-cormorant text-sm tracking-[0.4em] text-gold-400/60 uppercase mt-1">
-                Aari Works
-              </div>
+      {/* Main Footer Content */}
+      <div className="container-luxury py-16 md:py-20 relative z-10 space-y-16">
+        
+        {/* Upper Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-12 items-start">
+
+          {/* ── Brand & Interactive Contact Column (2 Cols) ───────────────── */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Official Brand Logo matching Navbar */}
+            <Link href="/" className="inline-block group">
+              <VideoLogo size="lg" showText={true} />
             </Link>
 
-            <p className="font-inter text-sm text-cream/50 leading-relaxed mb-6 max-w-xs">
-              Crafting exquisite Aari work & bridal blouses with love and precision since 2019. 
-              Your dream design, brought to life.
+            <p className="font-inter text-xs sm:text-sm text-cream/60 leading-relaxed max-w-sm">
+              Crafting exquisite Aari work &amp; bridal blouses with generations of needlecraft heritage in Kaveripakkam. Your dream bridal design, tailored to perfection.
             </p>
 
-            {/* Contact Info */}
-            <div className="space-y-3">
+            {/* ── Interactive Contact Cards ─────────────────────────────────── */}
+            <div className="space-y-3 pt-1">
+              {/* WhatsApp Direct Item */}
               <a
-                href="https://wa.me/917604887356"
-                className="flex items-center gap-3 text-sm text-cream/60 hover:text-gold-400 transition-colors group"
+                href="https://wa.me/917604887356?text=Hi%20Sangee%20Sri%20Aari%20Works!%20I%20want%20to%20inquire%20about%20bridal%20blouse%20embroidery."
                 target="_blank"
+                rel="noreferrer"
+                className="group flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-green-500/50 hover:bg-green-500/10 hover:shadow-[0_0_25px_rgba(16,185,129,0.2)] transition-all duration-300"
               >
-                <div className="w-8 h-8 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
-                  <FaWhatsapp size={14} className="text-green-400" />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-green-500/15 border border-green-500/30 flex items-center justify-center text-green-400 group-hover:scale-110 group-hover:bg-green-500 group-hover:text-darkbase transition-all duration-300 shrink-0">
+                    <FaWhatsapp size={18} />
+                  </div>
+                  <div>
+                    <span className="font-inter text-[10px] text-cream/40 block uppercase tracking-wider font-semibold">WhatsApp Studio</span>
+                    <span className="font-mono text-xs font-bold text-cream group-hover:text-green-400 transition-colors">+91 76048 87356</span>
+                  </div>
                 </div>
-                +91 76048 87356
+                <ArrowUpRight size={14} className="text-cream/30 group-hover:text-green-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
               </a>
 
+              {/* Direct Call Item */}
               <a
                 href="tel:+917604887356"
-                className="flex items-center gap-3 text-sm text-cream/60 hover:text-gold-400 transition-colors group"
+                className="group flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-gold-500/50 hover:bg-gold-500/10 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] transition-all duration-300"
               >
-                <div className="w-8 h-8 rounded-full bg-gold-500/10 border border-gold-500/20 flex items-center justify-center group-hover:bg-gold-500/20 transition-colors">
-                  <Phone size={14} className="text-gold-400" />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-darkbase transition-all duration-300 shrink-0">
+                    <Phone size={16} />
+                  </div>
+                  <div>
+                    <span className="font-inter text-[10px] text-cream/40 block uppercase tracking-wider font-semibold">Call Studio Direct</span>
+                    <span className="font-mono text-xs font-bold text-cream group-hover:text-gold-400 transition-colors">+91 76048 87356</span>
+                  </div>
                 </div>
-                +91 76048 87356
+                <ArrowUpRight size={14} className="text-cream/30 group-hover:text-gold-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
               </a>
 
-              <div className="flex items-start gap-3 text-sm text-cream/60">
-                <div className="w-8 h-8 rounded-full bg-gold-500/10 border border-gold-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <MapPin size={14} className="text-gold-400" />
+              {/* Physical Studio Address Item */}
+              <a
+                href="https://maps.google.com/?q=No+6+Bazaar+Street+Kaveripakkam+Ranipet+632508"
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-start justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-gold-500/50 hover:bg-gold-500/10 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] transition-all duration-300"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-darkbase transition-all duration-300 shrink-0 mt-0.5">
+                    <MapPin size={16} />
+                  </div>
+                  <div>
+                    <span className="font-inter text-[10px] text-cream/40 block uppercase tracking-wider font-semibold mb-0.5">Studio Location</span>
+                    <span className="font-inter text-xs text-cream/80 leading-snug block group-hover:text-cream transition-colors">
+                      No. 6, Bazaar Street, Kaveripakkam<br />
+                      Ranipet District — 632 508, Tamil Nadu
+                    </span>
+                  </div>
                 </div>
-                <span>
-                  No. 6, Bazaar Street, Kaveripakkam<br />
-                  Ranipet District — 632 508
-                </span>
-              </div>
+                <ExternalLink size={14} className="text-cream/30 group-hover:text-gold-400 group-hover:scale-110 transition-all duration-300 shrink-0 mt-1" />
+              </a>
             </div>
 
-            {/* Social Links — Instagram & WhatsApp */}
-            <div className="flex flex-wrap items-center gap-3 mt-6">
+            {/* ── Social Action Buttons (Instagram & WhatsApp Studio) ──────── */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <a
                 href="https://www.instagram.com/sangeesri_aari_works"
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Instagram"
-                className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white font-inter text-xs font-semibold shadow-lg hover:scale-105 transition-all duration-300 group"
+                aria-label="Instagram Page"
+                className="relative overflow-hidden group px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-inter text-xs font-bold shadow-lg hover:shadow-[0_0_30px_rgba(225,48,108,0.5)] hover:scale-[1.03] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <Instagram size={16} />
+                <Instagram size={16} className="group-hover:rotate-12 transition-transform duration-300" />
                 <span>@sangeesri_aari_works</span>
               </a>
 
@@ -114,75 +143,84 @@ export function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="WhatsApp Studio"
-                className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-inter text-xs font-semibold shadow-lg hover:scale-105 transition-all duration-300 group"
+                className="relative overflow-hidden group px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-inter text-xs font-bold shadow-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:scale-[1.03] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <FaWhatsapp size={16} />
-                <span>WhatsApp Studio (+91 76048 87356)</span>
+                <FaWhatsapp size={16} className="group-hover:scale-110 transition-transform duration-300" />
+                <span>WhatsApp Studio</span>
               </a>
             </div>
           </div>
 
-          {/* Link Columns */}
+          {/* ── Nav Columns (4 Cols) ───────────────────────────────────────── */}
           {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title}>
-              <h4 className="font-playfair text-sm font-semibold text-gold-400 tracking-widest uppercase mb-5">
+            <div key={title} className="space-y-4">
+              <h4 className="font-playfair text-xs font-bold text-gold-400 tracking-widest uppercase pb-2 border-b border-gold-500/20">
                 {title}
               </h4>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="font-inter text-sm text-cream/50 hover:text-gold-400 transition-colors duration-200 flex items-center gap-2 group"
+                      className="font-inter text-xs text-cream/50 hover:text-gold-400 transition-all duration-300 flex items-center gap-2 group py-0.5"
                     >
-                      <span className="w-0 group-hover:w-2 h-px bg-gold-500 transition-all duration-300" />
-                      {link.label}
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold-500/30 group-hover:bg-gold-400 group-hover:scale-125 transition-all duration-300" />
+                      <span className="group-hover:translate-x-1 transition-transform duration-300">
+                        {link.label}
+                      </span>
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
+
         </div>
 
-        {/* CTA Banner */}
-        <div className="mt-16 rounded-3xl glass-gold p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="font-playfair text-2xl md:text-3xl font-bold text-gradient-gold mb-2">
-              Ready to Create Your Dream Design?
+        {/* ── Perfectly Aligned Interactive CTA Banner ──────────────────────── */}
+        <div className="rounded-3xl glass-gold p-6 md:p-10 border border-gold-500/30 hover:border-gold-400/60 shadow-[0_0_40px_rgba(212,175,55,0.12)] hover:shadow-[0_0_50px_rgba(212,175,55,0.25)] transition-all duration-500 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
+          <div className="relative z-10 space-y-1 text-center md:text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-[11px] font-inter font-semibold mb-1">
+              <Sparkles size={12} /> Custom Bridal Embroidery Consultation
+            </div>
+            <h3 className="font-playfair text-xl md:text-2xl font-bold text-cream group-hover:text-gradient-gold transition-all duration-300">
+              Ready to Craft Your Dream Bridal Blouse?
             </h3>
-            <p className="font-inter text-sm text-cream/60">
-              Book a free consultation today. WhatsApp us your reference images.
+            <p className="font-inter text-xs text-cream/60 max-w-xl">
+              Share your saree border photo on WhatsApp or request a fast instant design estimate.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10 w-full sm:w-auto">
             <a
-              href="https://wa.me/917604887356?text=Hi! I'd like to book a design consultation."
-              className="btn-luxury"
+              href="https://wa.me/917604887356?text=Hi!%20I%20want%20to%20book%20a%20bridal%20blouse%20consultation."
+              className="btn-luxury text-xs py-2.5 px-5 justify-center flex items-center gap-2 group/btn"
               target="_blank"
+              rel="noreferrer"
             >
-              <FaWhatsapp size={16} />
+              <FaWhatsapp size={15} className="text-green-400 group-hover/btn:scale-110 transition-transform" />
               Chat on WhatsApp
             </a>
-            <Link href="/quotation" className="btn-outline-gold">
-              Get Quotation
+            <Link href="/quotation" className="btn-outline-gold text-xs py-2.5 px-5 justify-center">
+              Get Instant Quotation
             </Link>
           </div>
         </div>
+
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-white/5 py-6 relative z-10">
+      {/* ── Bottom Sub-Footer ────────────────────────────────────────────── */}
+      <div className="border-t border-white/5 py-6 relative z-10 bg-[#030201]">
         <div className="container-luxury flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="font-inter text-xs text-cream/30">
-            © {new Date().getFullYear()} Sangee Sri Aari Works. All rights reserved.
+          <p className="font-inter text-xs text-cream/40 text-center sm:text-left">
+            © {new Date().getFullYear()} Sangee Sri Aari Works — Kaveripakkam, Ranipet. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-6">
             {['Privacy Policy', 'Terms of Service', 'Refund Policy'].map((item) => (
               <Link
                 key={item}
                 href={`/${item.toLowerCase().replace(/ /g, '-')}`}
-                className="font-inter text-xs text-cream/30 hover:text-gold-400 transition-colors"
+                className="font-inter text-xs text-cream/40 hover:text-gold-400 transition-colors"
               >
                 {item}
               </Link>

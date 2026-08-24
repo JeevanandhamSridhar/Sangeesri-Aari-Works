@@ -1,23 +1,29 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, ExternalLink } from 'lucide-react'
-
-const galleryItems = [
-  { id: 1, src: 'https://picsum.photos/seed/g1/600/700', category: 'Bridal', title: 'Royal Gold Bridal Blouse' },
-  { id: 2, src: 'https://picsum.photos/seed/g2/600/800', category: 'Aari Work', title: 'Traditional Maggam Design' },
-  { id: 3, src: 'https://picsum.photos/seed/g3/700/600', category: 'Designer', title: 'Modern Stone Work' },
-  { id: 4, src: 'https://picsum.photos/seed/g4/600/700', category: 'Zardosi', title: 'Zardosi Embroidery' },
-  { id: 5, src: 'https://picsum.photos/seed/g5/600/800', category: 'Bridal', title: 'Silk Wedding Blouse' },
-  { id: 6, src: 'https://picsum.photos/seed/g6/700/700', category: 'Traditional', title: 'Temple Motif Design' },
-]
+import { ArrowRight, ExternalLink, Hash, Sparkles } from 'lucide-react'
+import { galleryDesigns as initialGalleryDesigns, GalleryDesign } from '@/data/galleryData'
 
 export function GalleryPreview() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [designs, setDesigns] = useState<GalleryDesign[]>(initialGalleryDesigns)
+
+  // Load custom admin-saved gallery items if present
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ssaw_admin_gallery_designs')
+      if (saved) {
+        setDesigns(JSON.parse(saved))
+      }
+    } catch {}
+  }, [])
+
+  // Showcase 6 featured designs on homepage
+  const featuredDesigns = designs.slice(0, 6)
 
   return (
     <section ref={ref} className="section-padding bg-darkbase relative overflow-hidden">
@@ -32,7 +38,8 @@ export function GalleryPreview() {
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               className="section-label mb-4"
             >
-              Our Portfolio
+              <Sparkles size={12} />
+              Real Studio Creations
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
@@ -40,9 +47,12 @@ export function GalleryPreview() {
               transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="font-playfair text-4xl md:text-5xl font-bold"
             >
-              <span className="text-cream">Our </span>
+              <span className="text-cream">Our Handcrafted </span>
               <span className="text-gradient-gold">Creations</span>
             </motion.h2>
+            <p className="font-inter text-xs text-cream/50 mt-2">
+              Showing verified design codes (<span className="text-gold-400 font-mono font-bold">SSAW-001</span> to <span className="text-gold-400 font-mono font-bold">SSAW-034</span>)
+            </p>
           </div>
           <motion.div
             initial={{ opacity: 0 }}
@@ -50,48 +60,58 @@ export function GalleryPreview() {
             transition={{ delay: 0.3 }}
           >
             <Link href="/gallery" className="btn-luxury text-sm group">
-              View Full Gallery
+              View All {designs.length} Designs
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
         </div>
 
-        {/* Masonry-style grid */}
+        {/* Masonry-style grid featuring live real images */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {galleryItems.map((item, i) => (
+          {featuredDesigns.map((item, i) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 40, scale: 0.95 }}
               animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className={`relative group rounded-3xl overflow-hidden cursor-pointer ${
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              className={`relative group rounded-3xl overflow-hidden cursor-pointer border border-white/10 hover:border-gold-500/40 transition-all ${
                 i === 0 || i === 3 ? 'row-span-2 aspect-[4/5]' : 'aspect-[4/3]'
               }`}
             >
-              <Image
-                src={item.src}
-                alt={item.title}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-darkbase/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <Link href={`/gallery`} className="relative block w-full h-full">
+                <Image
+                  src={item.src}
+                  alt={item.title}
+                  fill
+                  unoptimized
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-darkbase/95 via-darkbase/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500" />
 
-              {/* Category badge */}
-              <div className="absolute top-4 left-4">
-                <span className="badge-gold text-[10px]">{item.category}</span>
-              </div>
-
-              {/* Info on hover */}
-              <div className="absolute bottom-0 inset-x-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                <p className="font-playfair text-base font-semibold text-cream mb-1">{item.title}</p>
-                <div className="flex items-center gap-1 text-gold-400 text-xs font-inter">
-                  <ExternalLink size={12} /> View Design
+                {/* Top Left: Category Badge */}
+                <div className="absolute top-3 left-3 z-10">
+                  <span className="badge-gold text-[10px] shadow-sm">{item.category}</span>
                 </div>
-              </div>
 
-              {/* Gold border on hover */}
-              <div className="absolute inset-0 rounded-3xl border border-gold-500/0 group-hover:border-gold-500/30 transition-all duration-500" />
+                {/* Top Right: Unique Code Pill */}
+                <div className="absolute top-3 right-3 z-10">
+                  <span className="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-gold-500/40 text-gold-400 font-mono text-[11px] font-bold flex items-center gap-1">
+                    <Hash size={10} />
+                    {item.code}
+                  </span>
+                </div>
+
+                {/* Info on hover */}
+                <div className="absolute bottom-0 inset-x-0 p-4 md:p-5 z-10">
+                  <span className="font-mono text-[11px] text-gold-400 font-bold block mb-0.5">Code: {item.code}</span>
+                  <p className="font-playfair text-sm md:text-base font-semibold text-cream mb-1 leading-snug">{item.title}</p>
+                  <div className="flex items-center gap-1 text-gold-400 text-xs font-inter font-medium">
+                    <ExternalLink size={12} /> Quote Code on WhatsApp
+                  </div>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -99,3 +119,4 @@ export function GalleryPreview() {
     </section>
   )
 }
+

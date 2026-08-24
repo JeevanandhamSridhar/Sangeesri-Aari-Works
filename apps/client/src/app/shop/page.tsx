@@ -91,6 +91,7 @@ export default function ShopPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
               className="input-luxury pl-12"
+              suppressHydrationWarning
             />
           </div>
 
@@ -99,6 +100,7 @@ export default function ShopPage() {
             <button
               onClick={() => setSortOpen(!sortOpen)}
               className="btn-outline-gold flex items-center gap-2 py-3 px-5"
+              suppressHydrationWarning
             >
               Sort: {sortOptions.find((o) => o.value === sortBy)?.label}
               <ChevronDown size={16} className={sortOpen ? 'rotate-180' : ''} />
@@ -116,6 +118,7 @@ export default function ShopPage() {
                       key={opt.value}
                       onClick={() => { setSortBy(opt.value); setSortOpen(false) }}
                       className={`w-full text-left px-5 py-3 font-inter text-sm transition-colors border-b border-white/5 last:border-0 ${sortBy === opt.value ? 'text-gold-400 bg-gold-500/10' : 'text-cream/60 hover:text-cream hover:bg-white/5'}`}
+                      suppressHydrationWarning
                     >
                       {opt.label}
                     </button>
@@ -129,6 +132,7 @@ export default function ShopPage() {
           <button
             onClick={() => setFilterOpen(!filterOpen)}
             className={`btn-outline-gold flex items-center gap-2 py-3 px-5 ${filterOpen ? 'border-gold-500 bg-gold-500/10' : ''}`}
+            suppressHydrationWarning
           >
             <SlidersHorizontal size={16} />
             Filters
@@ -190,6 +194,7 @@ export default function ShopPage() {
                   ? 'bg-gold-500 text-darkbase font-bold'
                   : 'glass border border-white/10 text-cream/60 hover:text-cream hover:border-gold-500/30'
               }`}
+              suppressHydrationWarning
             >
               {cat}
             </button>
@@ -236,26 +241,28 @@ export default function ShopPage() {
                         src={product.image}
                         alt={product.name}
                         fill
+                        unoptimized
+                        sizes="(max-width: 768px) 50vw, 25vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />
 
                       {/* Badges */}
-                      <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                        {product.isBestSeller && <span className="badge-gold text-[10px]">⭐ Best Seller</span>}
-                        {product.isNew && <span className="text-[10px] font-inter font-bold px-2 py-0.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300">New</span>}
-                        {discount >= 20 && <span className="badge-discount">{discount}% OFF</span>}
-                        {!product.inStock && <span className="text-[10px] font-inter font-bold px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-300">Out of Stock</span>}
+                      <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+                        {product.isBestSeller && <span className="badge-gold text-[9px] shadow-sm">⭐ Best Seller</span>}
+                        {product.isNew && <span className="text-[9px] font-inter font-bold px-2 py-0.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300">New</span>}
+                        {discount >= 20 && <span className="badge-discount text-[9px]">{discount}% OFF</span>}
+                        {!product.inStock && <span className="text-[9px] font-inter font-bold px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-300">Out of Stock</span>}
                       </div>
 
                       {/* Wishlist */}
-                      <button className="absolute top-3 right-3 w-8 h-8 rounded-full glass flex items-center justify-center text-cream/50 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 duration-300">
-                        <Heart size={15} />
+                      <button className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full glass flex items-center justify-center text-cream/70 hover:text-red-400 transition-colors z-10" suppressHydrationWarning>
+                        <Heart size={14} />
                       </button>
 
-                      {/* Quick add */}
+                      {/* Desktop Quick add overlay */}
                       {product.inStock && (
-                        <div className="absolute inset-x-3 bottom-3 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
-                          <button onClick={() => handleAddToCart(product)} className="btn-luxury w-full justify-center text-xs py-3">
+                        <div className="hidden md:block absolute inset-x-3 bottom-3 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
+                          <button onClick={() => handleAddToCart(product)} className="btn-luxury w-full justify-center text-xs py-2.5" suppressHydrationWarning>
                             <ShoppingBag size={14} /> Quick Add
                           </button>
                         </div>
@@ -263,36 +270,39 @@ export default function ShopPage() {
                     </div>
 
                     {/* Info */}
-                    <div className="p-4">
-                      <p className="font-inter text-[10px] text-gold-500/60 mb-1 tracking-widest uppercase">{product.category}</p>
+                    <div className="p-3 sm:p-4">
+                      <p className="font-inter text-[9px] sm:text-[10px] text-gold-500/70 mb-1 tracking-widest uppercase font-semibold">{product.category}</p>
                       <Link href={`/shop/${product.slug}`}>
-                        <h3 className="font-inter text-sm font-semibold text-cream/90 hover:text-gold-400 transition-colors line-clamp-2 mb-2 leading-snug">{product.name}</h3>
+                        <h3 className="font-inter text-xs sm:text-sm font-semibold text-cream/90 hover:text-gold-400 transition-colors line-clamp-2 mb-2 leading-snug">{product.name}</h3>
                       </Link>
-                      <div className="flex items-center gap-1 mb-3">
+                      <div className="flex items-center gap-1 mb-2.5">
                         {Array.from({ length: 5 }).map((_, j) => (
                           <Star key={j} size={10} className={j < Math.floor(product.rating) ? 'fill-gold-500 text-gold-500' : 'text-cream/20'} />
                         ))}
-                        <span className="font-inter text-[10px] text-cream/40 ml-1">({product.reviewCount})</span>
+                        <span className="font-inter text-[9px] text-cream/40 ml-0.5">({product.reviewCount})</span>
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-1 pt-1 border-t border-white/5">
                         <div>
-                          <span className="font-playfair text-base font-bold text-gold-400">{formatCurrency(product.salePrice)}</span>
+                          <span className="font-playfair text-sm sm:text-base font-bold text-gold-400">{formatCurrency(product.salePrice)}</span>
                           {product.mrp > product.salePrice && (
-                            <span className="font-inter text-xs text-cream/30 line-through ml-2">{formatCurrency(product.mrp)}</span>
+                            <span className="font-inter text-[10px] sm:text-xs text-cream/30 line-through block sm:inline sm:ml-1.5">{formatCurrency(product.mrp)}</span>
                           )}
                         </div>
                         {product.inStock ? (
                           <button
                             onClick={() => handleAddToCart(product)}
-                            className="w-8 h-8 rounded-full border border-gold-500/30 flex items-center justify-center text-gold-400 hover:bg-gold-500/10 transition-all"
+                            className="w-8 h-8 rounded-full bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-darkbase transition-all shrink-0 active:scale-95"
+                            title="Add to cart"
+                            suppressHydrationWarning
                           >
                             <ShoppingBag size={14} />
                           </button>
                         ) : (
-                          <span className="font-inter text-xs text-red-400/60">Sold Out</span>
+                          <span className="font-inter text-[10px] text-red-400/60 font-semibold">Sold Out</span>
                         )}
                       </div>
                     </div>
+
                   </motion.div>
                 )
               })}

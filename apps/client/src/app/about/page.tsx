@@ -161,7 +161,6 @@ export default function AboutPage() {
                   fill
                   unoptimized
                   className="object-cover object-center"
-                  priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0806]/40 via-transparent to-transparent" />
               </div>

@@ -32,6 +32,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
@@ -40,6 +41,14 @@
     overflow-x: hidden;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hardware-Accelerated 60FPS Smooth Scrolling */
+  header, section, footer, .product-card, .glass, .glass-dark, .glass-gold {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
   }
 
   /* Custom scrollbar */

@@ -4,18 +4,18 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 
 const items = [
-  { label: 'Aari Work', image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Bridal Blouses', image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Maggam Work', image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Stone Work', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4b4f7b?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Zardosi', image: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Silk Blouses', image: 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Thread Embroidery', image: 'https://images.unsplash.com/photo-1511285605577-4d62fb50d2f7?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Tailoring', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Custom Designs', image: 'https://images.unsplash.com/photo-1602810316498-ab67cf68c8e1?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Wedding Blouses', image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Reception Wear', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4b4f7b?auto=format&fit=crop&w=120&q=80' },
-  { label: 'Traditional Designs', image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=120&q=80' },
+  { label: 'Aari Work', image: '/gallery/0021292954d624910413c938e24cf6eb.jpg' },
+  { label: 'Bridal Blouses', image: '/gallery/6f817a312dab16b83919340a31c8f863.jpg' },
+  { label: 'Maggam Work', image: '/gallery/28e8741d4e77e7232c4e239fd3c61d72.jpg' },
+  { label: 'Stone Work', image: '/gallery/1188aeced112589e8ef70312c5f94ca6.jpg' },
+  { label: 'Zardosi', image: '/gallery/3c5193ce7c639a340f1917dea3d31a26.jpg' },
+  { label: 'Silk Blouses', image: '/gallery/715fa9a303a97a6886ac5dfc44249237.jpg' },
+  { label: 'Thread Embroidery', image: '/gallery/634f4eedaea0edfaf805bef91ac2f3d1.jpg' },
+  { label: 'Cutwork Designs', image: '/gallery/532a7fed4e07f55b76ad497abe48dddb.jpg' },
+  { label: 'Kasu Work', image: '/gallery/52cada781684790f15b4e91021e86168.jpg' },
+  { label: 'Wedding Blouses', image: '/gallery/88d922362499a71835583f04df9bf97a.jpg' },
+  { label: 'Reception Wear', image: '/gallery/926fc3692dcb38a0ab85a87fc609da50.jpg' },
+  { label: 'Traditional Designs', image: '/gallery/8af03220e9565478d9caad7c7213ad5b.jpg' },
 ]
 
 function MarqueeRow() {

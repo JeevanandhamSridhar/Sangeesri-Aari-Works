@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Package, Truck, CheckCircle2, Clock, Star, MessageSquarePlus, Sparkles } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Search, Package, Star, MessageSquarePlus } from 'lucide-react'
 import { ReviewsSection } from '@/components/sections/ReviewsSection'
 
 interface TrackedOrder {
@@ -19,7 +19,7 @@ interface TrackedOrder {
   date: string
 }
 
-export default function OrderTrackingPage() {
+function OrderTrackingContent() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('orderId') || ''
 
@@ -28,7 +28,7 @@ export default function OrderTrackingPage() {
   const [searched, setSearched] = useState(false)
   const [showReviewModal, setShowReviewModal] = useState(false)
 
-  // Demo order catalog for lookup lookup fallback
+  // Demo order catalog for lookup fallback
   const demoOrders: TrackedOrder[] = [
     { id: '1', orderNumber: 'ORD-2026-9021', customerName: 'Priya Lakshmi', customerPhone: '9876543210', city: 'Vellore', itemsCount: 2, totalAmount: 4999, orderStatus: 'DELIVERED', trackingNumber: 'ST-VEL-99182', date: '2026-07-28' },
     { id: '2', orderNumber: 'ORD-2026-9020', customerName: 'Meena Devi', customerPhone: '9789012345', city: 'Chennai', itemsCount: 1, totalAmount: 999, orderStatus: 'SHIPPED', trackingNumber: 'ST-CHN-44102', date: '2026-07-30' },
@@ -156,7 +156,7 @@ export default function OrderTrackingPage() {
                   </div>
                 </div>
 
-                {/* REVIEW SYSTEM TRIGGER: ONLY POPPED UP FOR DELIVERED / COMPLETED ORDERS */}
+                {/* REVIEW SYSTEM TRIGGER */}
                 {activeOrder.orderStatus === 'DELIVERED' ? (
                   <div className="p-6 rounded-2xl bg-green-500/10 border border-green-500/30 text-center space-y-3">
                     <div className="flex justify-center gap-1">
@@ -197,3 +197,12 @@ export default function OrderTrackingPage() {
     </div>
   )
 }
+
+export default function OrderTrackingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-darkbase pt-28 pb-24 text-center text-cream/50 font-inter text-sm">Loading Order Tracking...</div>}>
+      <OrderTrackingContent />
+    </Suspense>
+  )
+}
+
