@@ -238,9 +238,9 @@ export default function GalleryPage() {
                         <p className="font-playfair text-sm font-bold text-cream mb-2 leading-snug line-clamp-1">{img.title}</p>
 
                         <div className="flex flex-wrap gap-1">
-                          {img.tags?.slice(0, 2).map((t) => (
-                            <span key={t} className="text-[9px] px-2 py-0.5 rounded-full bg-white/10 text-cream/70 border border-white/5">
-                              {t}
+                          {img.tags?.map((t) => (
+                            <span key={t} className="text-[9px] px-2 py-0.5 rounded-full bg-gold-500/10 text-gold-300 border border-gold-500/20 font-inter">
+                              #{t}
                             </span>
                           ))}
                         </div>
