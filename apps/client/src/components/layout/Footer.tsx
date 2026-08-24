@@ -176,37 +176,6 @@ export function Footer() {
           ))}
 
         </div>
-
-        {/* ── Perfectly Aligned Interactive CTA Banner ──────────────────────── */}
-        <div className="rounded-3xl glass-gold p-6 md:p-10 border border-gold-500/30 hover:border-gold-400/60 shadow-[0_0_40px_rgba(212,175,55,0.12)] hover:shadow-[0_0_50px_rgba(212,175,55,0.25)] transition-all duration-500 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
-          <div className="relative z-10 space-y-1 text-center md:text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-[11px] font-inter font-semibold mb-1">
-              <Sparkles size={12} /> Custom Bridal Embroidery Consultation
-            </div>
-            <h3 className="font-playfair text-xl md:text-2xl font-bold text-cream group-hover:text-gradient-gold transition-all duration-300">
-              Ready to Craft Your Dream Bridal Blouse?
-            </h3>
-            <p className="font-inter text-xs text-cream/60 max-w-xl">
-              Share your saree border photo on WhatsApp or request a fast instant design estimate.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10 w-full sm:w-auto">
-            <a
-              href="https://wa.me/917604887356?text=Hi!%20I%20want%20to%20book%20a%20bridal%20blouse%20consultation."
-              className="btn-luxury text-xs py-2.5 px-5 justify-center flex items-center gap-2 group/btn"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FaWhatsapp size={15} className="text-green-400 group-hover/btn:scale-110 transition-transform" />
-              Chat on WhatsApp
-            </a>
-            <Link href="/quotation" className="btn-outline-gold text-xs py-2.5 px-5 justify-center">
-              Get Instant Quotation
-            </Link>
-          </div>
-        </div>
-
       </div>
 
       {/* ── Bottom Sub-Footer ────────────────────────────────────────────── */}
