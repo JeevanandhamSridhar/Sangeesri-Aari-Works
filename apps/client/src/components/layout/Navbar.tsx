@@ -12,6 +12,17 @@ import { cn } from '@/lib/utils'
 const navLinks = [
   { label: 'Home', href: '/' },
   {
+    label: 'Services',
+    href: '/services',
+    submenu: [
+      { label: 'Aari Embroidery', href: '/services#aari-work' },
+      { label: 'Bridal Customization', href: '/services#bridal' },
+      { label: 'Designer Cutwork', href: '/services#designer' },
+      { label: 'Tailoring & Fitting', href: '/services#tailoring' },
+      { label: 'Express Order Slots', href: '/services#express' },
+    ],
+  },
+  {
     label: 'Collections',
     href: '/collections',
     submenu: [
