@@ -1,7 +1,53 @@
 import { jsPDF } from 'jspdf'
 import { GalleryDesign } from '@/data/galleryData'
 
-export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible: boolean = false) {
+/**
+ * Converts an image URL into a base64 Data URL for embedding into jsPDF
+ */
+async function urlToBase64(url: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      resolve(null)
+      return
+    }
+    const img = new window.Image()
+    img.crossOrigin = 'Anonymous'
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.naturalWidth || img.width || 400
+        canvas.height = img.naturalHeight || img.height || 500
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(img, 0, 0)
+          const dataURL = canvas.toDataURL('image/jpeg', 0.85)
+          resolve(dataURL)
+          return
+        }
+      } catch (e) {
+        console.warn('Canvas conversion failed for PDF image:', e)
+      }
+      resolve(null)
+    }
+    img.onerror = () => {
+      resolve(null)
+    }
+    img.src = url
+  })
+}
+
+export async function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible: boolean = false) {
+  // Pre-convert all design images to Base64 in parallel for embedded PDF rendering
+  const imageMap = new Map<string, string | null>()
+  await Promise.all(
+    designs.map(async (d) => {
+      if (d.src) {
+        const b64 = await urlToBase64(d.src)
+        imageMap.set(d.id, b64)
+      }
+    })
+  )
+
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -13,20 +59,37 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
 
   // Helper colors
   const goldRgb = [212, 175, 55] // #D4AF37
-  const darkRgb = [15, 12, 9]    // #0F0C09
-  const textRgb = [40, 40, 40]
+  const darkRgb = [12, 9, 6]     // #0C0906
+
+  // Draw Luxury Gold Crown / Mandala Emblem
+  const drawLuxuryEmblem = (cx: number, cy: number, r: number) => {
+    doc.setDrawColor(212, 175, 55)
+    doc.setLineWidth(0.6)
+    doc.circle(cx, cy, r, 'D')
+    doc.setLineWidth(0.2)
+    doc.circle(cx, cy, r - 1.5, 'D')
+
+    // Inner Star / Diamond Symbol
+    doc.setFillColor(212, 175, 55)
+    doc.triangle(cx, cy - r + 3, cx + 2.5, cy, cx - 2.5, cy, 'F')
+    doc.triangle(cx, cy + r - 3, cx + 2.5, cy, cx - 2.5, cy, 'F')
+  }
 
   // Header & Footer helper for subsequent pages
   const addHeaderFooter = (pageNo: number, totalPages: number) => {
     if (pageNo === 1) return // Skip cover page
 
-    // Header
-    doc.setFillColor(15, 12, 9)
+    // Top Header Bar
+    doc.setFillColor(12, 9, 6)
     doc.rect(0, 0, pageWidth, 18, 'F')
+
+    // Mini Emblem
+    drawLuxuryEmblem(18, 9, 5)
+
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(10)
     doc.setTextColor(212, 175, 55)
-    doc.text('SANGEE SRI AARI WORKS', 14, 11)
+    doc.text('SANGEE SRI AARI WORKS', 27, 11)
 
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
@@ -37,82 +100,87 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
     doc.setLineWidth(0.4)
     doc.line(14, 18, pageWidth - 14, 18)
 
-    // Footer
-    doc.setFillColor(15, 12, 9)
+    // Bottom Footer Bar
+    doc.setFillColor(12, 9, 6)
     doc.rect(0, pageHeight - 14, pageWidth, 14, 'F')
     doc.setFontSize(8)
     doc.setTextColor(180, 180, 180)
-    doc.text('Kaveripakkam, Ranipet Dist. | Phone: +91 76048 87356', 14, pageHeight - 5)
+    doc.text('Kaveripakkam, Ranipet District — 632 508 | WhatsApp & Phone: +91 76048 87356', 14, pageHeight - 5)
     doc.text(`Page ${pageNo} of ${totalPages}`, pageWidth - 14, pageHeight - 5, { align: 'right' })
   }
 
   // ── PAGE 1: LUXURY COVER PAGE ───────────────────────────────────
-  // Dark Background with Gold Border
-  doc.setFillColor(15, 12, 9)
+  doc.setFillColor(12, 9, 6)
   doc.rect(0, 0, pageWidth, pageHeight, 'F')
 
-  // Gold Inner Frame Lines
+  // Double Gold Border Frame
   doc.setDrawColor(212, 175, 55)
   doc.setLineWidth(1)
   doc.rect(10, 10, pageWidth - 20, pageHeight - 20)
   doc.setLineWidth(0.3)
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24)
 
-  // Top Logo Crown / Ornament Symbol
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(28)
-  doc.setTextColor(212, 175, 55)
-  doc.text('👑', pageWidth / 2, 60, { align: 'center' })
+  // Top Luxury Emblem
+  drawLuxuryEmblem(pageWidth / 2, 55, 14)
 
-  // Main Brand Title
-  doc.setFontSize(24)
-  doc.text('SANGEE SRI AARI WORKS', pageWidth / 2, 78, { align: 'center' })
+  // Brand Name
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(26)
+  doc.setTextColor(212, 175, 55)
+  doc.text('SANGEE SRI AARI WORKS', pageWidth / 2, 82, { align: 'center' })
 
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(11)
+  doc.setFontSize(10)
   doc.setTextColor(220, 200, 150)
-  doc.text('HIGH-END BRIDAL BLOUSE & AARI EMBROIDERY STUDIO', pageWidth / 2, 88, { align: 'center' })
+  doc.text('HIGH-END BRIDAL BLOUSE & HANDCRAFTED EMBROIDERY STUDIO', pageWidth / 2, 91, { align: 'center' })
 
-  // Divider Line
+  // Decorative Line
   doc.setDrawColor(212, 175, 55)
   doc.setLineWidth(0.5)
-  doc.line(pageWidth / 2 - 40, 96, pageWidth / 2 + 40, 96)
+  doc.line(pageWidth / 2 - 45, 98, pageWidth / 2 + 45, 98)
 
-  // Catalog Subtitle
+  // Brochure Title
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(18)
   doc.setTextColor(255, 255, 255)
-  doc.text('OFFICIAL DESIGN CATALOGUE', pageWidth / 2, 120, { align: 'center' })
+  doc.text('OFFICIAL DESIGN CATALOGUE', pageWidth / 2, 118, { align: 'center' })
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(10)
   doc.setTextColor(180, 180, 180)
-  doc.text(`Featuring ${designs.length} Exclusive Handcrafted Blouse Designs`, pageWidth / 2, 128, { align: 'center' })
+  doc.text(`Featuring ${designs.length} Handcrafted Blouse Designs with Design Verification Codes`, pageWidth / 2, 126, { align: 'center' })
 
-  // Details Card Box
-  doc.setFillColor(30, 25, 20)
-  doc.roundedRect(30, 150, pageWidth - 60, 75, 4, 4, 'F')
+  // Studio & Contact Card Box
+  doc.setFillColor(25, 20, 15)
+  doc.roundedRect(25, 145, pageWidth - 50, 88, 4, 4, 'F')
   doc.setDrawColor(212, 175, 55)
-  doc.setLineWidth(0.4)
-  doc.roundedRect(30, 150, pageWidth - 60, 75, 4, 4, 'D')
+  doc.setLineWidth(0.5)
+  doc.roundedRect(25, 145, pageWidth - 50, 88, 4, 4, 'D')
 
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(11)
   doc.setTextColor(212, 175, 55)
-  doc.text('STUDIO & CONTACT INFORMATION', pageWidth / 2, 163, { align: 'center' })
+  doc.text('STUDIO INFORMATION & BOOKINGS', pageWidth / 2, 158, { align: 'center' })
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(9)
+  doc.setTextColor(240, 240, 240)
+  doc.text('Founder & Lead Designer: Kaviya S', pageWidth / 2, 168, { align: 'center' })
+  doc.setFontSize(8)
+  doc.setTextColor(200, 180, 130)
+  doc.text('(Joint Secretary of Ranipet District, Indian Aari Work Federation)', pageWidth / 2, 174, { align: 'center' })
+
+  doc.setFontSize(9)
   doc.setTextColor(230, 230, 230)
-  doc.text('Lead Designer: Kaviya S (Joint Secretary, Indian Aari Work Federation)', pageWidth / 2, 173, { align: 'center' })
-  doc.text('Location: Kaveripakkam, Ranipet District, Tamil Nadu', pageWidth / 2, 181, { align: 'center' })
-  doc.text('Direct Orders & WhatsApp Inquiry: +91 76048 87356', pageWidth / 2, 189, { align: 'center' })
-  doc.text('Instagram Portfolio: @sangeesri_aari_works', pageWidth / 2, 197, { align: 'center' })
-  doc.text('Website: https://sangeesriaariworks.com', pageWidth / 2, 205, { align: 'center' })
+  doc.text('Address: No. 6, Bazaar Street, Kaveripakkam, Ranipet District — 632 508, Tamil Nadu', pageWidth / 2, 184, { align: 'center' })
+  doc.text('WhatsApp & Phone Direct: +91 76048 87356', pageWidth / 2, 192, { align: 'center' })
+  doc.text('Instagram Portfolio: @sangeesri_aari_works', pageWidth / 2, 200, { align: 'center' })
+  doc.text('Official Website: https://sangeesriaariworks.com', pageWidth / 2, 208, { align: 'center' })
+  doc.text('Specialization: Bridal Blouses, Zardosi, Kundan, Maggam & Cutwork', pageWidth / 2, 216, { align: 'center' })
 
   doc.setFontSize(8)
   doc.setTextColor(140, 140, 140)
-  doc.text(`Catalogue Generated: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}`, pageWidth / 2, 260, { align: 'center' })
+  doc.text(`Catalogue Issue Date: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}`, pageWidth / 2, 262, { align: 'center' })
 
   // ── PAGE 2: INDEX / TABLE OF CONTENTS ──────────────────────────
   doc.addPage()
@@ -120,18 +188,18 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
   doc.rect(0, 0, pageWidth, pageHeight, 'F')
 
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(16)
-  doc.setTextColor(15, 12, 9)
+  doc.setFontSize(15)
+  doc.setTextColor(12, 9, 6)
   doc.text('DESIGN CATALOGUE INDEX', 14, 28)
 
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
+  doc.setFontSize(8.5)
   doc.setTextColor(100, 100, 100)
-  doc.text('Quick Reference list of all designs and unique SSAW Codes:', 14, 34)
+  doc.text('Quick reference index of all designs with unique design codes for WhatsApp quotes:', 14, 34)
 
-  // Table Headers
+  // Table Header
   let yPos = 42
-  doc.setFillColor(15, 12, 9)
+  doc.setFillColor(12, 9, 6)
   doc.rect(14, yPos, pageWidth - 28, 8, 'F')
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(8)
@@ -143,14 +211,14 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
 
   yPos += 8
 
-  designs.slice(0, 22).forEach((item, idx) => {
+  designs.slice(0, 24).forEach((item, idx) => {
     if (idx % 2 === 0) {
       doc.setFillColor(245, 240, 230)
       doc.rect(14, yPos, pageWidth - 28, 7, 'F')
     }
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(8)
-    doc.setTextColor(15, 12, 9)
+    doc.setTextColor(12, 9, 6)
     doc.text(item.code, 18, yPos + 4.8)
 
     doc.setFont('helvetica', 'normal')
@@ -169,10 +237,8 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
     yPos += 7
   })
 
-  // ── SUBSEQUENT PAGES: DESIGN CARDS GRID ─────────────────────────
-  let currentPage = 3
+  // ── SUBSEQUENT PAGES: DESIGN CARDS WITH EMBEDDED HIGH-RES PHOTOS ─────
   const itemsPerPage = 3
-  const totalDesignPages = Math.ceil(designs.length / itemsPerPage)
 
   for (let i = 0; i < designs.length; i += itemsPerPage) {
     doc.addPage()
@@ -183,85 +249,102 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
     let cardY = 24
 
     pageItems.forEach((item) => {
-      // Card Frame Box
+      // Main Card Frame
       doc.setFillColor(255, 255, 255)
       doc.roundedRect(14, cardY, pageWidth - 28, 78, 3, 3, 'F')
       doc.setDrawColor(220, 210, 190)
       doc.setLineWidth(0.3)
       doc.roundedRect(14, cardY, pageWidth - 28, 78, 3, 3, 'D')
 
-      // Left Image Placeholder Badge Box
+      // Left Image Box (Width: 62mm, Height: 70mm)
+      const imgX = 18
+      const imgY = cardY + 4
+      const imgW = 58
+      const imgH = 70
+
       doc.setFillColor(245, 240, 230)
-      doc.roundedRect(18, cardY + 4, 65, 70, 2, 2, 'F')
+      doc.roundedRect(imgX, imgY, imgW, imgH, 2, 2, 'F')
       doc.setDrawColor(212, 175, 55)
-      doc.setLineWidth(0.4)
-      doc.roundedRect(18, cardY + 4, 65, 70, 2, 2, 'D')
+      doc.setLineWidth(0.3)
+      doc.roundedRect(imgX, imgY, imgW, imgH, 2, 2, 'D')
 
-      // Badge Code in Box
-      doc.setFillColor(15, 12, 9)
-      doc.roundedRect(22, cardY + 8, 35, 7, 2, 2, 'F')
-      doc.setFont('helvetica', 'bold')
-      doc.setFontSize(8)
-      doc.setTextColor(212, 175, 55)
-      doc.text(item.code, 39.5, cardY + 12.8, { align: 'center' })
+      // Check if image Base64 exists and embed image
+      const b64Data = imageMap.get(item.id)
+      if (b64Data) {
+        try {
+          doc.addImage(b64Data, 'JPEG', imgX + 1, imgY + 1, imgW - 2, imgH - 2)
+        } catch (e) {
+          console.warn('Failed to embed image in PDF:', e)
+        }
+      } else {
+        // Fallback info if base64 conversion failed
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(8)
+        doc.setTextColor(150, 130, 90)
+        doc.text('SSAW DESIGN', imgX + imgW / 2, imgY + 30, { align: 'center' })
+        doc.text(item.code, imgX + imgW / 2, imgY + 36, { align: 'center' })
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(7)
+        doc.setTextColor(140, 140, 140)
+        doc.text('View Photo Online', imgX + imgW / 2, imgY + 44, { align: 'center' })
+      }
 
+      // Code Badge Banner on Image
+      doc.setFillColor(12, 9, 6)
+      doc.roundedRect(imgX + 2, imgY + 2, 26, 6, 1.5, 1.5, 'F')
       doc.setFont('helvetica', 'bold')
-      doc.setFontSize(9)
-      doc.setTextColor(15, 12, 9)
-      doc.text('HIGH-RES PHOTO', 50.5, cardY + 36, { align: 'center' })
-      doc.setFont('helvetica', 'normal')
       doc.setFontSize(7.5)
-      doc.setTextColor(120, 120, 120)
-      doc.text('View on Web / Instagram', 50.5, cardY + 42, { align: 'center' })
-      doc.text(`@sangeesri_aari_works`, 50.5, cardY + 47, { align: 'center' })
+      doc.setTextColor(212, 175, 55)
+      doc.text(item.code, imgX + 15, imgY + 6.2, { align: 'center' })
 
       // Right Content Info
-      const contentX = 90
+      const contentX = 82
 
       // Category Pill
       doc.setFillColor(240, 230, 205)
-      doc.roundedRect(contentX, cardY + 6, 45, 5, 1.5, 1.5, 'F')
+      doc.roundedRect(contentX, cardY + 6, 42, 5, 1.5, 1.5, 'F')
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(7)
       doc.setTextColor(140, 100, 10)
       doc.text(item.category.toUpperCase(), contentX + 3, cardY + 9.5)
 
-      // Title
+      // Design Title
       doc.setFont('helvetica', 'bold')
-      doc.setFontSize(12)
-      doc.setTextColor(15, 12, 9)
+      doc.setFontSize(11)
+      doc.setTextColor(12, 9, 6)
       doc.text(item.title, contentX, cardY + 18)
 
       // Description
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(8)
-      doc.setTextColor(80, 80, 80)
+      doc.setTextColor(70, 70, 70)
       const descText = item.description || 'Custom handcrafted Aari embroidery blouse design tailored to your measurements.'
-      const descLines = doc.splitTextToSize(descText, pageWidth - contentX - 20)
+      const descLines = doc.splitTextToSize(descText, pageWidth - contentX - 18)
       doc.text(descLines, contentX, cardY + 24)
 
       // Tags
       if (item.tags && item.tags.length > 0) {
         doc.setFontSize(7.5)
-        doc.setTextColor(120, 100, 40)
+        doc.setTextColor(130, 105, 35)
         doc.text(`Tags: ${item.tags.join(' • ')}`, contentX, cardY + 42)
       }
 
-      // Price Box Divider & Info
+      // Divider Line
       doc.setDrawColor(230, 220, 200)
       doc.setLineWidth(0.3)
-      doc.line(contentX, cardY + 46, pageWidth - 20, cardY + 46)
+      doc.line(contentX, cardY + 46, pageWidth - 18, cardY + 46)
 
+      // Price / Quote Box
       const canShowPrice = isBulkPriceVisible || item.showPrice
 
       if (canShowPrice) {
         doc.setFont('helvetica', 'bold')
-        doc.setFontSize(8)
+        doc.setFontSize(7.5)
         doc.setTextColor(140, 100, 10)
         doc.text('ESTIMATED PRICE RANGE:', contentX, cardY + 53)
 
         doc.setFontSize(11)
-        doc.setTextColor(15, 12, 9)
+        doc.setTextColor(12, 9, 6)
         doc.text(item.priceEstimate || '₹3,500 – ₹6,500', contentX, cardY + 60)
 
         doc.setFont('helvetica', 'normal')
@@ -270,23 +353,21 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
         doc.text('* Final cost depends on work density, fabric material, and size.', contentX, cardY + 66)
       } else {
         doc.setFillColor(245, 245, 245)
-        doc.roundedRect(contentX, cardY + 50, pageWidth - contentX - 22, 18, 2, 2, 'F')
+        doc.roundedRect(contentX, cardY + 50, pageWidth - contentX - 20, 18, 2, 2, 'F')
 
         doc.setFont('helvetica', 'bold')
         doc.setFontSize(8.5)
-        doc.setTextColor(15, 12, 9)
+        doc.setTextColor(12, 9, 6)
         doc.text('PRICE ON REQUEST', contentX + 4, cardY + 56)
 
         doc.setFont('helvetica', 'normal')
         doc.setFontSize(7.5)
-        doc.setTextColor(100, 100, 100)
-        doc.text(`WhatsApp Code "${item.code}" to +91 76048 87356 for custom quote`, contentX + 4, cardY + 62)
+        doc.setTextColor(90, 90, 90)
+        doc.text(`Quote Design Code "${item.code}" on WhatsApp: +91 76048 87356`, contentX + 4, cardY + 62)
       }
 
       cardY += 84
     })
-
-    currentPage++
   }
 
   // Add headers & footers across all pages
@@ -297,5 +378,5 @@ export function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible:
   }
 
   // Trigger browser download
-  doc.save(`Sangee-Sri-Aari-Works-Catalog-${new Date().toISOString().slice(0, 10)}.pdf`)
+  doc.save(`Sangee-Sri-Aari-Works-Official-Brochure-${new Date().toISOString().slice(0, 10)}.pdf`)
 }

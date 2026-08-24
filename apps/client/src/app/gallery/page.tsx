@@ -65,20 +65,18 @@ export default function GalleryPage() {
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     setDownloadingPdf(true)
-    toast.info('Generating official Sangee Sri Aari Works PDF catalog...')
-    setTimeout(() => {
-      try {
-        generatePdfCatalog(designs, globalShowPrices)
-        toast.success('PDF Catalog downloaded successfully!')
-      } catch (err) {
-        console.error('PDF generation error:', err)
-        toast.error('Failed to generate PDF catalog')
-      } finally {
-        setDownloadingPdf(false)
-      }
-    }, 400)
+    toast.info('Generating official Sangee Sri Aari Works PDF catalog with embedded blouse photos...')
+    try {
+      await generatePdfCatalog(designs, globalShowPrices)
+      toast.success('Official PDF Catalog downloaded successfully!')
+    } catch (err) {
+      console.error('PDF generation error:', err)
+      toast.error('Failed to generate PDF catalog')
+    } finally {
+      setDownloadingPdf(false)
+    }
   }
 
   const filtered = designs.filter((img) => {
