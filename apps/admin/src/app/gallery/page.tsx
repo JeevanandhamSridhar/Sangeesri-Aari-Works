@@ -181,24 +181,34 @@ export default function AdminGalleryPage() {
   }
 
   const processFiles = (files: File[]) => {
-    files.forEach((file, idx) => {
-      const objectUrl = URL.createObjectURL(file)
-      const rawName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-      const formattedTitle = rawName.charAt(0).toUpperCase() + rawName.slice(1) || 'Aari Blouse Design'
+    toast.info(`Uploading ${files.length} images to server...`)
+    let completed = 0
 
-      syncWithServerStore({
-        action: 'add_item',
-        item: {
-          title: formattedTitle,
-          category: 'Bridal Blouses',
-          src: objectUrl,
-          showPrice: false,
-          priceEstimate: '₹3,500 – ₹6,500',
-          tags: ['New Arrival', 'Custom'],
-        },
-      })
+    files.forEach((file) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string
+        if (base64) {
+          const rawName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
+          const formattedTitle = rawName.charAt(0).toUpperCase() + rawName.slice(1) || 'Aari Blouse Design'
+
+          syncWithServerStore({
+            action: 'upload_file',
+            fileData: base64,
+            fileName: file.name,
+            title: formattedTitle,
+            category: 'Bridal Blouses',
+            priceEstimate: '₹3,500 – ₹6,500',
+          })
+
+          completed++
+          if (completed === files.length) {
+            toast.success(`Successfully uploaded ${files.length} images to gallery!`)
+          }
+        }
+      }
+      reader.readAsDataURL(file)
     })
-    toast.success(`Uploaded ${files.length} images!`)
   }
 
   const handleCopyCode = (code: string) => {

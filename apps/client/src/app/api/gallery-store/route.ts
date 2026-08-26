@@ -32,7 +32,9 @@ function readStorageFile(): GalleryItem[] {
       return []
     }
     const raw = fs.readFileSync(JSON_PATH, 'utf-8')
-    return JSON.parse(raw)
+    const parsed: GalleryItem[] = JSON.parse(raw)
+    // Filter out invalid blob: URLs
+    return parsed.filter((item) => !item.src.includes('blob:'))
   } catch {
     return []
   }
@@ -44,14 +46,19 @@ function writeStorageFile(items: GalleryItem[]) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true })
     }
-    fs.writeFileSync(JSON_PATH, JSON.stringify(items, null, 2), 'utf-8')
+    // Clean out blob: URLs before saving
+    const cleanItems = items.filter((item) => !item.src.includes('blob:'))
+    fs.writeFileSync(JSON_PATH, JSON.stringify(cleanItems, null, 2), 'utf-8')
   } catch (err) {
     console.error('Error writing gallery storage JSON:', err)
   }
 }
 
 function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] {
-  // 1. Ensure directories exist
+  // Purge any blob: entries
+  let cleaned = existingItems.filter((item) => !item.src.includes('blob:'))
+
+  // Ensure directories exist
   if (!fs.existsSync(CLIENT_GALLERY_DIR)) {
     fs.mkdirSync(CLIENT_GALLERY_DIR, { recursive: true })
   }
@@ -61,45 +68,38 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
     } catch {}
   }
 
-  // 2. Bidirectional copy between Client & Admin public/gallery folders
+  // Bidirectional file copy between Client & Admin
   const clientFiles = fs.readdirSync(CLIENT_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
   let adminFiles: string[] = []
   if (fs.existsSync(ADMIN_GALLERY_DIR)) {
     adminFiles = fs.readdirSync(ADMIN_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
   }
 
-  // Copy missing files from Admin to Client
   adminFiles.forEach((file) => {
     const dest = path.join(CLIENT_GALLERY_DIR, file)
     if (!fs.existsSync(dest)) {
       try {
         fs.copyFileSync(path.join(ADMIN_GALLERY_DIR, file), dest)
-      } catch (e) {
-        console.warn('Failed to copy file from Admin to Client gallery:', e)
-      }
+      } catch {}
     }
   })
 
-  // Copy missing files from Client to Admin
   if (fs.existsSync(ADMIN_GALLERY_DIR)) {
     clientFiles.forEach((file) => {
       const dest = path.join(ADMIN_GALLERY_DIR, file)
       if (!fs.existsSync(dest)) {
         try {
           fs.copyFileSync(path.join(CLIENT_GALLERY_DIR, file), dest)
-        } catch (e) {
-          console.warn('Failed to copy file from Client to Admin gallery:', e)
-        }
+        } catch {}
       }
     })
   }
 
-  // Re-read combined client files after copy
   const allFiles = fs.readdirSync(CLIENT_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
-  const registeredSrcs = new Set(existingItems.map((item) => item.src))
+  const registeredSrcs = new Set(cleaned.map((item) => item.src))
 
   let maxNum = 0
-  existingItems.forEach((item) => {
+  cleaned.forEach((item) => {
     const match = item.code.match(/SSAW-(\d+)/)
     if (match) {
       const num = parseInt(match[1], 10)
@@ -107,7 +107,7 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
     }
   })
 
-  let updated = [...existingItems]
+  let updated = [...cleaned]
   let added = false
 
   allFiles.forEach((file) => {
@@ -134,10 +134,9 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
     }
   })
 
-  // Ensure every item has an images array initialized
   updated = updated.map((item) => ({
     ...item,
-    images: Array.isArray(item.images) && item.images.length > 0 ? item.images : [item.src],
+    images: Array.isArray(item.images) && item.images.length > 0 ? item.images.filter(i => !i.includes('blob:')) : [item.src],
   }))
 
   if (added) {
@@ -160,8 +159,51 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { action, id, showPrice, item } = body
+    const { action, id, showPrice, item, fileData, fileName, title, category, priceEstimate } = body
     let current = readStorageFile()
+
+    if (action === 'upload_file' && fileData && fileName) {
+      const cleanName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, '_')
+      const base64Data = fileData.replace(/^data:image\/\w+;base64,/, '')
+      const buffer = Buffer.from(base64Data, 'base64')
+
+      const clientPath = path.join(CLIENT_GALLERY_DIR, cleanName)
+      const adminPath = path.join(ADMIN_GALLERY_DIR, cleanName)
+
+      fs.writeFileSync(clientPath, buffer)
+      if (fs.existsSync(path.dirname(adminPath))) {
+        try { fs.writeFileSync(adminPath, buffer) } catch {}
+      }
+
+      const relativeSrc = `/gallery/${cleanName}`
+      let maxNum = 0
+      current.forEach((i) => {
+        const match = i.code.match(/SSAW-(\d+)/)
+        if (match) {
+          const num = parseInt(match[1], 10)
+          if (num > maxNum) maxNum = num
+        }
+      })
+      maxNum++
+      const code = `SSAW-${String(maxNum).padStart(3, '0')}`
+
+      const newItem: GalleryItem = {
+        id: `gal-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        code,
+        title: title || cleanName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
+        category: category || 'Bridal Blouses',
+        src: relativeSrc,
+        images: [relativeSrc],
+        showPrice: false,
+        priceEstimate: priceEstimate || '₹3,500 – ₹6,500',
+        tags: ['New Arrival', 'Custom'],
+        description: 'Custom handcrafted Aari embroidery blouse design.',
+      }
+
+      current.unshift(newItem)
+      writeStorageFile(current)
+      return NextResponse.json({ success: true, designs: current }, { headers: corsHeaders })
+    }
 
     if (action === 'delete' && id) {
       const targetItem = current.find((i) => i.id === id)
@@ -217,7 +259,7 @@ export async function POST(request: Request) {
         }
       })
       maxNum++
-      const itemImages = Array.isArray(item.images) && item.images.length > 0 ? item.images : [item.src || '/gallery/0021292954d624910413c938e24cf6eb.jpg']
+      const itemImages = Array.isArray(item.images) && item.images.length > 0 ? item.images.filter((i: string) => !i.includes('blob:')) : [item.src || '/gallery/0021292954d624910413c938e24cf6eb.jpg']
       const newItem: GalleryItem = {
         id: `gal-${Date.now()}`,
         code: `SSAW-${String(maxNum).padStart(3, '0')}`,
@@ -232,11 +274,6 @@ export async function POST(request: Request) {
       }
       current.unshift(newItem)
       writeStorageFile(current)
-      return NextResponse.json({ success: true, designs: current }, { headers: corsHeaders })
-    }
-
-    if (action === 'sync_folder') {
-      current = syncDirectoriesAndStorage(current)
       return NextResponse.json({ success: true, designs: current }, { headers: corsHeaders })
     }
 
