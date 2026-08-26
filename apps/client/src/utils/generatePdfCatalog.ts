@@ -37,7 +37,9 @@ async function urlToBase64(url: string): Promise<string | null> {
 }
 
 export async function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVisible: boolean = false) {
-  // Pre-convert all design images to Base64 in parallel for embedded PDF rendering
+  // Pre-convert logo and all design images to Base64 in parallel for embedded PDF rendering
+  const logoBase64 = await urlToBase64('/logo.jpg')
+
   const imageMap = new Map<string, string | null>()
   await Promise.all(
     designs.map(async (d) => {
@@ -61,20 +63,6 @@ export async function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVi
   const goldRgb = [212, 175, 55] // #D4AF37
   const darkRgb = [12, 9, 6]     // #0C0906
 
-  // Draw Luxury Gold Crown / Mandala Emblem
-  const drawLuxuryEmblem = (cx: number, cy: number, r: number) => {
-    doc.setDrawColor(212, 175, 55)
-    doc.setLineWidth(0.6)
-    doc.circle(cx, cy, r, 'D')
-    doc.setLineWidth(0.2)
-    doc.circle(cx, cy, r - 1.5, 'D')
-
-    // Inner Star / Diamond Symbol
-    doc.setFillColor(212, 175, 55)
-    doc.triangle(cx, cy - r + 3, cx + 2.5, cy, cx - 2.5, cy, 'F')
-    doc.triangle(cx, cy + r - 3, cx + 2.5, cy, cx - 2.5, cy, 'F')
-  }
-
   // Header & Footer helper for subsequent pages
   const addHeaderFooter = (pageNo: number, totalPages: number) => {
     if (pageNo === 1) return // Skip cover page
@@ -83,13 +71,19 @@ export async function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVi
     doc.setFillColor(12, 9, 6)
     doc.rect(0, 0, pageWidth, 18, 'F')
 
-    // Mini Emblem
-    drawLuxuryEmblem(18, 9, 5)
+    // Embedded Mini Golden Peacock Logo Image
+    if (logoBase64) {
+      try {
+        doc.addImage(logoBase64, 'JPEG', 14, 2, 14, 14)
+      } catch (e) {
+        console.warn('Failed to embed header logo in PDF:', e)
+      }
+    }
 
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(10)
     doc.setTextColor(212, 175, 55)
-    doc.text('SANGEE SRI AARI WORKS', 27, 11)
+    doc.text('SANGEE SRI AARI WORKS', 32, 11)
 
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
@@ -120,12 +114,18 @@ export async function generatePdfCatalog(designs: GalleryDesign[], isBulkPriceVi
   doc.setLineWidth(0.3)
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24)
 
-  // Top Luxury Emblem
-  drawLuxuryEmblem(pageWidth / 2, 55, 14)
+  // Top Official Golden Peacock Logo Image
+  if (logoBase64) {
+    try {
+      doc.addImage(logoBase64, 'JPEG', pageWidth / 2 - 28, 22, 56, 52)
+    } catch (e) {
+      console.warn('Failed to embed cover logo in PDF:', e)
+    }
+  }
 
   // Brand Name
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(26)
+  doc.setFontSize(24)
   doc.setTextColor(212, 175, 55)
   doc.text('SANGEE SRI AARI WORKS', pageWidth / 2, 82, { align: 'center' })
 
