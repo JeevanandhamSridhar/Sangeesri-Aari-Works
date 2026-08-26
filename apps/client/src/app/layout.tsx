@@ -7,26 +7,9 @@ import { CartDrawer } from '@/components/shop/CartDrawer'
 import { Toaster } from 'sonner'
 import { Providers } from './providers'
 
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-  preload: false,
-})
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-  preload: false,
-})
-
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  variable: '--font-cormorant',
-  display: 'swap',
-  preload: false,
-})
+const playfair = { variable: 'font-playfair' }
+const inter = { variable: 'font-inter' }
+const cormorant = { variable: 'font-cormorant' }
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sangeesriaariworks.com'),

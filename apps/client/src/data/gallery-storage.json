@@ -1,5 +1,328 @@
 [
   {
+    "id": "gal-1787772682843-n6dy",
+    "code": "SSAW-065",
+    "title": "WhatsApp Image 2026 08 18 at 6.54.57 PM (1)",
+    "category": "Bridal Blouses",
+    "src": "/gallery/WhatsApp Image 2026-08-18 at 6.54.57 PM (1).jpeg",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.57 PM (1).jpeg"
+    ],
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom handcrafted Aari embroidery blouse design."
+  },
+  {
+    "id": "gal-1787771938483",
+    "code": "SSAW-064",
+    "title": "WhatsApp Image 2026 08 27 at 12.44.20 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/3f9a970a-18dc-43f8-9a32-c22226ea3622",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/3f9a970a-18dc-43f8-9a32-c22226ea3622"
+    ]
+  },
+  {
+    "id": "gal-1787771938456",
+    "code": "SSAW-063",
+    "title": "WhatsApp Image 2026 08 27 at 12.43.33 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/df8e05dd-2d1c-4b83-b1ed-20016dd4b7d9",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/df8e05dd-2d1c-4b83-b1ed-20016dd4b7d9"
+    ]
+  },
+  {
+    "id": "gal-1787771938426",
+    "code": "SSAW-062",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.50 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/51a01b6f-31f7-44ce-8c6c-268c34a94826",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/51a01b6f-31f7-44ce-8c6c-268c34a94826"
+    ]
+  },
+  {
+    "id": "gal-1787771938401",
+    "code": "SSAW-061",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.49 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/00e20efc-be48-41d9-9a0f-8419d231f8fc",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/00e20efc-be48-41d9-9a0f-8419d231f8fc"
+    ]
+  },
+  {
+    "id": "gal-1787771938340",
+    "code": "SSAW-060",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.49 AM (2)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/51b99f20-ce3e-41b6-9ff0-03f270dac304",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/51b99f20-ce3e-41b6-9ff0-03f270dac304"
+    ]
+  },
+  {
+    "id": "gal-1787771938283",
+    "code": "SSAW-059",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.49 AM (1)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/6ea39fab-fc9c-4883-b0f3-496eb0e6b8c3",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/6ea39fab-fc9c-4883-b0f3-496eb0e6b8c3"
+    ]
+  },
+  {
+    "id": "gal-1787771938164",
+    "code": "SSAW-058",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.48 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/f47fa53d-1ac4-4e11-a450-fb60009110dc",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/f47fa53d-1ac4-4e11-a450-fb60009110dc"
+    ]
+  },
+  {
+    "id": "gal-1787771938108",
+    "code": "SSAW-057",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.48 AM (1)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/23cd169c-90dc-41b1-9520-0692c9f47af0",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/23cd169c-90dc-41b1-9520-0692c9f47af0"
+    ]
+  },
+  {
+    "id": "gal-1787771938067",
+    "code": "SSAW-056",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.47 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/5cf3342c-4e40-4e25-8f7e-f616bd90af93",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/5cf3342c-4e40-4e25-8f7e-f616bd90af93"
+    ]
+  },
+  {
+    "id": "gal-1787771938024",
+    "code": "SSAW-055",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.47 AM (2)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/77cc1c21-6deb-4309-bc70-e0ac755fa682",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/77cc1c21-6deb-4309-bc70-e0ac755fa682"
+    ]
+  },
+  {
+    "id": "gal-1787771937961",
+    "code": "SSAW-054",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.47 AM (1)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/2e811f14-eda7-4b7c-bc36-89a2b0a311af",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/2e811f14-eda7-4b7c-bc36-89a2b0a311af"
+    ]
+  },
+  {
+    "id": "gal-1787771937916",
+    "code": "SSAW-053",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.46 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/e227b118-7f39-41bc-b2d2-cfea8e2e8c74",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/e227b118-7f39-41bc-b2d2-cfea8e2e8c74"
+    ]
+  },
+  {
+    "id": "gal-1787771937883",
+    "code": "SSAW-052",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.46 AM (2)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/12d01ef1-8796-4be6-94b8-a2cc0243475a",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/12d01ef1-8796-4be6-94b8-a2cc0243475a"
+    ]
+  },
+  {
+    "id": "gal-1787771937864",
+    "code": "SSAW-051",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.46 AM (1)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/ede71522-c902-46df-a419-4884f95ab94c",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/ede71522-c902-46df-a419-4884f95ab94c"
+    ]
+  },
+  {
+    "id": "gal-1787771937835",
+    "code": "SSAW-050",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.45 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/880bf9e5-b82a-4115-a4b0-1b0ecc5488fd",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/880bf9e5-b82a-4115-a4b0-1b0ecc5488fd"
+    ]
+  },
+  {
+    "id": "gal-1787771937782",
+    "code": "SSAW-049",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.45 AM (1)",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/e21642ba-5449-4a52-8902-a7956f702b7e",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/e21642ba-5449-4a52-8902-a7956f702b7e"
+    ]
+  },
+  {
+    "id": "gal-1787771937725",
+    "code": "SSAW-048",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.36 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/f4953ea0-a6a5-460e-990c-ddb448d66db2",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/f4953ea0-a6a5-460e-990c-ddb448d66db2"
+    ]
+  },
+  {
+    "id": "gal-1787771937684",
+    "code": "SSAW-047",
+    "title": "WhatsApp Image 2026 08 27 at 12.42.35 AM",
+    "category": "Bridal Blouses",
+    "src": "blob:http://localhost:3001/432e1c16-f6ca-47e1-8a02-bbcda750eda8",
+    "showPrice": false,
+    "priceEstimate": "₹3,500 – ₹6,500",
+    "tags": [
+      "New Arrival",
+      "Custom"
+    ],
+    "description": "Custom Aari work design.",
+    "images": [
+      "blob:http://localhost:3001/432e1c16-f6ca-47e1-8a02-bbcda750eda8"
+    ]
+  },
+  {
     "id": "gal-001",
     "code": "SSAW-001",
     "title": "Royal Gold Zari Bridal Blouse",
@@ -12,7 +335,10 @@
       "Heavy Work",
       "Handcrafted"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design with gold Zari threadwork along neck and sleeve borders."
+    "description": "Custom handcrafted Aari embroidery blouse design with gold Zari threadwork along neck and sleeve borders.",
+    "images": [
+      "/gallery/0021292954d624910413c938e24cf6eb.jpg"
+    ]
   },
   {
     "id": "gal-002",
@@ -27,7 +353,10 @@
       "Pearl Work",
       "Sleeve Design"
     ],
-    "description": "Exquisite pearl drop border embroidery with genuine Kundan stone highlights."
+    "description": "Exquisite pearl drop border embroidery with genuine Kundan stone highlights.",
+    "images": [
+      "/gallery/04122fc69adef826efe5d2820f4b8ead.jpg"
+    ]
   },
   {
     "id": "gal-003",
@@ -42,7 +371,10 @@
       "Floral Vine",
       "Custom Fit"
     ],
-    "description": "Traditional South Indian Maggam work with intricate floral vines and silk thread shading."
+    "description": "Traditional South Indian Maggam work with intricate floral vines and silk thread shading.",
+    "images": [
+      "/gallery/0dff00bd3e67c2bb470bed1ad3ff6cb6.jpg"
+    ]
   },
   {
     "id": "gal-004",
@@ -57,7 +389,10 @@
       "Velvet Base",
       "Grand Wedding"
     ],
-    "description": "Rich metallic Zardosi work crafted on velvet base for reception and grand occasions."
+    "description": "Rich metallic Zardosi work crafted on velvet base for reception and grand occasions.",
+    "images": [
+      "/gallery/0f5a6b5d607e6d7263cc2edad41ca412.jpg"
+    ]
   },
   {
     "id": "gal-005",
@@ -72,7 +407,10 @@
       "Scallop Neck",
       "Modern Bridal"
     ],
-    "description": "Precision hand-cut border embroidery with delicate pearl drop bead accents."
+    "description": "Precision hand-cut border embroidery with delicate pearl drop bead accents.",
+    "images": [
+      "/gallery/1188aeced112589e8ef70312c5f94ca6.jpg"
+    ]
   },
   {
     "id": "gal-006",
@@ -87,7 +425,10 @@
       "Peacock Motif",
       "Heritage"
     ],
-    "description": "Heritage temple architecture embroidery with twin peacock motifs along the back neck."
+    "description": "Heritage temple architecture embroidery with twin peacock motifs along the back neck.",
+    "images": [
+      "/gallery/20f3c230b0f0128ca8a1b2f122738186.jpg"
+    ]
   },
   {
     "id": "gal-007",
@@ -102,7 +443,10 @@
       "Sequins",
       "Sleeve Focus"
     ],
-    "description": "Dense gold beadwork with subtle micro sequin highlights."
+    "description": "Dense gold beadwork with subtle micro sequin highlights.",
+    "images": [
+      "/gallery/28e8741d4e77e7232c4e239fd3c61d72.jpg"
+    ]
   },
   {
     "id": "gal-008",
@@ -117,7 +461,10 @@
       "Full Back Neck",
       "Bridal Favorite"
     ],
-    "description": "Stunning full back neck peacock artwork with multi-colored silk thread shading."
+    "description": "Stunning full back neck peacock artwork with multi-colored silk thread shading.",
+    "images": [
+      "/gallery/3c5193ce7c639a340f1917dea3d31a26.jpg"
+    ]
   },
   {
     "id": "gal-009",
@@ -132,7 +479,10 @@
       "Cutwork Sleeve",
       "Modern Chic"
     ],
-    "description": "Contemporary sheer organza sleeves featuring dense Aari embroidery borders."
+    "description": "Contemporary sheer organza sleeves featuring dense Aari embroidery borders.",
+    "images": [
+      "/gallery/4e2a9315e059bc8a2180cf22bb163311.jpg"
+    ]
   },
   {
     "id": "gal-010",
@@ -147,7 +497,10 @@
       "Traditional Red",
       "Golden Thread"
     ],
-    "description": "Sacred lotus flower motifs embroidered with golden Zari thread along sleeve borders."
+    "description": "Sacred lotus flower motifs embroidered with golden Zari thread along sleeve borders.",
+    "images": [
+      "/gallery/52cada781684790f15b4e91021e86168.jpg"
+    ]
   },
   {
     "id": "gal-011",
@@ -162,7 +515,10 @@
       "3D Zardosi",
       "Wedding"
     ],
-    "description": "Premium deep red velvet blouse ornamented with 3D Zardosi bullion wire embroidery."
+    "description": "Premium deep red velvet blouse ornamented with 3D Zardosi bullion wire embroidery.",
+    "images": [
+      "/gallery/532a7fed4e07f55b76ad497abe48dddb.jpg"
+    ]
   },
   {
     "id": "gal-012",
@@ -177,7 +533,10 @@
       "Cascading Pattern",
       "Elegant"
     ],
-    "description": "Hand-stitched hanging pearl latkan tassels along elbow length sleeve borders."
+    "description": "Hand-stitched hanging pearl latkan tassels along elbow length sleeve borders.",
+    "images": [
+      "/gallery/53c21ce159019069defe38397051d4e1.jpg"
+    ]
   },
   {
     "id": "gal-013",
@@ -192,7 +551,10 @@
       "Scallop Cutwork",
       "Silk Base"
     ],
-    "description": "Bold deep V-neckline framed with handcrafted scalloped cutwork embroidery."
+    "description": "Bold deep V-neckline framed with handcrafted scalloped cutwork embroidery.",
+    "images": [
+      "/gallery/634f4eedaea0edfaf805bef91ac2f3d1.jpg"
+    ]
   },
   {
     "id": "gal-014",
@@ -207,7 +569,10 @@
       "Heritage Art",
       "Bridal Reception"
     ],
-    "description": "Royal elephant procession motifs embroidered with Zari thread and stone work."
+    "description": "Royal elephant procession motifs embroidered with Zari thread and stone work.",
+    "images": [
+      "/gallery/6f817a312dab16b83919340a31c8f863.jpg"
+    ]
   },
   {
     "id": "gal-015",
@@ -222,7 +587,10 @@
       "Floral All Over",
       "Custom Fitting"
     ],
-    "description": "All-over micro bead embroidery creating a shimmering floral vine pattern."
+    "description": "All-over micro bead embroidery creating a shimmering floral vine pattern.",
+    "images": [
+      "/gallery/715d0271ffe707475e1dee2930360993.jpg"
+    ]
   },
   {
     "id": "gal-016",
@@ -237,7 +605,10 @@
       "Heavy Stone",
       "Bridal Special"
     ],
-    "description": "Heavy Kundan stone studded back neck and sleeve art with golden Zari outlines."
+    "description": "Heavy Kundan stone studded back neck and sleeve art with golden Zari outlines.",
+    "images": [
+      "/gallery/715fa9a303a97a6886ac5dfc44249237.jpg"
+    ]
   },
   {
     "id": "gal-017",
@@ -252,7 +623,10 @@
       "Kanga Motif",
       "Silk Saree Match"
     ],
-    "description": "Traditional mango paisley (manga motif) Maggam embroidery for silk saree matching."
+    "description": "Traditional mango paisley (manga motif) Maggam embroidery for silk saree matching.",
+    "images": [
+      "/gallery/76d891d577ac24b0d164972994670995.jpg"
+    ]
   },
   {
     "id": "gal-018",
@@ -267,7 +641,10 @@
       "Neckline Focus",
       "Elegant Simple"
     ],
-    "description": "Sleek and elegant thin gold Zari border embroidery for lightweight silk sarees."
+    "description": "Sleek and elegant thin gold Zari border embroidery for lightweight silk sarees.",
+    "images": [
+      "/gallery/88b9308ba1af60e349a229d672fae65c.jpg"
+    ]
   },
   {
     "id": "gal-019",
@@ -282,7 +659,10 @@
       "Zardosi Art",
       "Grand Bridal"
     ],
-    "description": "Luxury French wire Zardosi work with metallic bullion thread highlights."
+    "description": "Luxury French wire Zardosi work with metallic bullion thread highlights.",
+    "images": [
+      "/gallery/88d922362499a71835583f04df9bf97a.jpg"
+    ]
   },
   {
     "id": "gal-020",
@@ -297,7 +677,10 @@
       "Cutwork Border",
       "Modern Saree"
     ],
-    "description": "Modern geometric cutwork patterns combined with subtle sequin embroidery."
+    "description": "Modern geometric cutwork patterns combined with subtle sequin embroidery.",
+    "images": [
+      "/gallery/8af03220e9565478d9caad7c7213ad5b.jpg"
+    ]
   },
   {
     "id": "gal-021",
@@ -312,7 +695,10 @@
       "Divine Motifs",
       "Kanchipuram Match"
     ],
-    "description": "Auspicious Annapakshi (divine swan) motif embroidery matching Kanchipuram silk borders."
+    "description": "Auspicious Annapakshi (divine swan) motif embroidery matching Kanchipuram silk borders.",
+    "images": [
+      "/gallery/8b7ae5238b9caca2dc34eb6a3d176cf0.jpg"
+    ]
   },
   {
     "id": "gal-022",
@@ -327,7 +713,10 @@
       "Full Back Art",
       "Gold Thread"
     ],
-    "description": "Grand Muhurtham bridal Aari blouse featuring dense gold Zari and pearl work."
+    "description": "Grand Muhurtham bridal Aari blouse featuring dense gold Zari and pearl work.",
+    "images": [
+      "/gallery/926fc3692dcb38a0ab85a87fc609da50.jpg"
+    ]
   },
   {
     "id": "gal-023",
@@ -342,7 +731,10 @@
       "Velvet Base",
       "Reception"
     ],
-    "description": "3D raised floral velvet embroidery with metallic French wire shading."
+    "description": "3D raised floral velvet embroidery with metallic French wire shading.",
+    "images": [
+      "/gallery/9d78fc2d37a8b699ecb1aa7d2a5ebe3b.jpg"
+    ]
   },
   {
     "id": "gal-024",
@@ -357,7 +749,10 @@
       "Scallop Neck",
       "Gentle Elegance"
     ],
-    "description": "Soft pearl border embroidery following a delicate scalloped neckline."
+    "description": "Soft pearl border embroidery following a delicate scalloped neckline.",
+    "images": [
+      "/gallery/a25f770ca5448d276ad4548753dc539a.jpg"
+    ]
   },
   {
     "id": "gal-025",
@@ -372,7 +767,10 @@
       "Elbow Length",
       "Bridal Classic"
     ],
-    "description": "Elbow-length sleeve art depicting a majestic peacock with spreading feathers."
+    "description": "Elbow-length sleeve art depicting a majestic peacock with spreading feathers.",
+    "images": [
+      "/gallery/a6d9d97465984afaf0cab42d2b4c4d58.jpg"
+    ]
   },
   {
     "id": "gal-026",
@@ -387,7 +785,10 @@
       "Contemporary",
       "Designer Wear"
     ],
-    "description": "Sheer net back panel framed by heavy gold Aari embroidery borders."
+    "description": "Sheer net back panel framed by heavy gold Aari embroidery borders.",
+    "images": [
+      "/gallery/a9be6d514c3b8fe9e39fde0750e4289c.jpg"
+    ]
   },
   {
     "id": "gal-027",
@@ -402,7 +803,10 @@
       "Heritage Maggam",
       "Auspicious"
     ],
-    "description": "Auspicious Kalash motifs surrounded by intricate Maggam thread embroidery."
+    "description": "Auspicious Kalash motifs surrounded by intricate Maggam thread embroidery.",
+    "images": [
+      "/gallery/b1acb3fac90343146e24f1970cc5ceb4.jpg"
+    ]
   },
   {
     "id": "gal-028",
@@ -417,7 +821,10 @@
       "Coin Embroidery",
       "Traditional South"
     ],
-    "description": "Gold coin Kasu Mala motif embroidery for South Indian wedding silk sarees."
+    "description": "Gold coin Kasu Mala motif embroidery for South Indian wedding silk sarees.",
+    "images": [
+      "/gallery/b29c739cf2a0118668f8cf69ea7f7ea9.jpg"
+    ]
   },
   {
     "id": "gal-029",
@@ -432,7 +839,10 @@
       "Heavy Bridal",
       "Zari Embroidery"
     ],
-    "description": "Rich emerald green silk blouse adorned with dense gold Zari and beadwork."
+    "description": "Rich emerald green silk blouse adorned with dense gold Zari and beadwork.",
+    "images": [
+      "/gallery/b554a37034b606dfa8993fa03a305dee.jpg"
+    ]
   },
   {
     "id": "gal-030",
@@ -447,7 +857,10 @@
       "Zardosi Wire",
       "Bridal Glow"
     ],
-    "description": "Vibrant magenta pink bridal blouse with metallic French wire Zardosi art."
+    "description": "Vibrant magenta pink bridal blouse with metallic French wire Zardosi art.",
+    "images": [
+      "/gallery/b81cd06c8387a0762555cc968e2d2017.jpg"
+    ]
   },
   {
     "id": "gal-031",
@@ -462,7 +875,10 @@
       "Velvet Base",
       "Peacock Maggam"
     ],
-    "description": "Luxurious navy blue velvet blouse with peacock feather Maggam work."
+    "description": "Luxurious navy blue velvet blouse with peacock feather Maggam work.",
+    "images": [
+      "/gallery/bb2728a18167c06fa525423bd048ddcf.jpg"
+    ]
   },
   {
     "id": "gal-032",
@@ -477,7 +893,10 @@
       "Scallop Edge",
       "Delicate Art"
     ],
-    "description": "Intricate lattice pearl mesh pattern with hand-cut scalloped borders."
+    "description": "Intricate lattice pearl mesh pattern with hand-cut scalloped borders.",
+    "images": [
+      "/gallery/c0134c8f91dd2dc645113d5f0f2a7cfa.jpg"
+    ]
   },
   {
     "id": "gal-033",
@@ -492,7 +911,10 @@
       "Muhurtham Special",
       "Full Heavy"
     ],
-    "description": "Opulent full heavy golden Zari embroidery designed for traditional Muhurtham silk sarees."
+    "description": "Opulent full heavy golden Zari embroidery designed for traditional Muhurtham silk sarees.",
+    "images": [
+      "/gallery/c6cb22ab0f3e087bbe2a0ff17dc602ec.jpg"
+    ]
   },
   {
     "id": "gal-034",
@@ -507,7 +929,10 @@
       "Designer Cutwork",
       "Modern Look"
     ],
-    "description": "Translucent organza sheer back panel framed with heavy gold Aari embroidery borders."
+    "description": "Translucent organza sheer back panel framed with heavy gold Aari embroidery borders.",
+    "images": [
+      "/gallery/e313474edcb70368acebe6db8116bd15.jpg"
+    ]
   },
   {
     "id": "gal-035",
@@ -522,7 +947,10 @@
       "Heritage Art",
       "Silk Saree Match"
     ],
-    "description": "Traditional temple architecture & Kalash motif embroidery matching Kanchipuram silk borders."
+    "description": "Traditional temple architecture & Kalash motif embroidery matching Kanchipuram silk borders.",
+    "images": [
+      "/gallery/f5a30c68ad640c7b00e184f2572bf383.jpg"
+    ]
   },
   {
     "id": "gal-1787571513153-l562",
@@ -537,7 +965,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.57 PM.jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-bq41",
@@ -552,7 +983,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.58 PM (1).jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-p1ea",
@@ -567,7 +1001,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.58 PM (2).jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-0t1i",
@@ -582,7 +1019,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.58 PM.jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-rzxb",
@@ -597,7 +1037,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.59 PM (1).jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-1pas",
@@ -612,7 +1055,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.59 PM.jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-hheu",
@@ -627,7 +1073,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.55.00 PM.jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-j04d",
@@ -642,7 +1091,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.55.01 PM (1).jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-65uh",
@@ -657,7 +1109,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.55.01 PM.jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-vvf2",
@@ -672,7 +1127,10 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.55.02 PM.jpeg"
+    ]
   },
   {
     "id": "gal-1787571513153-6rcl",
@@ -687,6 +1145,9 @@
       "Handcrafted",
       "Aari Work"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "images": [
+      "/gallery/WhatsApp Image 2026-08-18 at 6.55.03 PM.jpeg"
+    ]
   }
 ]

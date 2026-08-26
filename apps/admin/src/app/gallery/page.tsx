@@ -151,6 +151,7 @@ export default function AdminGalleryPage() {
       title,
       category,
       src: url,
+      images: [url],
       showPrice: false,
       priceEstimate,
       tags: ['Custom Design', 'Handcrafted'],

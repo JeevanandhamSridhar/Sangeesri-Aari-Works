@@ -3,7 +3,8 @@ import fs from 'fs'
 import path from 'path'
 
 const JSON_PATH = path.join(process.cwd(), '../client/src/data/gallery-storage.json')
-const PUBLIC_GALLERY_DIR = path.join(process.cwd(), '../client/public/gallery')
+const ADMIN_GALLERY_DIR = path.join(process.cwd(), 'public/gallery')
+const CLIENT_GALLERY_DIR = path.join(process.cwd(), '../client/public/gallery')
 
 export interface GalleryItem {
   id: string
@@ -11,6 +12,7 @@ export interface GalleryItem {
   title: string
   category: string
   src: string
+  images?: string[]
   showPrice?: boolean
   priceEstimate?: string
   tags: string[]
@@ -42,14 +44,51 @@ function writeStorageFile(items: GalleryItem[]) {
   }
 }
 
-function syncWithPublicGallery(existingItems: GalleryItem[]): GalleryItem[] {
-  if (!fs.existsSync(PUBLIC_GALLERY_DIR)) return existingItems
+function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] {
+  if (!fs.existsSync(ADMIN_GALLERY_DIR)) {
+    fs.mkdirSync(ADMIN_GALLERY_DIR, { recursive: true })
+  }
+  if (!fs.existsSync(CLIENT_GALLERY_DIR)) {
+    try {
+      fs.mkdirSync(CLIENT_GALLERY_DIR, { recursive: true })
+    } catch {}
+  }
 
-  const files = fs.readdirSync(PUBLIC_GALLERY_DIR).filter((f) =>
-    /\.(jpg|jpeg|png|webp)$/i.test(f)
-  )
+  const adminFiles = fs.readdirSync(ADMIN_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
+  let clientFiles: string[] = []
+  if (fs.existsSync(CLIENT_GALLERY_DIR)) {
+    clientFiles = fs.readdirSync(CLIENT_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
+  }
 
+  // Copy missing files from Admin to Client
+  if (fs.existsSync(CLIENT_GALLERY_DIR)) {
+    adminFiles.forEach((file) => {
+      const dest = path.join(CLIENT_GALLERY_DIR, file)
+      if (!fs.existsSync(dest)) {
+        try {
+          fs.copyFileSync(path.join(ADMIN_GALLERY_DIR, file), dest)
+        } catch (e) {
+          console.warn('Failed to copy file from Admin to Client gallery:', e)
+        }
+      }
+    })
+  }
+
+  // Copy missing files from Client to Admin
+  clientFiles.forEach((file) => {
+    const dest = path.join(ADMIN_GALLERY_DIR, file)
+    if (!fs.existsSync(dest)) {
+      try {
+        fs.copyFileSync(path.join(CLIENT_GALLERY_DIR, file), dest)
+      } catch (e) {
+        console.warn('Failed to copy file from Client to Admin gallery:', e)
+      }
+    }
+  })
+
+  const allFiles = fs.readdirSync(ADMIN_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
   const registeredSrcs = new Set(existingItems.map((item) => item.src))
+
   let maxNum = 0
   existingItems.forEach((item) => {
     const match = item.code.match(/SSAW-(\d+)/)
@@ -62,25 +101,34 @@ function syncWithPublicGallery(existingItems: GalleryItem[]): GalleryItem[] {
   let updated = [...existingItems]
   let added = false
 
-  files.forEach((file) => {
+  allFiles.forEach((file) => {
     const relativeSrc = `/gallery/${file}`
     if (!registeredSrcs.has(relativeSrc)) {
       maxNum++
       const code = `SSAW-${String(maxNum).padStart(3, '0')}`
-      updated.push({
+      const formattedTitle = file.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
+      const title = formattedTitle.length > 5 ? formattedTitle : `Aari Blouse Design ${code}`
+
+      updated.unshift({
         id: `gal-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
         code,
-        title: `Aari Blouse Design ${code}`,
+        title,
         category: 'Bridal Blouses',
         src: relativeSrc,
+        images: [relativeSrc],
         showPrice: false,
         priceEstimate: '₹3,500 – ₹6,500',
-        tags: ['Bridal', 'Handcrafted', 'Aari Work'],
+        tags: ['New Arrival', 'Custom'],
         description: 'Custom handcrafted Aari embroidery blouse design.',
       })
       added = true
     }
   })
+
+  updated = updated.map((item) => ({
+    ...item,
+    images: Array.isArray(item.images) && item.images.length > 0 ? item.images : [item.src],
+  }))
 
   if (added) {
     writeStorageFile(updated)
@@ -91,7 +139,7 @@ function syncWithPublicGallery(existingItems: GalleryItem[]): GalleryItem[] {
 
 export async function GET() {
   const existing = readStorageFile()
-  const synced = syncWithPublicGallery(existing)
+  const synced = syncDirectoriesAndStorage(existing)
   return NextResponse.json({ success: true, designs: synced })
 }
 
@@ -104,17 +152,20 @@ export async function POST(request: Request) {
     if (action === 'delete' && id) {
       const targetItem = current.find((i) => i.id === id)
       if (targetItem) {
-        if (targetItem.src.startsWith('/gallery/')) {
-          const filename = targetItem.src.replace('/gallery/', '')
-          const filePath = path.join(PUBLIC_GALLERY_DIR, filename)
-          if (fs.existsSync(filePath)) {
-            try {
-              fs.unlinkSync(filePath)
-            } catch (e) {
-              console.warn('Could not unlink physical file:', e)
+        const srcsToDelete = targetItem.images || [targetItem.src]
+        srcsToDelete.forEach((src) => {
+          if (src.startsWith('/gallery/')) {
+            const filename = src.replace('/gallery/', '')
+            const adminPath = path.join(ADMIN_GALLERY_DIR, filename)
+            const clientPath = path.join(CLIENT_GALLERY_DIR, filename)
+            if (fs.existsSync(adminPath)) {
+              try { fs.unlinkSync(adminPath) } catch {}
+            }
+            if (fs.existsSync(clientPath)) {
+              try { fs.unlinkSync(clientPath) } catch {}
             }
           }
-        }
+        })
       }
       current = current.filter((i) => i.id !== id)
       writeStorageFile(current)
@@ -152,12 +203,14 @@ export async function POST(request: Request) {
         }
       })
       maxNum++
+      const itemImages = Array.isArray(item.images) && item.images.length > 0 ? item.images : [item.src || '/gallery/0021292954d624910413c938e24cf6eb.jpg']
       const newItem: GalleryItem = {
         id: `gal-${Date.now()}`,
         code: `SSAW-${String(maxNum).padStart(3, '0')}`,
         title: item.title || `Aari Blouse Design SSAW-${String(maxNum).padStart(3, '0')}`,
         category: item.category || 'Bridal Blouses',
-        src: item.src || '/gallery/default.jpg',
+        src: itemImages[0],
+        images: itemImages,
         showPrice: item.showPrice || false,
         priceEstimate: item.priceEstimate || '₹3,500 – ₹6,000',
         tags: item.tags || ['Handcrafted'],
@@ -169,10 +222,11 @@ export async function POST(request: Request) {
     }
 
     if (action === 'sync_folder') {
-      current = syncWithPublicGallery(current)
+      current = syncDirectoriesAndStorage(current)
       return NextResponse.json({ success: true, designs: current })
     }
 
+    current = syncDirectoriesAndStorage(current)
     return NextResponse.json({ success: true, designs: current })
   } catch (err) {
     return NextResponse.json({ success: false, error: String(err) }, { status: 500 })

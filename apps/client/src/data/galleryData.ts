@@ -4,6 +4,7 @@ export interface GalleryDesign {
   title: string
   category: string
   src: string
+  images?: string[] // Multiple angle photos for sliding motion / carousel
   showPrice?: boolean // Default false: hide price unless enabled by admin
   priceEstimate?: string // Custom price range set by admin based on work, size & materials
   tags: string[]
