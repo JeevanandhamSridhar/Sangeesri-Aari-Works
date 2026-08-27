@@ -5,9 +5,27 @@ import path from 'path'
 const JSON_PATH = path.join(process.cwd(), '../client/src/data/about-storage.json')
 const ADMIN_ABOUT_DIR = path.join(process.cwd(), 'public/about')
 const CLIENT_ABOUT_DIR = path.join(process.cwd(), '../client/public/about')
+const ADMIN_PUBLIC_DIR = path.join(process.cwd(), 'public')
+const CLIENT_PUBLIC_DIR = path.join(process.cwd(), '../client/public')
+
+function syncPublicAssets() {
+  try {
+    ['owner.jpg', 'owner.png'].forEach((file) => {
+      const srcClient = path.join(CLIENT_PUBLIC_DIR, file)
+      const srcAdmin = path.join(ADMIN_PUBLIC_DIR, file)
+      if (fs.existsSync(srcClient) && !fs.existsSync(srcAdmin)) {
+        try { fs.copyFileSync(srcClient, srcAdmin) } catch {}
+      }
+      if (fs.existsSync(srcAdmin) && !fs.existsSync(srcClient)) {
+        try { fs.copyFileSync(srcAdmin, srcClient) } catch {}
+      }
+    })
+  } catch {}
+}
 
 function readAboutFile() {
   try {
+    syncPublicAssets()
     if (!fs.existsSync(JSON_PATH)) return null
     const raw = fs.readFileSync(JSON_PATH, 'utf-8')
     return JSON.parse(raw)
@@ -47,7 +65,7 @@ export async function POST(request: Request) {
       const buffer = Buffer.from(base64Data, 'base64')
 
       fs.writeFileSync(path.join(ADMIN_ABOUT_DIR, cleanName), buffer)
-      if (fs.existsSync(CLIENT_BLOG_DIR_CHECK)) {
+      if (fs.existsSync(CLIENT_ABOUT_DIR)) {
         try { fs.writeFileSync(path.join(CLIENT_ABOUT_DIR, cleanName), buffer) } catch {}
       }
 
@@ -65,5 +83,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: String(err) }, { status: 500 })
   }
 }
-
-const CLIENT_BLOG_DIR_CHECK = path.join(process.cwd(), '../client/public/about')

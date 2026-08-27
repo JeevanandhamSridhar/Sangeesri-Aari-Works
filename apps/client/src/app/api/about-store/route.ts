@@ -5,6 +5,8 @@ import path from 'path'
 const JSON_PATH = path.join(process.cwd(), 'src/data/about-storage.json')
 const CLIENT_ABOUT_DIR = path.join(process.cwd(), 'public/about')
 const ADMIN_ABOUT_DIR = path.join(process.cwd(), '../admin/public/about')
+const CLIENT_PUBLIC_DIR = path.join(process.cwd(), 'public')
+const ADMIN_PUBLIC_DIR = path.join(process.cwd(), '../admin/public')
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,8 +14,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
+function syncPublicAssets() {
+  try {
+    ['owner.jpg', 'owner.png'].forEach((file) => {
+      const srcClient = path.join(CLIENT_PUBLIC_DIR, file)
+      const srcAdmin = path.join(ADMIN_PUBLIC_DIR, file)
+      if (fs.existsSync(srcClient) && !fs.existsSync(srcAdmin)) {
+        try { fs.copyFileSync(srcClient, srcAdmin) } catch {}
+      }
+      if (fs.existsSync(srcAdmin) && !fs.existsSync(srcClient)) {
+        try { fs.copyFileSync(srcAdmin, srcClient) } catch {}
+      }
+    })
+  } catch {}
+}
+
 function readAboutFile() {
   try {
+    syncPublicAssets()
     if (!fs.existsSync(JSON_PATH)) return null
     const raw = fs.readFileSync(JSON_PATH, 'utf-8')
     return JSON.parse(raw)
