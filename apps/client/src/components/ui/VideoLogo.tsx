@@ -55,14 +55,12 @@ export function VideoLogo({
               loop
               muted
               playsInline
+              preload="metadata"
               onError={() => setHasVideoError(true)}
               className="w-full h-full object-cover scale-105 transition-transform duration-700 group-hover:scale-110"
             >
-              <source src="/video-logo.mp4" type="video/mp4" />
-              <source src="/hero-logo.mp4.mp4" type="video/mp4" />
               <source src="/hero-logo.mp4" type="video/mp4" />
-              <source src="/video-logo.webm" type="video/webm" />
-              <source src={src} type="video/mp4" />
+              <source src="/video-logo.mp4" type="video/mp4" />
             </video>
           ) : (
             /* Fallback Monogram */
