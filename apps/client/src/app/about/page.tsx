@@ -3,17 +3,17 @@
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Sparkles, Award, Heart, ShieldCheck, ArrowRight, Scissors, Star, Quote, Globe, Trophy, Calendar, Medal, Eye, X } from 'lucide-react'
 
-const skills = [
+const defaultSkills = [
   { label: 'Aari Embroidery & Zari Work', pct: 98 },
   { label: 'Bridal Blouse Designing', pct: 96 },
   { label: 'Kundan, Stone & Cutwork', pct: 94 },
   { label: 'Zardosi & Heritage Motifs', pct: 92 },
 ]
 
-const achievements = [
+const defaultAchievements = [
   {
     icon: Medal,
     date: 'Official Role',
@@ -48,7 +48,7 @@ const achievements = [
   },
 ]
 
-const eventPhotos = [
+const defaultEventPhotos = [
   {
     id: 1,
     src: '/about/federation-record.jpg',
@@ -71,6 +71,32 @@ export default function AboutPage() {
   const artistRef = useRef<HTMLDivElement>(null)
   const isArtistInView = useInView(artistRef, { once: true, margin: '-80px' })
   const [selectedImage, setSelectedImage] = useState<{ src: string; title: string; subtitle: string } | null>(null)
+  const [aboutStore, setAboutStore] = useState<any>(null)
+
+  useEffect(() => {
+    fetch('/api/about-store')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          setAboutStore(data.data)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const founderName = aboutStore?.founderName || 'Sangee Sri (Kaviya S)'
+  const founderTitle = aboutStore?.founderTitle || 'Fashion Designer & Master Aari Artist'
+  const federationRole = aboutStore?.federationRole || 'Joint Secretary of Ranipet District — Indian Aari Work Federation'
+  const quoteText = aboutStore?.quote || 'Every blouse is crafted with reverence. As Joint Secretary of the Indian Aari Work Federation, my mission is to uphold the highest standard of needlecraft for every bride.'
+  const bio1 = aboutStore?.bio1 || "With over 10+ years of master practice in traditional Aari embroidery and bridal couture design, Kaviya S has established Sangee Sri Aari Works as Ranipet district's leading studio."
+  const bio2 = aboutStore?.bio2 || 'Her expertise spans Kundan stone setting, Zardosi metallic work, traditional Maggam embroidery, and modern cutwork borders. Each blouse undergoes rigorous quality craftsmanship under her personal supervision.'
+  const founderPhoto = aboutStore?.founderPhoto || '/owner.jpg'
+  const aariBlousesCount = aboutStore?.aariBlousesCount || '1000+'
+  const bridalBlousesCount = aboutStore?.bridalBlousesCount || '200+'
+  const yearsMastery = aboutStore?.yearsMastery || '10+'
+  const skillsList = aboutStore?.skills || defaultSkills
+  const achievementsList = aboutStore?.achievements || defaultAchievements
+  const eventPhotosList = aboutStore?.eventPhotos || defaultEventPhotos
 
   return (
     <div className="min-h-screen bg-darkbase pt-28 md:pt-36 pb-24 overflow-x-hidden">
@@ -88,7 +114,7 @@ export default function AboutPage() {
             <span className="text-gradient-gold">Aari Masterpieces</span>
           </h1>
           <p className="font-cormorant text-lg sm:text-xl text-cream/70 leading-relaxed">
-            Located in Kaveripakkam, Ranipet District, Sangee Sri Aari Works is led by Kaviya S — Joint Secretary of Ranipet District, Indian Aari Work Federation.
+            Located in Kaveripakkam, Ranipet District, Sangee Sri Aari Works is led by {founderName} — {federationRole}.
           </p>
         </div>
 
@@ -105,7 +131,7 @@ export default function AboutPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-darkbase/80 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 rounded-2xl glass-dark border border-gold-500/30">
               <p className="font-inter text-xs text-gold-400 font-bold uppercase tracking-wider">Studio Legacy</p>
-              <p className="font-playfair text-base sm:text-lg text-cream font-bold mt-1">1000+ Aari Blouses · 200+ Bridal Blouses Crafted</p>
+              <p className="font-playfair text-base sm:text-lg text-cream font-bold mt-1">{aariBlousesCount} Aari Blouses · {bridalBlousesCount} Bridal Blouses Crafted</p>
             </div>
           </div>
 
@@ -125,15 +151,15 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2 sm:pt-4">
               <div className="glass p-3.5 sm:p-5 rounded-2xl border border-white/10 text-center">
-                <p className="font-playfair text-xl sm:text-3xl font-bold text-gold-400">1000+</p>
+                <p className="font-playfair text-xl sm:text-3xl font-bold text-gold-400">{aariBlousesCount}</p>
                 <p className="font-inter text-[10px] sm:text-[11px] text-cream/60 mt-1">Aari Blouses</p>
               </div>
               <div className="glass p-3.5 sm:p-5 rounded-2xl border border-white/10 text-center">
-                <p className="font-playfair text-xl sm:text-3xl font-bold text-gold-400">200+</p>
+                <p className="font-playfair text-xl sm:text-3xl font-bold text-gold-400">{bridalBlousesCount}</p>
                 <p className="font-inter text-[10px] sm:text-[11px] text-cream/60 mt-1">Bridal Blouses</p>
               </div>
               <div className="glass p-3.5 sm:p-5 rounded-2xl border border-white/10 text-center">
-                <p className="font-playfair text-xl sm:text-3xl font-bold text-gold-400">10+</p>
+                <p className="font-playfair text-xl sm:text-3xl font-bold text-gold-400">{yearsMastery}</p>
                 <p className="font-inter text-[10px] sm:text-[11px] text-cream/60 mt-1">Years Mastery</p>
               </div>
             </div>
@@ -155,7 +181,7 @@ export default function AboutPage() {
             </div>
             <h2 className="font-playfair text-3xl md:text-5xl font-bold">
               <span className="text-cream">Meet </span>
-              <span className="text-gradient-gold">Kaviya S</span>
+              <span className="text-gradient-gold">{founderName}</span>
             </h2>
           </motion.div>
 
@@ -168,34 +194,32 @@ export default function AboutPage() {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="relative mx-auto w-full max-w-[460px]"
             >
-              {/* Decorative background glow */}
               <div className="absolute -inset-2 rounded-[36px] bg-gradient-to-r from-gold-500/20 to-maroon-900/30 blur-lg" />
 
-              {/* Main photo frame */}
               <div className="relative w-full aspect-[4/3] rounded-[28px] sm:rounded-[32px] overflow-hidden border-2 border-gold-500/40 shadow-[0_0_50px_rgba(212,175,55,0.25)] bg-black/60">
                 <Image
-                  src="/owner.jpg"
-                  alt="Kaviya S — Founder of Sangee Sri Aari Works & Joint Secretary Ranipet District"
+                  src={founderPhoto}
+                  alt={`${founderName} — ${founderTitle}`}
                   fill
                   unoptimized
                   className="object-cover object-center scale-105 hover:scale-100 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0806]/70 via-transparent to-transparent pointer-events-none" />
 
-                {/* 10+ YEARS OF MASTERY BADGE - SAFELY EMBEDDED INSIDE TOP RIGHT */}
+                {/* 10+ YEARS OF MASTERY BADGE */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={isArtistInView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 }}
                   className="absolute top-3 right-3 z-20 bg-darkbase/85 backdrop-blur-md rounded-2xl p-3 border border-gold-500/50 shadow-luxury text-center"
                 >
-                  <div className="font-playfair text-2xl font-bold text-gradient-gold">10+</div>
+                  <div className="font-playfair text-2xl font-bold text-gradient-gold">{yearsMastery}</div>
                   <div className="font-inter text-[9px] text-cream/80 tracking-widest uppercase mt-0.5 font-semibold leading-tight">
                     Years of<br />Mastery
                   </div>
                 </motion.div>
 
-                {/* JOINT SECRETARY ROLE BADGE - SAFELY EMBEDDED INSIDE BOTTOM LEFT */}
+                {/* JOINT SECRETARY ROLE BADGE */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={isArtistInView ? { opacity: 1, y: 0 } : {}}
@@ -221,14 +245,14 @@ export default function AboutPage() {
             >
               <div>
                 <h3 className="font-playfair text-2xl sm:text-3xl md:text-4xl font-bold text-cream mb-1">
-                  Sangee Sri (Kaviya S)
+                  {founderName}
                 </h3>
                 <p className="font-cormorant text-base sm:text-lg font-semibold tracking-wider text-gold-400 uppercase">
-                  Fashion Designer &amp; Master Aari Artist
+                  {founderTitle}
                 </p>
                 <p className="font-inter text-xs text-cream/60 mt-1 flex items-center gap-1.5">
                   <Medal size={14} className="text-gold-400" />
-                  Joint Secretary of Ranipet District — <span className="text-gold-300 font-semibold">Indian Aari Work Federation</span>
+                  {federationRole}
                 </p>
               </div>
 
@@ -236,21 +260,21 @@ export default function AboutPage() {
               <div className="relative pl-5 sm:pl-6 border-l-2 border-gold-500/40">
                 <Quote size={18} className="text-gold-500/40 absolute -left-2 -top-1" />
                 <p className="font-cormorant text-lg sm:text-xl text-cream/80 italic leading-relaxed">
-                  Every blouse is crafted with reverence. As Joint Secretary of the Indian Aari Work Federation, my mission is to uphold the highest standard of needlecraft for every bride.
+                  {quoteText}
                 </p>
               </div>
 
               <p className="font-inter text-xs sm:text-sm text-cream/70 leading-relaxed">
-                With over 10+ years of master practice in traditional Aari embroidery and bridal couture design, Kaviya S has established Sangee Sri Aari Works as Ranipet district's leading studio.
+                {bio1}
               </p>
 
               <p className="font-inter text-xs sm:text-sm text-cream/70 leading-relaxed">
-                Her expertise spans Kundan stone setting, Zardosi metallic work, traditional Maggam embroidery, and modern cutwork borders. Each blouse undergoes rigorous quality craftsmanship under her personal supervision.
+                {bio2}
               </p>
 
               {/* Skill bars */}
               <div className="space-y-3.5 pt-2">
-                {skills.map((skill, i) => (
+                {skillsList.map((skill: any, i: number) => (
                   <motion.div
                     key={skill.label}
                     initial={{ opacity: 0, x: 20 }}
@@ -294,14 +318,14 @@ export default function AboutPage() {
               Indian Aari Work Federation <span className="text-gradient-gold">Official Events</span>
             </h2>
             <p className="font-inter text-xs text-cream/60">
-              Photographs of Kaviya S conducting World Record Events and attending International Federation Conferences
+              Photographs of {founderName} conducting World Record Events and attending International Federation Conferences
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-            {eventPhotos.map((photo, idx) => (
+            {eventPhotosList.map((photo: any, idx: number) => (
               <motion.div
-                key={photo.id}
+                key={photo.id || idx}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -309,7 +333,6 @@ export default function AboutPage() {
                 onClick={() => setSelectedImage(photo)}
                 className="glass-admin rounded-3xl border border-gold-500/30 overflow-hidden group cursor-pointer hover:border-gold-400 transition-all duration-500 flex flex-col justify-between"
               >
-                {/* Photo container */}
                 <div className="relative aspect-[4/3] w-full bg-black/60 overflow-hidden">
                   <Image
                     src={photo.src}
@@ -320,14 +343,12 @@ export default function AboutPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-darkbase via-transparent to-transparent opacity-80" />
 
-                  {/* Badge */}
                   <div className="absolute top-4 left-4 z-10">
                     <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-gold-500/40 text-gold-400 font-inter text-[11px] font-bold shadow-md flex items-center gap-1">
                       {photo.badge}
                     </span>
                   </div>
 
-                  {/* Hover view hint */}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <div className="px-4 py-2 rounded-2xl bg-gold-500 text-darkbase font-inter text-xs font-bold flex items-center gap-2 shadow-2xl scale-95 group-hover:scale-100 transition-transform">
                       <Eye size={16} /> View Full Photo
@@ -335,7 +356,6 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                {/* Details */}
                 <div className="p-6 space-y-2 bg-gradient-to-b from-transparent to-darkbase">
                   <span className="font-inter text-[11px] text-gold-400/80 font-bold uppercase tracking-wider block">
                     {photo.date}
@@ -364,37 +384,34 @@ export default function AboutPage() {
               Key Federation <span className="text-gradient-gold">Milestones</span>
             </h2>
             <p className="font-inter text-xs text-cream/60">
-              Recognitions and historic governance events led by Kaviya S
+              Recognitions and historic governance events led by {founderName}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {achievements.map((item, idx) => {
-              const IconComp = item.icon
-              return (
-                <div
-                  key={idx}
-                  className="glass-gold p-6 rounded-3xl border border-gold-500/25 relative group hover:border-gold-400/50 transition-all duration-300 space-y-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="badge-gold text-[10px] font-semibold">{item.highlight}</span>
-                    <span className="font-inter text-xs text-gold-400 font-bold">{item.date}</span>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 shrink-0 group-hover:scale-110 transition-transform">
-                      <IconComp size={22} />
-                    </div>
-                    <div>
-                      <h3 className="font-playfair text-lg sm:text-xl font-bold text-cream">{item.title}</h3>
-                      <p className="font-inter text-xs text-gold-400/80 font-medium">{item.org}</p>
-                    </div>
-                  </div>
-                  <p className="font-inter text-xs text-cream/70 leading-relaxed pt-1">
-                    {item.description}
-                  </p>
+            {achievementsList.map((item: any, idx: number) => (
+              <div
+                key={idx}
+                className="glass-gold p-6 rounded-3xl border border-gold-500/25 relative group hover:border-gold-400/50 transition-all duration-300 space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="badge-gold text-[10px] font-semibold">{item.highlight}</span>
+                  <span className="font-inter text-xs text-gold-400 font-bold">{item.date}</span>
                 </div>
-              )
-            })}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 shrink-0 group-hover:scale-110 transition-transform">
+                    <Medal size={22} />
+                  </div>
+                  <div>
+                    <h3 className="font-playfair text-lg sm:text-xl font-bold text-cream">{item.title}</h3>
+                    <p className="font-inter text-xs text-gold-400/80 font-medium">{item.org}</p>
+                  </div>
+                </div>
+                <p className="font-inter text-xs text-cream/70 leading-relaxed pt-1">
+                  {item.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -424,7 +441,7 @@ export default function AboutPage() {
               <Heart size={36} className="text-gold-400 mx-auto" />
               <h3 className="font-playfair text-lg sm:text-xl font-bold text-cream">Personal Care</h3>
               <p className="font-inter text-xs text-cream/70 leading-relaxed">
-                Direct consultation with Kaviya S, customized matching to your saree border, and guaranteed delivery.
+                Direct consultation with {founderName}, customized matching to your saree border, and guaranteed delivery.
               </p>
             </div>
           </div>

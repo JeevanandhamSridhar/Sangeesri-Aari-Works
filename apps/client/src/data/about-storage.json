@@ -1,0 +1,66 @@
+{
+  "founderName": "Sangee Sri (Kaviya S)",
+  "founderTitle": "Fashion Designer & Master Aari Artist",
+  "federationRole": "Joint Secretary of Ranipet District — Indian Aari Work Federation",
+  "quote": "Every blouse is crafted with reverence. As Joint Secretary of the Indian Aari Work Federation, my mission is to uphold the highest standard of needlecraft for every bride.",
+  "bio1": "With over 10+ years of master practice in traditional Aari embroidery and bridal couture design, Kaviya S has established Sangee Sri Aari Works as Ranipet district's leading studio.",
+  "bio2": "Her expertise spans Kundan stone setting, Zardosi metallic work, traditional Maggam embroidery, and modern cutwork borders. Each blouse undergoes rigorous quality craftsmanship under her personal supervision.",
+  "founderPhoto": "/owner.jpg",
+  "aariBlousesCount": "1000+",
+  "bridalBlousesCount": "200+",
+  "yearsMastery": "10+",
+  "skills": [
+    { "label": "Aari Embroidery & Zari Work", "pct": 98 },
+    { "label": "Bridal Blouse Designing", "pct": 96 },
+    { "label": "Kundan, Stone & Cutwork", "pct": 94 },
+    { "label": "Zardosi & Heritage Motifs", "pct": 92 }
+  ],
+  "achievements": [
+    {
+      "highlight": "District Leadership",
+      "date": "Official Role",
+      "title": "Joint Secretary of Ranipet District",
+      "org": "Indian Aari Work Federation",
+      "description": "Appointed Joint Secretary of Ranipet District, leading initiatives to empower local embroidery artisans, promote traditional needlework, and enforce high quality standards."
+    },
+    {
+      "highlight": "World Record Event",
+      "date": "November 2025",
+      "title": "Conducted Noble World Record Event",
+      "org": "World Record Achievement",
+      "description": "Successfully organized and conducted the Noble World Record Event for Aari Work, bringing together master craftspeople to create record-breaking hand-embroidered art."
+    },
+    {
+      "highlight": "International Conference",
+      "date": "March 9th, 2025",
+      "title": "First International Aari Work Conference",
+      "org": "Virudhunagar, Tamil Nadu",
+      "description": "Participated as a key delegate at the 1st International Aari Work Conference in Virudhunagar, sharing insights on bridal couture embroidery and design innovation."
+    },
+    {
+      "highlight": "Federation Meeting",
+      "date": "July 4th, 2026",
+      "title": "4th General Body Meeting",
+      "org": "Indian Aari Work Federation",
+      "description": "Attended the 4th General Body Meeting of the Indian Aari Work Federation, collaborating on artisan welfare, training programs, and federation governance."
+    }
+  ],
+  "eventPhotos": [
+    {
+      "id": 1,
+      "src": "/about/federation-record.jpg",
+      "title": "Noble World Record Event for Aari Work",
+      "subtitle": "Kaviya S (Joint Secretary, Ranipet District) leading the historic World Record Aari Work event with fellow federation officers.",
+      "date": "Indian Aari Work Federation · Official Record",
+      "badge": "World Record Event 🏆"
+    },
+    {
+      "id": 2,
+      "src": "/about/federation-convention.jpg",
+      "title": "International Aari Work Convention & Conference",
+      "subtitle": "Delegates and Federation leaders gathered for traditional needlecraft empowerment & artisan excellence awards.",
+      "date": "Grand Convention & Celebrity Guest Showcase",
+      "badge": "Federation Conference ⭐"
+    }
+  ]
+}

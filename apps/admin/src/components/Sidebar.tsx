@@ -17,6 +17,8 @@ import {
   MessageSquare,
   GraduationCap,
   BookOpen,
+  Newspaper,
+  UserCheck,
   X,
 } from 'lucide-react'
 
@@ -25,6 +27,8 @@ const navItems = [
   { label: 'Products', href: '/products', icon: Package },
   { label: 'Orders', href: '/orders', icon: ShoppingBag },
   { label: 'Quotations', href: '/quotations', icon: FileText },
+  { label: 'Blogspot Daily Updates', href: '/blog', icon: Newspaper },
+  { label: 'About Page CMS', href: '/about-cms', icon: UserCheck },
   { label: 'Academy Students', href: '/academy/students', icon: GraduationCap },
   { label: 'Academy Courses', href: '/academy/courses', icon: BookOpen },
   { label: 'Appointments', href: '/appointments', icon: Calendar },

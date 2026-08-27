@@ -37,7 +37,7 @@ const navLinks = [
   { label: 'Gallery', href: '/gallery' },
   { label: 'Shop', href: '/shop' },
   { label: 'About', href: '/about' },
-  { label: 'Trending Stories', href: '/blog' },
+  { label: 'Blogspot', href: '/blog' },
   { label: 'Contact', href: '/contact' },
 ]
 

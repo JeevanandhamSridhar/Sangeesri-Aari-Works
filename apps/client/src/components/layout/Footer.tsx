@@ -34,7 +34,7 @@ const footerLinks = {
     { label: 'About Kaviya S', href: '/about' },
     { label: 'Design Gallery', href: '/gallery' },
     { label: 'Academy Courses', href: '/academy' },
-    { label: 'Trending Stories', href: '/blog' },
+    { label: 'Blogspot Daily Updates', href: '/blog' },
     { label: 'Customer Wishlist', href: '/account/wishlist' },
     { label: 'Contact Studio', href: '/contact' },
   ],
