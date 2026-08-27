@@ -263,13 +263,16 @@ export default function AdminGalleryPage() {
               action: 'upload_file',
               fileData: base64,
               fileName: `angle_${Date.now()}_${file.name}`,
+              isAngleOnly: true,
             }),
           })
             .then((res) => res.json())
             .then((data) => {
-              if (data.designs && data.designs.length > 0) {
-                const uploadedSrc = data.designs[0].src
-                setEditImages((prev) => [...prev, uploadedSrc])
+              if (data.uploadedSrc) {
+                setEditImages((prev) => [...prev, data.uploadedSrc])
+                toast.success('New angle photo added!')
+              } else if (data.designs && data.designs.length > 0) {
+                setEditImages((prev) => [...prev, data.designs[data.designs.length - 1].src])
                 toast.success('New angle photo added!')
               }
             })

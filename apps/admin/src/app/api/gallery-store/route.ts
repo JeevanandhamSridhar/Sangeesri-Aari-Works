@@ -177,7 +177,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { action, id, showPrice, hidden, item, fileData, fileName, title, category, priceEstimate, images } = body
+    const { action, id, showPrice, hidden, item, fileData, fileName, title, category, priceEstimate, images, isAngleOnly } = body
     let current = readStorageFile()
 
     if (action === 'upload_file' && fileData && fileName) {
@@ -194,6 +194,11 @@ export async function POST(request: Request) {
       }
 
       const relativeSrc = `/gallery/${cleanName}`
+
+      if (isAngleOnly) {
+        return NextResponse.json({ success: true, uploadedSrc: relativeSrc, designs: current })
+      }
+
       let maxNum = 0
       current.forEach((i) => {
         const match = i.code.match(/SSAW-(\d+)/)
@@ -226,7 +231,7 @@ export async function POST(request: Request) {
         return numA - numB
       })
       writeStorageFile(current)
-      return NextResponse.json({ success: true, designs: current })
+      return NextResponse.json({ success: true, uploadedSrc: relativeSrc, designs: current })
     }
 
     if (action === 'delete' && id) {
@@ -317,7 +322,7 @@ export async function POST(request: Request) {
         return numA - numB
       })
       writeStorageFile(current)
-      return NextResponse.json({ success: true, designs: current })
+      return NextResponse.json({ success: true, uploadedSrc: itemImages[0], designs: current })
     }
 
     current = syncDirectoriesAndStorage(current)

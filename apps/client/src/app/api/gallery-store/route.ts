@@ -155,7 +155,6 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
       : [item.src],
   }))
 
-  // Always sort strictly by numeric code ascending (SSAW-001, SSAW-002, ...)
   updated.sort((a, b) => {
     const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
     const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
@@ -188,7 +187,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { action, id, showPrice, hidden, item, fileData, fileName, title, category, priceEstimate, images } = body
+    const { action, id, showPrice, hidden, item, fileData, fileName, title, category, priceEstimate, images, isAngleOnly } = body
     let current = readStorageFile()
 
     if (action === 'upload_file' && fileData && fileName) {
@@ -205,6 +204,12 @@ export async function POST(request: Request) {
       }
 
       const relativeSrc = `/gallery/${cleanName}`
+
+      // If uploading an extra angle photo for an existing design card, ONLY save to disk & return uploadedSrc
+      if (isAngleOnly) {
+        return NextResponse.json({ success: true, uploadedSrc: relativeSrc, designs: current }, { headers: corsHeaders })
+      }
+
       let maxNum = 0
       current.forEach((i) => {
         const match = i.code.match(/SSAW-(\d+)/)
@@ -237,7 +242,7 @@ export async function POST(request: Request) {
         return numA - numB
       })
       writeStorageFile(current)
-      return NextResponse.json({ success: true, designs: current }, { headers: corsHeaders })
+      return NextResponse.json({ success: true, uploadedSrc: relativeSrc, designs: current }, { headers: corsHeaders })
     }
 
     if (action === 'delete' && id) {
