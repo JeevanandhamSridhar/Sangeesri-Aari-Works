@@ -18,6 +18,7 @@ export interface GalleryItem {
   tags: string[]
   description?: string
   workType?: string
+  hidden?: boolean
 }
 
 function readStorageFile(): GalleryItem[] {
@@ -107,56 +108,40 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
 
   const unassignedFiles = allFiles.filter((f) => !registeredSrcs.has(`/gallery/${f}`))
 
-  for (let i = 0; i < unassignedFiles.length; i++) {
-    const file = unassignedFiles[i]
+  unassignedFiles.forEach((file) => {
     const relativeSrc = `/gallery/${file}`
     maxNum++
     const code = `SSAW-${String(maxNum).padStart(3, '0')}`
     const formattedTitle = file.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
     const title = formattedTitle.length > 5 ? formattedTitle : `Aari Blouse Design ${code}`
 
-    const cardImages = [relativeSrc]
-    if (i + 1 < unassignedFiles.length) {
-      cardImages.push(`/gallery/${unassignedFiles[i + 1]}`)
-      registeredSrcs.add(`/gallery/${unassignedFiles[i + 1]}`)
-      i++
-    }
-    if (i + 1 < unassignedFiles.length) {
-      cardImages.push(`/gallery/${unassignedFiles[i + 1]}`)
-      registeredSrcs.add(`/gallery/${unassignedFiles[i + 1]}`)
-      i++
-    }
-
-    updated.unshift({
+    updated.push({
       id: `gal-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       code,
       title,
       category: 'Bridal Blouses',
       src: relativeSrc,
-      images: cardImages,
+      images: [relativeSrc],
       showPrice: false,
       priceEstimate: '₹3,500 – ₹6,500',
       tags: ['New Arrival', 'Custom'],
       description: 'Custom handcrafted Aari embroidery blouse design.',
+      hidden: false,
     })
     added = true
-  }
+  })
 
-  updated = updated.map((item) => {
-    let cardImgs = Array.isArray(item.images) && item.images.length > 0
+  updated = updated.map((item) => ({
+    ...item,
+    images: Array.isArray(item.images) && item.images.length > 0
       ? item.images.filter((i) => !i.includes('blob:'))
-      : [item.src]
+      : [item.src],
+  }))
 
-    if (cardImgs.length < 2 && allFiles.length > 2) {
-      const fallback1 = `/gallery/${allFiles[(updated.indexOf(item) + 1) % allFiles.length]}`
-      const fallback2 = `/gallery/${allFiles[(updated.indexOf(item) + 2) % allFiles.length]}`
-      cardImgs = Array.from(new Set([...cardImgs, fallback1, fallback2]))
-    }
-
-    return {
-      ...item,
-      images: cardImgs,
-    }
+  updated.sort((a, b) => {
+    const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+    const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+    return numA - numB
   })
 
   if (added) {
@@ -166,16 +151,22 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
   return updated
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const isAdmin = searchParams.get('admin') === 'true'
+
   const existing = readStorageFile()
   const synced = syncDirectoriesAndStorage(existing)
-  return NextResponse.json({ success: true, designs: synced })
+  
+  const filtered = isAdmin ? synced : synced.filter((item) => !item.hidden)
+
+  return NextResponse.json({ success: true, designs: filtered })
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { action, id, showPrice, item, fileData, fileName, title, category, priceEstimate, images } = body
+    const { action, id, showPrice, hidden, item, fileData, fileName, title, category, priceEstimate, images } = body
     let current = readStorageFile()
 
     if (action === 'upload_file' && fileData && fileName) {
@@ -214,9 +205,15 @@ export async function POST(request: Request) {
         priceEstimate: priceEstimate || '₹3,500 – ₹6,500',
         tags: ['New Arrival', 'Custom'],
         description: 'Custom handcrafted Aari embroidery blouse design.',
+        hidden: false,
       }
 
-      current.unshift(newItem)
+      current.push(newItem)
+      current.sort((a, b) => {
+        const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+        const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+        return numA - numB
+      })
       writeStorageFile(current)
       return NextResponse.json({ success: true, designs: current })
     }
@@ -244,6 +241,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, designs: current })
     }
 
+    if (action === 'toggle_hidden' && id) {
+      current = current.map((i) =>
+        i.id === id ? { ...i, hidden: typeof hidden === 'boolean' ? hidden : !i.hidden } : i
+      )
+      writeStorageFile(current)
+      return NextResponse.json({ success: true, designs: current })
+    }
+
     if (action === 'toggle_price_mode') {
       if (id) {
         current = current.map((i) =>
@@ -261,6 +266,11 @@ export async function POST(request: Request) {
 
     if (action === 'update_item' && item && item.id) {
       current = current.map((i) => (i.id === item.id ? { ...i, ...item } : i))
+      current.sort((a, b) => {
+        const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+        const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+        return numA - numB
+      })
       writeStorageFile(current)
       return NextResponse.json({ success: true, designs: current })
     }
@@ -278,8 +288,8 @@ export async function POST(request: Request) {
       const itemImages = Array.isArray(item.images) && item.images.length > 0 ? item.images.filter((i: string) => !i.includes('blob:')) : [item.src || '/gallery/0021292954d624910413c938e24cf6eb.jpg']
       const newItem: GalleryItem = {
         id: `gal-${Date.now()}`,
-        code: `SSAW-${String(maxNum).padStart(3, '0')}`,
-        title: item.title || `Aari Blouse Design SSAW-${String(maxNum).padStart(3, '0')}`,
+        code: item.code || `SSAW-${String(maxNum).padStart(3, '0')}`,
+        title: item.title || `Aari Blouse Design ${item.code || `SSAW-${String(maxNum).padStart(3, '0')}`}`,
         category: item.category || 'Bridal Blouses',
         src: itemImages[0],
         images: itemImages,
@@ -287,8 +297,14 @@ export async function POST(request: Request) {
         priceEstimate: item.priceEstimate || '₹3,500 – ₹6,000',
         tags: item.tags || ['Handcrafted'],
         description: item.description || 'Custom Aari work design.',
+        hidden: false,
       }
-      current.unshift(newItem)
+      current.push(newItem)
+      current.sort((a, b) => {
+        const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+        const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+        return numA - numB
+      })
       writeStorageFile(current)
       return NextResponse.json({ success: true, designs: current })
     }

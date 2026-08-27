@@ -9,6 +9,7 @@ import {
   Edit,
   Trash2,
   Eye,
+  EyeOff,
   Tag,
   Package,
   CheckCircle2,
@@ -26,6 +27,7 @@ interface Product {
   stock: number
   images: string[]
   inStock: boolean
+  hidden?: boolean
 }
 
 const initialProducts: Product[] = [
@@ -96,6 +98,19 @@ export default function AdminProductsPage() {
       setProducts(products.filter((p) => p.id !== id))
       toast.success(`${name} deleted successfully`)
     }
+  }
+
+  const toggleHideProduct = (id: string) => {
+    setProducts((prev) =>
+      prev.map((p) => {
+        if (p.id === id) {
+          const newHidden = !p.hidden
+          toast.success(newHidden ? `${p.name} hidden from website` : `${p.name} published to website`)
+          return { ...p, hidden: newHidden }
+        }
+        return p
+      })
+    )
   }
 
   const filtered = products.filter((p) => {
@@ -201,6 +216,17 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => toggleHideProduct(prod.id)}
+                          className={`p-2 rounded-lg transition-colors ${
+                            prod.hidden
+                              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                              : 'bg-white/5 hover:bg-gold-500/20 text-cream/60 hover:text-gold-400'
+                          }`}
+                          title={prod.hidden ? 'Hidden from website. Click to publish.' : 'Visible on website. Click to hide.'}
+                        >
+                          {prod.hidden ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
                         <Link
                           href={`/products/edit/${prod.id}`}
                           className="p-2 rounded-lg bg-white/5 hover:bg-gold-500/20 hover:text-gold-400 transition-colors text-cream/60"
