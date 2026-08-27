@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingBag, Menu, X, ChevronDown, Phone, Heart } from 'lucide-react'
+import { ShoppingBag, Menu, X, ChevronDown, Phone, Heart, Sparkles } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import { VideoLogo } from '@/components/ui/VideoLogo'
 import { cn } from '@/lib/utils'
@@ -20,17 +20,6 @@ const navLinks = [
       { label: 'Designer Cutwork', href: '/services#designer' },
       { label: 'Tailoring & Fitting', href: '/services#tailoring' },
       { label: 'Express Order Slots', href: '/services#express' },
-    ],
-  },
-  {
-    label: 'Collections',
-    href: '/collections',
-    submenu: [
-      { label: 'Bridal Collection', href: '/collections/bridal' },
-      { label: 'Designer Blouses', href: '/collections/designer' },
-      { label: 'Traditional', href: '/collections/traditional' },
-      { label: 'Modern Collection', href: '/collections/modern' },
-      { label: 'Custom Design', href: '/collections/custom' },
     ],
   },
   { label: 'Academy', href: '/academy' },
@@ -72,7 +61,7 @@ export function Navbar() {
   }, [])
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
+    const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -84,7 +73,7 @@ export function Navbar() {
   return (
     <>
       {/* Top Studio Order Availability Banner */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0c0805] border-b border-gold-500/10 py-1.5 px-4 text-center font-inter text-xs text-cream/70 flex items-center justify-center gap-3">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0c0805]/95 backdrop-blur-md border-b border-gold-500/10 py-1.5 px-4 text-center font-inter text-xs text-cream/70 flex items-center justify-center gap-3">
         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gold-500/10 border border-gold-500/20 text-gold-400">
           <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: studioStatus.dotColor || '#10b981' }} />
           {studioStatus.badgeText}
@@ -99,88 +88,86 @@ export function Navbar() {
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          'fixed top-7 left-0 right-0 z-50 transition-all duration-500',
+          'fixed top-7 left-0 right-0 z-50 transition-all duration-500 transform-gpu will-change-transform',
           scrolled
-            ? 'glass-dark shadow-luxury border-b border-gold-500/10'
-            : 'bg-transparent'
+            ? 'bg-[#0a0705]/90 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] border-b border-gold-500/20 py-1'
+            : 'bg-gradient-to-b from-darkbase/90 via-darkbase/40 to-transparent py-2'
         )}
       >
         <div className="container-luxury">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16 md:h-20">
             {/* Brand Logo */}
             <Link href="/" className="flex items-center gap-3 group">
               <VideoLogo size="md" showText={true} />
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <div
-                  key={link.href}
-                  className="relative"
-                  onMouseEnter={() => link.submenu && setActiveDropdown(link.label)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  <Link
-                    href={link.href}
-                    className={cn(
-                      'relative flex items-center gap-1 px-4 py-2 text-sm font-inter font-medium tracking-wide transition-colors duration-200',
-                      pathname === link.href
-                        ? 'text-gold-400'
-                        : 'text-cream/70 hover:text-gold-400'
-                    )}
+            <nav className="hidden lg:flex items-center gap-1.5">
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                return (
+                  <div
+                    key={link.href}
+                    className="relative"
+                    onMouseEnter={() => link.submenu && setActiveDropdown(link.label)}
+                    onMouseLeave={() => setActiveDropdown(null)}
                   >
-                    {pathname === link.href && (
-                      <span
-                        className="absolute inset-0 rounded-full bg-gold-500/10 border border-gold-500/20 transition-all duration-300 pointer-events-none"
-                      />
-                    )}
-                    <span className="relative z-10">{link.label}</span>
-                    {link.submenu && (
-                      <ChevronDown
-                        size={14}
-                        className={cn(
-                          'relative z-10 transition-transform duration-200',
-                          activeDropdown === link.label ? 'rotate-180' : ''
-                        )}
-                      />
-                    )}
-                  </Link>
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        'relative flex items-center gap-1 px-4 py-2 text-xs md:text-sm font-inter font-semibold tracking-wide transition-all duration-300 rounded-full',
+                        isActive
+                          ? 'text-gold-400 bg-gold-500/10 border border-gold-500/30 shadow-[0_0_15px_rgba(212,175,55,0.2)]'
+                          : 'text-cream/80 hover:text-cream hover:bg-white/5'
+                      )}
+                    >
+                      <span className="relative z-10">{link.label}</span>
+                      {link.submenu && (
+                        <ChevronDown
+                          size={14}
+                          className={cn(
+                            'relative z-10 transition-transform duration-300',
+                            activeDropdown === link.label ? 'rotate-180 text-gold-400' : 'text-cream/50'
+                          )}
+                        />
+                      )}
+                    </Link>
 
-                  {/* Dropdown */}
-                  <AnimatePresence>
-                    {link.submenu && activeDropdown === link.label && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute top-full left-0 mt-2 w-56 glass-dark rounded-2xl border border-gold-500/15 overflow-hidden shadow-luxury"
-                      >
-                        {link.submenu.map((sub) => (
-                          <Link
-                            key={sub.href}
-                            href={sub.href}
-                            className="flex items-center gap-3 px-5 py-3 text-sm text-cream/70 hover:text-gold-400 hover:bg-gold-500/5 transition-all duration-200 border-b border-white/5 last:border-0"
-                          >
-                            <span className="w-1 h-1 rounded-full bg-gold-500/50" />
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
+                    {/* Smooth Spring Dropdown */}
+                    <AnimatePresence>
+                      {link.submenu && activeDropdown === link.label && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                          className="absolute top-full left-0 mt-2 w-60 glass-admin rounded-2xl border border-gold-500/30 overflow-hidden shadow-2xl z-50 p-1.5"
+                        >
+                          {link.submenu.map((sub) => (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              className="flex items-center gap-3 px-4 py-2.5 text-xs font-inter text-cream/70 hover:text-gold-400 hover:bg-gold-500/10 rounded-xl transition-all duration-200 border-b border-white/5 last:border-0"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-gold-400" />
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )
+              })}
             </nav>
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
               <Link
                 href="tel:+917604887356"
-                className="hidden md:flex items-center gap-2 btn-outline-gold py-2.5 px-5 text-xs"
+                className="hidden md:flex items-center gap-2 btn-outline-gold py-2 px-4 text-xs font-bold rounded-xl"
               >
                 <Phone size={14} />
                 Book Now
@@ -188,14 +175,14 @@ export function Navbar() {
 
               <Link
                 href="/account/wishlist"
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-gold-500/30 text-cream/60 hover:text-gold-400 transition-all duration-300"
+                className="hidden md:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-gold-500/40 text-cream/70 hover:text-gold-400 transition-all duration-300 bg-black/40"
               >
                 <Heart size={18} />
               </Link>
 
               <Link
                 href="/cart"
-                className="relative flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-gold-500/30 text-cream/60 hover:text-gold-400 transition-all duration-300"
+                className="relative flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-gold-500/40 text-cream/70 hover:text-gold-400 transition-all duration-300 bg-black/40"
               >
                 <ShoppingBag size={18} />
                 {cartCount > 0 && (
@@ -212,7 +199,7 @@ export function Navbar() {
 
               {/* Mobile menu toggle */}
               <button
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-gold-500/30 text-cream/60 hover:text-gold-400 transition-all duration-300"
+                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-gold-500/40 text-cream/80 hover:text-gold-400 transition-all duration-300 bg-black/40"
                 onClick={() => setMobileOpen(!mobileOpen)}
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -222,30 +209,28 @@ export function Navbar() {
         </div>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* Silky Smooth Mobile Menu Drawer */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] lg:hidden flex justify-end"
-          >
-            <div
-              className="absolute inset-0 bg-darkbase/80 backdrop-blur-md"
+          <div className="fixed inset-0 z-[100] lg:hidden flex justify-end">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-darkbase/85 backdrop-blur-xl"
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="relative z-10 w-[85vw] max-w-sm h-full glass-dark border-l border-gold-500/20 flex flex-col justify-between shadow-2xl"
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="relative z-10 w-[85vw] max-w-sm h-full glass-admin border-l border-gold-500/30 flex flex-col justify-between shadow-2xl"
             >
               <div className="flex items-center justify-between p-5 border-b border-white/10 pt-6">
                 <div>
                   <span className="font-playfair text-lg font-bold text-gradient-gold block">Sangee Sri Aari Works</span>
-                  <span className="font-inter text-[10px] text-cream/40 uppercase tracking-wider block">Boutique & Academy</span>
+                  <span className="font-inter text-[10px] text-cream/40 uppercase tracking-wider block">Boutique &amp; Academy</span>
                 </div>
                 <button
                   onClick={() => setMobileOpen(false)}
@@ -255,47 +240,52 @@ export function Navbar() {
                 </button>
               </div>
 
-              <nav className="flex-1 overflow-y-auto p-5 space-y-1.5 touch-pan-y">
-                {navLinks.map((link, i) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.25 }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={cn(
-                        'flex items-center gap-3 px-4 py-3 rounded-xl font-inter text-sm font-medium transition-all duration-200',
-                        pathname === link.href
-                          ? 'text-gold-400 bg-gold-500/10 border border-gold-500/20 font-bold'
-                          : 'text-cream/80 hover:text-gold-400 hover:bg-white/5'
-                      )}
+              <nav className="flex-1 overflow-y-auto p-5 space-y-2 touch-pan-y">
+                {navLinks.map((link, i) => {
+                  const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                  return (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.03, duration: 0.2 }}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-gold-500/50" />
-                      {link.label}
-                    </Link>
-                    {link.submenu && (
-                      <div className="ml-6 my-1 pl-2 border-l border-white/10 space-y-1">
-                        {link.submenu.map((sub) => (
-                          <Link
-                            key={sub.href}
-                            href={sub.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 text-xs text-cream/60 hover:text-gold-400 rounded-lg transition-all duration-200"
-                          >
-                            <span className="w-1 h-1 rounded-full bg-gold-500/30" />
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
+                      <Link
+                        href={link.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          'flex items-center justify-between px-4 py-3 rounded-2xl font-inter text-sm font-semibold transition-all duration-200',
+                          isActive
+                            ? 'text-gold-400 bg-gold-500/10 border border-gold-500/30 font-bold'
+                            : 'text-cream/80 hover:text-gold-400 hover:bg-white/5'
+                        )}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gold-400" />
+                          {link.label}
+                        </span>
+                      </Link>
+                      {link.submenu && (
+                        <div className="ml-6 my-1 pl-2 border-l border-white/10 space-y-1">
+                          {link.submenu.map((sub) => (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center gap-2 px-3 py-2 text-xs text-cream/60 hover:text-gold-400 rounded-xl transition-all duration-200"
+                            >
+                              <span className="w-1 h-1 rounded-full bg-gold-500/40" />
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  )
+                })}
               </nav>
 
-              <div className="p-5 border-t border-white/10 space-y-2.5 bg-black/40">
+              <div className="p-5 border-t border-white/10 space-y-2.5 bg-black/60">
                 <Link
                   href="tel:+917604887356"
                   className="btn-luxury w-full justify-center text-xs py-3 flex items-center gap-2"
@@ -312,10 +302,9 @@ export function Navbar() {
                 </Link>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>
   )
 }
-
