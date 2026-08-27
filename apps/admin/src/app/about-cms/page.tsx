@@ -16,8 +16,28 @@ import {
   Star,
   Quote,
   X,
+  Calendar,
+  Building,
+  FileText,
 } from 'lucide-react'
 import { toast } from 'sonner'
+
+export interface AchievementItem {
+  highlight: string
+  date: string
+  title: string
+  org: string
+  description: string
+}
+
+export interface EventPhotoItem {
+  id: number
+  src: string
+  title: string
+  subtitle: string
+  date: string
+  badge: string
+}
 
 export default function AdminAboutCmsPage() {
   const [aboutData, setAboutData] = useState<any>(null)
@@ -26,13 +46,22 @@ export default function AdminAboutCmsPage() {
   const [uploadingFounder, setUploadingFounder] = useState(false)
   const [uploadingEvent, setUploadingEvent] = useState(false)
 
-  // Event Photo Add State
+  // Event Photo Modal State
+  const [eventModalOpen, setEventModalOpen] = useState(false)
   const [eventTitle, setEventTitle] = useState('')
   const [eventSubtitle, setEventSubtitle] = useState('')
   const [eventDate, setEventDate] = useState('')
   const [eventBadge, setEventBadge] = useState('World Record Event 🏆')
   const [eventSrc, setEventSrc] = useState('')
-  const [eventModalOpen, setEventModalOpen] = useState(false)
+
+  // Milestone Modal State
+  const [milestoneModalOpen, setMilestoneModalOpen] = useState(false)
+  const [editingMilestoneIdx, setEditingMilestoneIdx] = useState<number | null>(null)
+  const [mTitle, setMTitle] = useState('')
+  const [mOrg, setMOrg] = useState('')
+  const [mDate, setMDate] = useState('')
+  const [mHighlight, setMHighlight] = useState('District Leadership')
+  const [mDescription, setMDescription] = useState('')
 
   const fetchAboutData = async () => {
     try {
@@ -64,7 +93,7 @@ export default function AdminAboutCmsPage() {
       })
       const result = await res.json()
       if (result.success) {
-        toast.success('About page content & images updated live!')
+        toast.success('About page content & milestones updated live!')
       }
     } catch {
       toast.error('Failed to save changes')
@@ -126,7 +155,7 @@ export default function AdminAboutCmsPage() {
           .then((data) => {
             if (data.uploadedSrc) {
               setEventSrc(data.uploadedSrc)
-              toast.success('Event image uploaded!')
+              toast.success('Event image uploaded successfully!')
             }
           })
           .finally(() => setUploadingEvent(false))
@@ -137,11 +166,11 @@ export default function AdminAboutCmsPage() {
 
   const addEventPhoto = () => {
     if (!eventTitle || !eventSrc) {
-      toast.error('Please provide an event title and photo')
+      toast.error('Please upload an event image and enter a title')
       return
     }
 
-    const newPhoto = {
+    const newPhoto: EventPhotoItem = {
       id: Date.now(),
       src: eventSrc,
       title: eventTitle,
@@ -160,7 +189,7 @@ export default function AdminAboutCmsPage() {
     setEventDate('')
     setEventSrc('')
     setEventModalOpen(false)
-    toast.success('New event photo added to About page!')
+    toast.success('New event photo added!')
   }
 
   const removeEventPhoto = (id: number) => {
@@ -169,6 +198,64 @@ export default function AdminAboutCmsPage() {
       eventPhotos: (prev.eventPhotos || []).filter((p: any) => p.id !== id),
     }))
     toast.success('Event photo removed')
+  }
+
+  // ── MILESTONES CONTROLLER ────────────────────────────────────────
+  const openAddMilestoneModal = () => {
+    setEditingMilestoneIdx(null)
+    setMTitle('')
+    setMOrg('Indian Aari Work Federation')
+    setMDate('November 2025')
+    setMHighlight('District Leadership')
+    setMDescription('')
+    setMilestoneModalOpen(true)
+  }
+
+  const openEditMilestoneModal = (idx: number) => {
+    const item = aboutData.achievements[idx]
+    if (!item) return
+    setEditingMilestoneIdx(idx)
+    setMTitle(item.title)
+    setMOrg(item.org)
+    setMDate(item.date)
+    setMHighlight(item.highlight)
+    setMDescription(item.description)
+    setMilestoneModalOpen(true)
+  }
+
+  const saveMilestone = () => {
+    if (!mTitle || !mDescription) {
+      toast.error('Please enter a milestone title and description')
+      return
+    }
+
+    const newMilestone: AchievementItem = {
+      title: mTitle,
+      org: mOrg,
+      date: mDate,
+      highlight: mHighlight,
+      description: mDescription,
+    }
+
+    const updatedAchievements = [...(aboutData.achievements || [])]
+    if (editingMilestoneIdx !== null) {
+      updatedAchievements[editingMilestoneIdx] = newMilestone
+      toast.success(`Updated milestone "${mTitle.slice(0, 25)}..."`)
+    } else {
+      updatedAchievements.push(newMilestone)
+      toast.success('New Key Federation Milestone added!')
+    }
+
+    setAboutData((prev: any) => ({ ...prev, achievements: updatedAchievements }))
+    setMilestoneModalOpen(false)
+  }
+
+  const removeMilestone = (idx: number) => {
+    if (confirm('Are you sure you want to delete this Key Federation Milestone?')) {
+      const updatedAchievements = (aboutData.achievements || []).filter((_: any, i: number) => i !== idx)
+      setAboutData((prev: any) => ({ ...prev, achievements: updatedAchievements }))
+      toast.success('Milestone removed')
+    }
   }
 
   if (loading || !aboutData) {
@@ -184,7 +271,7 @@ export default function AdminAboutCmsPage() {
             About Page Content &amp; Image CMS
           </h1>
           <p className="font-inter text-xs text-cream/50 mt-1">
-            Update Founder details, bio quotes, studio statistics, skills, and Federation event photos live.
+            Update Founder details, bio quotes, studio statistics, skills, Key Federation Milestones, and Event photos live.
           </p>
         </div>
 
@@ -208,7 +295,7 @@ export default function AdminAboutCmsPage() {
           {/* Portrait Photo Uploader */}
           <div className="space-y-3 text-center">
             <label className="font-inter text-xs text-gold-400 font-bold block">Founder Portrait Photo</label>
-            <div className="relative aspect-[4/3] w-full max-w-[260px] mx-auto rounded-2xl overflow-hidden border-2 border-gold-500/40 bg-black">
+            <div className="relative aspect-[4/3] w-full max-w-[260px] mx-auto rounded-2xl overflow-hidden border-2 border-gold-500/40 bg-black shadow-lg">
               <Image
                 src={aboutData.founderPhoto || '/owner.jpg'}
                 alt="Founder"
@@ -296,7 +383,65 @@ export default function AdminAboutCmsPage() {
         </div>
       </div>
 
-      {/* ── SECTION 2: STUDIO STATS & SKILLS ───────────────────── */}
+      {/* ── SECTION 2: KEY FEDERATION MILESTONES (NEW EDITABLE MANAGER) ─ */}
+      <div className="glass-admin p-6 rounded-3xl border border-gold-500/40 space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h2 className="font-playfair text-xl font-bold text-cream flex items-center gap-2">
+              <Trophy className="text-gold-400" size={22} />
+              Key Federation Milestones Manager ({aboutData.achievements?.length || 0} Milestones)
+            </h2>
+            <p className="font-inter text-xs text-cream/50 mt-0.5">
+              Add, edit, or remove the Key Federation governance milestones shown on the About page.
+            </p>
+          </div>
+
+          <button
+            onClick={openAddMilestoneModal}
+            className="btn-admin-gold py-2 px-4 flex items-center gap-1.5 text-xs"
+          >
+            <Plus size={15} /> Add Milestone
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {aboutData.achievements?.map((item: AchievementItem, idx: number) => (
+            <div key={idx} className="glass rounded-2xl border border-gold-500/25 p-5 space-y-3 relative group hover:border-gold-400/50 transition-all">
+              <div className="flex items-center justify-between">
+                <span className="badge-gold text-[10px] font-bold">{item.highlight}</span>
+                <span className="font-inter text-xs text-gold-400 font-bold">{item.date}</span>
+              </div>
+
+              <div>
+                <h3 className="font-playfair text-base font-bold text-cream">{item.title}</h3>
+                <p className="font-inter text-xs text-gold-400/80 font-medium mt-0.5">{item.org}</p>
+              </div>
+
+              <p className="font-inter text-xs text-cream/70 leading-relaxed">
+                {item.description}
+              </p>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+                <button
+                  onClick={() => openEditMilestoneModal(idx)}
+                  className="px-3 py-1 rounded-xl bg-gold-500/20 border border-gold-500/40 text-gold-400 hover:bg-gold-500 hover:text-darkbase transition-all font-inter text-xs font-bold flex items-center gap-1"
+                >
+                  <Edit3 size={12} /> Edit
+                </button>
+                <button
+                  onClick={() => removeMilestone(idx)}
+                  className="p-1.5 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
+                  title="Delete Milestone"
+                >
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── SECTION 3: STUDIO STATS & SKILLS ───────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass-admin p-6 rounded-3xl border border-white/10 space-y-4">
           <h3 className="font-playfair text-lg font-bold text-cream flex items-center gap-2 border-b border-white/10 pb-3">
@@ -371,7 +516,7 @@ export default function AdminAboutCmsPage() {
         </div>
       </div>
 
-      {/* ── SECTION 3: FEDERATION EVENT PHOTOS MANAGER ───────────── */}
+      {/* ── SECTION 4: FEDERATION EVENT PHOTOS MANAGER ───────────── */}
       <div className="glass-admin p-6 rounded-3xl border border-gold-500/30 space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
           <div>
@@ -380,12 +525,12 @@ export default function AdminAboutCmsPage() {
               Federation Official Event Photos ({aboutData.eventPhotos?.length || 0} Photos)
             </h2>
             <p className="font-inter text-xs text-cream/50 mt-0.5">
-              Manage real photos of World Record Events and International Conferences on the About page.
+              Upload real photos of World Record Events and International Conferences on the About page.
             </p>
           </div>
 
           <button
-            onClick={() => setEventModalOpen(true)}
+            onClick={() => { setEventSrc(''); setEventTitle(''); setEventSubtitle(''); setEventModalOpen(true) }}
             className="px-4 py-2 rounded-xl bg-gold-500/20 border border-gold-500/40 text-gold-400 hover:bg-gold-500 hover:text-darkbase transition-all font-inter text-xs font-bold flex items-center gap-2"
           >
             <Plus size={16} /> Add Event Photo
@@ -395,7 +540,7 @@ export default function AdminAboutCmsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {aboutData.eventPhotos?.map((photo: any) => (
             <div key={photo.id} className="glass rounded-2xl border border-white/10 p-4 flex gap-4 items-center">
-              <div className="relative aspect-[4/3] w-32 rounded-xl overflow-hidden bg-black shrink-0">
+              <div className="relative aspect-[4/3] w-32 rounded-xl overflow-hidden bg-black shrink-0 border border-gold-500/30">
                 <Image src={photo.src} alt={photo.title} fill unoptimized className="object-cover" />
               </div>
 
@@ -415,9 +560,99 @@ export default function AdminAboutCmsPage() {
         </div>
       </div>
 
-      {/* ADD EVENT PHOTO MODAL */}
+      {/* ADD / EDIT MILESTONE MODAL */}
+      {milestoneModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="glass-admin rounded-3xl border border-gold-500/40 p-6 max-w-lg w-full space-y-5">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 className="font-playfair text-lg font-bold text-cream flex items-center gap-2">
+                <Trophy size={18} className="text-gold-400" />
+                {editingMilestoneIdx !== null ? 'Edit Key Federation Milestone' : 'Add Key Federation Milestone'}
+              </h3>
+              <button onClick={() => setMilestoneModalOpen(false)} className="p-1.5 rounded-full hover:bg-white/10 text-cream/60">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="font-inter text-xs text-gold-400 font-bold block mb-1">Milestone Title *</label>
+                <input
+                  type="text"
+                  value={mTitle}
+                  onChange={(e) => setMTitle(e.target.value)}
+                  placeholder="e.g. Conducted Noble World Record Event"
+                  className="input-admin text-xs font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-inter text-xs text-cream/70 block mb-1">Organization / Location</label>
+                  <input
+                    type="text"
+                    value={mOrg}
+                    onChange={(e) => setMOrg(e.target.value)}
+                    placeholder="e.g. Indian Aari Work Federation"
+                    className="input-admin text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="font-inter text-xs text-cream/70 block mb-1">Date / Month</label>
+                  <input
+                    type="text"
+                    value={mDate}
+                    onChange={(e) => setMDate(e.target.value)}
+                    placeholder="e.g. November 2025"
+                    className="input-admin text-xs"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-inter text-xs text-cream/70 block mb-1">Highlight Badge Label</label>
+                <input
+                  type="text"
+                  value={mHighlight}
+                  onChange={(e) => setMHighlight(e.target.value)}
+                  placeholder="e.g. World Record Event"
+                  className="input-admin text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="font-inter text-xs text-cream/70 block mb-1">Full Description *</label>
+                <textarea
+                  value={mDescription}
+                  onChange={(e) => setMDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Describe the achievement, artisan attendance, or official federation governance..."
+                  className="input-admin text-xs w-full leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
+              <button
+                onClick={() => setMilestoneModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold glass border border-white/10 text-cream/60"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveMilestone}
+                className="btn-admin-gold text-xs py-2 px-6 flex items-center gap-1.5"
+              >
+                <Save size={14} /> Save Milestone
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADD EVENT PHOTO MODAL WITH INSTANT FILE PREVIEW */}
       {eventModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="glass-admin rounded-3xl border border-gold-500/40 p-6 max-w-lg w-full space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <h3 className="font-playfair text-lg font-bold text-cream flex items-center gap-2">
@@ -429,6 +664,32 @@ export default function AdminAboutCmsPage() {
             </div>
 
             <div className="space-y-3">
+              {/* IMAGE PREVIEW BOX */}
+              <div className="text-center">
+                <label className="font-inter text-xs text-cream/70 block mb-1.5">Select Event Image *</label>
+                {eventSrc ? (
+                  <div className="relative aspect-[4/3] w-full max-w-[280px] mx-auto rounded-2xl overflow-hidden border-2 border-gold-500/40 bg-black mb-3">
+                    <Image src={eventSrc} alt="Preview" fill unoptimized className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="aspect-[4/3] w-full max-w-[280px] mx-auto rounded-2xl border-2 border-dashed border-gold-500/30 flex flex-col items-center justify-center p-4 bg-black/40 mb-3">
+                    <Upload className="text-gold-400 mb-1" size={24} />
+                    <span className="font-inter text-xs text-cream/60">Click below to upload image file</span>
+                  </div>
+                )}
+
+                <label className="px-4 py-2 rounded-xl bg-gold-500/20 border border-gold-500/40 text-gold-400 hover:bg-gold-500 hover:text-darkbase transition-all font-inter text-xs font-bold cursor-pointer inline-flex items-center gap-2">
+                  <Upload size={14} />
+                  {uploadingEvent ? 'Uploading Image...' : eventSrc ? 'Change Image File' : 'Upload Image File'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleEventPhotoUpload}
+                  />
+                </label>
+              </div>
+
               <div>
                 <label className="font-inter text-xs text-cream/70 block mb-1">Event Title *</label>
                 <input
@@ -436,7 +697,7 @@ export default function AdminAboutCmsPage() {
                   value={eventTitle}
                   onChange={(e) => setEventTitle(e.target.value)}
                   placeholder="e.g. World Record Aari Work Ceremony"
-                  className="input-admin text-xs"
+                  className="input-admin text-xs font-bold"
                 />
               </div>
 
@@ -472,29 +733,6 @@ export default function AdminAboutCmsPage() {
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="font-inter text-xs text-cream/70 block mb-1">Event Photo *</label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    value={eventSrc}
-                    onChange={(e) => setEventSrc(e.target.value)}
-                    placeholder="/about/photo.jpg"
-                    className="input-admin text-xs flex-1"
-                  />
-                  <label className="px-3 py-2 rounded-xl bg-gold-500/20 border border-gold-500/40 text-gold-400 hover:bg-gold-500 hover:text-darkbase transition-all font-inter text-xs font-bold cursor-pointer shrink-0 flex items-center gap-1.5">
-                    <Upload size={14} />
-                    {uploadingEvent ? 'Uploading...' : 'Upload'}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleEventPhotoUpload}
-                    />
-                  </label>
-                </div>
-              </div>
             </div>
 
             <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
@@ -506,9 +744,9 @@ export default function AdminAboutCmsPage() {
               </button>
               <button
                 onClick={addEventPhoto}
-                className="btn-admin-gold text-xs py-2 px-6"
+                className="btn-admin-gold text-xs py-2 px-6 flex items-center gap-1.5"
               >
-                Add Photo
+                <Plus size={14} /> Add Event Photo
               </button>
             </div>
           </div>
