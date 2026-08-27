@@ -49,8 +49,14 @@ export default function QuotationPage() {
       date: dateStr,
     }
 
-    // Save quotation & notification to localStorage for instant Admin alert
+    // Save quotation & notification to localStorage & server JSON database
     try {
+      fetch('/api/quotations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quotation: newQuotation }),
+      }).catch(() => {})
+
       const existingQuos = JSON.parse(localStorage.getItem('sangee_sri_quotations') || '[]')
       localStorage.setItem('sangee_sri_quotations', JSON.stringify([newQuotation, ...existingQuos]))
 

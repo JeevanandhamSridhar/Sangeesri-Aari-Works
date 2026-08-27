@@ -33,7 +33,6 @@ function readStorageFile(): GalleryItem[] {
     }
     const raw = fs.readFileSync(JSON_PATH, 'utf-8')
     const parsed: GalleryItem[] = JSON.parse(raw)
-    // Filter out invalid blob: URLs
     return parsed.filter((item) => !item.src.includes('blob:'))
   } catch {
     return []
@@ -46,7 +45,6 @@ function writeStorageFile(items: GalleryItem[]) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true })
     }
-    // Clean out blob: URLs before saving
     const cleanItems = items.filter((item) => !item.src.includes('blob:'))
     fs.writeFileSync(JSON_PATH, JSON.stringify(cleanItems, null, 2), 'utf-8')
   } catch (err) {
@@ -55,10 +53,8 @@ function writeStorageFile(items: GalleryItem[]) {
 }
 
 function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] {
-  // Purge any blob: entries
   let cleaned = existingItems.filter((item) => !item.src.includes('blob:'))
 
-  // Ensure directories exist
   if (!fs.existsSync(CLIENT_GALLERY_DIR)) {
     fs.mkdirSync(CLIENT_GALLERY_DIR, { recursive: true })
   }
@@ -68,7 +64,6 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
     } catch {}
   }
 
-  // Bidirectional file copy between Client & Admin
   const clientFiles = fs.readdirSync(CLIENT_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
   let adminFiles: string[] = []
   if (fs.existsSync(ADMIN_GALLERY_DIR)) {
@@ -96,7 +91,13 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
   }
 
   const allFiles = fs.readdirSync(CLIENT_GALLERY_DIR).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
-  const registeredSrcs = new Set(cleaned.map((item) => item.src))
+  const registeredSrcs = new Set()
+  cleaned.forEach((item) => {
+    registeredSrcs.add(item.src)
+    if (Array.isArray(item.images)) {
+      item.images.forEach((imgSrc) => registeredSrcs.add(imgSrc))
+    }
+  })
 
   let maxNum = 0
   cleaned.forEach((item) => {
@@ -110,34 +111,61 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
   let updated = [...cleaned]
   let added = false
 
-  allFiles.forEach((file) => {
-    const relativeSrc = `/gallery/${file}`
-    if (!registeredSrcs.has(relativeSrc)) {
-      maxNum++
-      const code = `SSAW-${String(maxNum).padStart(3, '0')}`
-      const formattedTitle = file.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-      const title = formattedTitle.length > 5 ? formattedTitle : `Aari Blouse Design ${code}`
+  const unassignedFiles = allFiles.filter((f) => !registeredSrcs.has(`/gallery/${f}`))
 
-      updated.unshift({
-        id: `gal-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-        code,
-        title,
-        category: 'Bridal Blouses',
-        src: relativeSrc,
-        images: [relativeSrc],
-        showPrice: false,
-        priceEstimate: '₹3,500 – ₹6,500',
-        tags: ['New Arrival', 'Custom'],
-        description: 'Custom handcrafted Aari embroidery blouse design.',
-      })
-      added = true
+  for (let i = 0; i < unassignedFiles.length; i++) {
+    const file = unassignedFiles[i]
+    const relativeSrc = `/gallery/${file}`
+    maxNum++
+    const code = `SSAW-${String(maxNum).padStart(3, '0')}`
+    const formattedTitle = file.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
+    const title = formattedTitle.length > 5 ? formattedTitle : `Aari Blouse Design ${code}`
+
+    // Assign up to 2-3 photos if available in unassigned list
+    const cardImages = [relativeSrc]
+    if (i + 1 < unassignedFiles.length) {
+      cardImages.push(`/gallery/${unassignedFiles[i + 1]}`)
+      registeredSrcs.add(`/gallery/${unassignedFiles[i + 1]}`)
+      i++
+    }
+    if (i + 1 < unassignedFiles.length) {
+      cardImages.push(`/gallery/${unassignedFiles[i + 1]}`)
+      registeredSrcs.add(`/gallery/${unassignedFiles[i + 1]}`)
+      i++
+    }
+
+    updated.unshift({
+      id: `gal-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      code,
+      title,
+      category: 'Bridal Blouses',
+      src: relativeSrc,
+      images: cardImages,
+      showPrice: false,
+      priceEstimate: '₹3,500 – ₹6,500',
+      tags: ['New Arrival', 'Custom'],
+      description: 'Custom handcrafted Aari embroidery blouse design.',
+    })
+    added = true
+  }
+
+  updated = updated.map((item) => {
+    let cardImgs = Array.isArray(item.images) && item.images.length > 0
+      ? item.images.filter((i) => !i.includes('blob:'))
+      : [item.src]
+
+    if (cardImgs.length < 2 && allFiles.length > 2) {
+      // Pick 2 fallback angle previews from dataset if single image
+      const fallback1 = `/gallery/${allFiles[(updated.indexOf(item) + 1) % allFiles.length]}`
+      const fallback2 = `/gallery/${allFiles[(updated.indexOf(item) + 2) % allFiles.length]}`
+      cardImgs = Array.from(new Set([...cardImgs, fallback1, fallback2]))
+    }
+
+    return {
+      ...item,
+      images: cardImgs,
     }
   })
-
-  updated = updated.map((item) => ({
-    ...item,
-    images: Array.isArray(item.images) && item.images.length > 0 ? item.images.filter(i => !i.includes('blob:')) : [item.src],
-  }))
 
   if (added) {
     writeStorageFile(updated)
@@ -159,7 +187,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { action, id, showPrice, item, fileData, fileName, title, category, priceEstimate } = body
+    const { action, id, showPrice, item, fileData, fileName, title, category, priceEstimate, images } = body
     let current = readStorageFile()
 
     if (action === 'upload_file' && fileData && fileName) {
@@ -193,7 +221,7 @@ export async function POST(request: Request) {
         title: title || cleanName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
         category: category || 'Bridal Blouses',
         src: relativeSrc,
-        images: [relativeSrc],
+        images: Array.isArray(images) && images.length > 0 ? images : [relativeSrc],
         showPrice: false,
         priceEstimate: priceEstimate || '₹3,500 – ₹6,500',
         tags: ['New Arrival', 'Custom'],
