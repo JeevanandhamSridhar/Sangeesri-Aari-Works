@@ -60,6 +60,7 @@ export default function AdminAboutCmsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploadingFounder, setUploadingFounder] = useState(false)
+  const [uploadingStory, setUploadingStory] = useState(false)
   const [uploadingEvent, setUploadingEvent] = useState(false)
   const [uploadingMilestone, setUploadingMilestone] = useState(false)
   const [uploadingCustomSection, setUploadingCustomSection] = useState(false)
@@ -162,6 +163,20 @@ export default function AdminAboutCmsPage() {
       }
       reader.readAsDataURL(file)
     })
+  }
+
+  const handleStoryPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return
+    setUploadingStory(true)
+    const src = await uploadImageFile(e.target.files[0], 'story')
+    if (src) {
+      const updated = { ...aboutData, storyPhoto: src }
+      persistAboutData(updated)
+      toast.success('Studio Story image updated live!')
+    } else {
+      toast.error('Failed to upload story image')
+    }
+    setUploadingStory(false)
   }
 
   const handleFounderPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -414,6 +429,85 @@ export default function AdminAboutCmsPage() {
         >
           <Save size={16} /> {saving ? 'Saving Live...' : 'Save All Changes'}
         </button>
+      </div>
+
+      {/* ── SECTION: OUR STUDIO STORY & FEATURE IMAGE ─────────────── */}
+      <div className="glass-admin p-6 rounded-3xl border border-gold-500/30 space-y-6">
+        <h2 className="font-playfair text-xl font-bold text-cream flex items-center gap-2 border-b border-white/10 pb-3">
+          <Sparkles className="text-gold-400" size={20} />
+          Our Studio Story &amp; Main Feature Image
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          {/* Studio Story Photo Uploader */}
+          <div className="space-y-3 text-center">
+            <label className="font-inter text-xs text-gold-400 font-bold block">Studio Story Main Image</label>
+            <div className="relative aspect-[4/5] w-full max-w-[240px] mx-auto rounded-2xl overflow-hidden border-2 border-gold-500/40 bg-black shadow-lg">
+              <Image
+                src={aboutData.storyPhoto || '/about/federation-convention.jpg'}
+                alt="Studio Story Feature"
+                fill
+                unoptimized
+                className="object-cover"
+              />
+            </div>
+            <label className="px-4 py-2 rounded-xl bg-gold-500/20 border border-gold-500/40 text-gold-400 hover:bg-gold-500 hover:text-darkbase transition-all font-inter text-xs font-bold cursor-pointer inline-flex items-center gap-2">
+              <Upload size={14} />
+              {uploadingStory ? 'Uploading Image...' : 'Change Story Image'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleStoryPhotoUpload}
+              />
+            </label>
+          </div>
+
+          {/* Studio Story Text Inputs */}
+          <div className="md:col-span-2 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="font-inter text-xs text-cream/70 block mb-1">Story Subtitle / Badge</label>
+                <input
+                  type="text"
+                  value={aboutData.storySubtitle || 'Our Studio Story'}
+                  onChange={(e) => setAboutData({ ...aboutData, storySubtitle: e.target.value })}
+                  className="input-admin text-xs font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="font-inter text-xs text-cream/70 block mb-1">Story Main Heading</label>
+                <input
+                  type="text"
+                  value={aboutData.storyTitle || 'Preserving Tradition, Embracing Perfection'}
+                  onChange={(e) => setAboutData({ ...aboutData, storyTitle: e.target.value })}
+                  className="input-admin text-xs font-bold"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="font-inter text-xs text-cream/70 block mb-1">Story Paragraph 1</label>
+              <textarea
+                value={aboutData.storyParagraph1 || ''}
+                onChange={(e) => setAboutData({ ...aboutData, storyParagraph1: e.target.value })}
+                rows={3}
+                className="input-admin text-xs w-full leading-relaxed"
+              />
+            </div>
+
+            <div>
+              <label className="font-inter text-xs text-cream/70 block mb-1">Story Paragraph 2</label>
+              <textarea
+                value={aboutData.storyParagraph2 || ''}
+                onChange={(e) => setAboutData({ ...aboutData, storyParagraph2: e.target.value })}
+                rows={3}
+                className="input-admin text-xs w-full leading-relaxed"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ── SECTION 1: FOUNDER DETAILS & PORTRAIT ────────────────── */}

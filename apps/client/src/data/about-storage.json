@@ -1,28 +1,45 @@
 {
-  "founderName": "Sangee Sri (Kaviya S)",
-  "founderTitle": "Fashion Designer & Master Aari Artist",
+  "founderName": "Kaviya S",
+  "founderTitle": "Professional Aari Designer",
   "federationRole": "Joint Secretary of Ranipet District — Indian Aari Work Federation",
   "quote": "Every blouse is crafted with reverence. As Joint Secretary of the Indian Aari Work Federation, my mission is to uphold the highest standard of needlecraft for every bride.",
   "bio1": "With over 10+ years of master practice in traditional Aari embroidery and bridal couture design, Kaviya S has established Sangee Sri Aari Works as Ranipet district's leading studio.",
   "bio2": "Her expertise spans Kundan stone setting, Zardosi metallic work, traditional Maggam embroidery, and modern cutwork borders. Each blouse undergoes rigorous quality craftsmanship under her personal supervision.",
   "founderPhoto": "/owner.jpg",
+  "storySubtitle": "Our Studio Story",
+  "storyTitle": "Preserving Tradition, Embracing Perfection",
+  "storyParagraph1": "Founded with a deep devotion to authentic needlecraft, Sangee Sri Aari Works has grown into Kaveripakkam's premier boutique for bespoke bridal blouses and handcrafted Aari embroidery.",
+  "storyParagraph2": "Every stitch tells a story of patience and perfection. From selecting pure silk zari threads to hand-setting each Kundan stone and pearl, every blouse is treated as a regal canvas.",
+  "storyPhoto": "/about/federation-convention.jpg",
   "aariBlousesCount": "1000+",
   "bridalBlousesCount": "200+",
   "yearsMastery": "10+",
   "skills": [
-    { "label": "Aari Embroidery & Zari Work", "pct": 98 },
-    { "label": "Bridal Blouse Designing", "pct": 96 },
-    { "label": "Kundan, Stone & Cutwork", "pct": 94 },
-    { "label": "Zardosi & Heritage Motifs", "pct": 92 }
+    {
+      "label": "Aari Embroidery & Zari Work",
+      "pct": 98
+    },
+    {
+      "label": "Bridal Blouse Designing",
+      "pct": 96
+    },
+    {
+      "label": "Kundan, Stone & Cutwork",
+      "pct": 94
+    },
+    {
+      "label": "Zardosi & Heritage Motifs",
+      "pct": 92
+    }
   ],
   "achievements": [
     {
-      "highlight": "District Leadership",
-      "date": "Official Role",
       "title": "Joint Secretary of Ranipet District",
       "org": "Indian Aari Work Federation",
+      "date": "Official Role",
+      "highlight": "District Leadership",
       "description": "Appointed Joint Secretary of Ranipet District, leading initiatives to empower local embroidery artisans, promote traditional needlework, and enforce high quality standards.",
-      "image": "/about/federation-record.jpg"
+      "image": "/about/milestone_1787837931698_ChatGPT_Image_Aug_24__2026__05_27_50_PM.png"
     },
     {
       "highlight": "World Record Event",

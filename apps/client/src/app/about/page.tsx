@@ -130,16 +130,30 @@ export default function AboutPage() {
 
         {/* ── Story Section ────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          <div className="lg:col-span-6 relative aspect-[4/5] w-full rounded-3xl sm:rounded-4xl overflow-hidden glass border border-gold-500/20">
+          <div
+            className="lg:col-span-6 relative aspect-[4/5] w-full rounded-3xl sm:rounded-4xl overflow-hidden glass border border-gold-500/20 cursor-pointer group"
+            onClick={() => setSelectedImage({
+              src: aboutStore?.storyPhoto || '/about/federation-convention.jpg',
+              title: aboutStore?.storyTitle || 'Our Studio Story',
+              subtitle: aboutStore?.storyParagraph1,
+            })}
+          >
             <Image
-              src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"
-              alt="Artisan at work"
+              src={aboutStore?.storyPhoto || '/about/federation-convention.jpg'}
+              alt={aboutStore?.storyTitle || 'Studio Story Feature'}
               fill
               unoptimized
-              className="object-cover"
+              className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-darkbase/80 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 rounded-2xl glass-dark border border-gold-500/30">
+            
+            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span className="px-4 py-2 rounded-2xl bg-gold-500 text-darkbase font-inter text-xs font-bold flex items-center gap-2 shadow-2xl">
+                <Eye size={16} /> View Full Image
+              </span>
+            </div>
+
+            <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 rounded-2xl glass-dark border border-gold-500/30 z-10">
               <p className="font-inter text-xs text-gold-400 font-bold uppercase tracking-wider">Studio Legacy</p>
               <p className="font-playfair text-base sm:text-lg text-cream font-bold mt-1">{aariBlousesCount} Aari Blouses · {bridalBlousesCount} Bridal Blouses Crafted</p>
             </div>
@@ -147,16 +161,16 @@ export default function AboutPage() {
 
           <div className="lg:col-span-6 space-y-6">
             <span className="font-inter text-xs text-gold-500 tracking-widest uppercase font-semibold">
-              Our Studio Story
+              {aboutStore?.storySubtitle || 'Our Studio Story'}
             </span>
             <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl font-bold text-cream">
-              Preserving Tradition, Embracing Perfection
+              {aboutStore?.storyTitle || 'Preserving Tradition, Embracing Perfection'}
             </h2>
-            <p className="font-inter text-xs sm:text-sm text-cream/70 leading-relaxed">
-              Founded with a deep devotion to authentic needlecraft, Sangee Sri Aari Works has grown into Kaveripakkam's premier boutique for bespoke bridal blouses and handcrafted Aari embroidery.
+            <p className="font-inter text-xs sm:text-sm text-cream/70 leading-relaxed whitespace-pre-line">
+              {aboutStore?.storyParagraph1 || "Founded with a deep devotion to authentic needlecraft, Sangee Sri Aari Works has grown into Kaveripakkam's premier boutique for bespoke bridal blouses and handcrafted Aari embroidery."}
             </p>
-            <p className="font-inter text-xs sm:text-sm text-cream/70 leading-relaxed">
-              Every stitch tells a story of patience and perfection. From selecting pure silk zari threads to hand-setting each Kundan stone and pearl, every blouse is treated as a regal canvas.
+            <p className="font-inter text-xs sm:text-sm text-cream/70 leading-relaxed whitespace-pre-line">
+              {aboutStore?.storyParagraph2 || "Every stitch tells a story of patience and perfection. From selecting pure silk zari threads to hand-setting each Kundan stone and pearl, every blouse is treated as a regal canvas."}
             </p>
 
             <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2 sm:pt-4">
