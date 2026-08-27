@@ -21,28 +21,32 @@
       "date": "Official Role",
       "title": "Joint Secretary of Ranipet District",
       "org": "Indian Aari Work Federation",
-      "description": "Appointed Joint Secretary of Ranipet District, leading initiatives to empower local embroidery artisans, promote traditional needlework, and enforce high quality standards."
+      "description": "Appointed Joint Secretary of Ranipet District, leading initiatives to empower local embroidery artisans, promote traditional needlework, and enforce high quality standards.",
+      "image": "/about/federation-record.jpg"
     },
     {
       "highlight": "World Record Event",
       "date": "November 2025",
       "title": "Conducted Noble World Record Event",
       "org": "World Record Achievement",
-      "description": "Successfully organized and conducted the Noble World Record Event for Aari Work, bringing together master craftspeople to create record-breaking hand-embroidered art."
+      "description": "Successfully organized and conducted the Noble World Record Event for Aari Work, bringing together master craftspeople to create record-breaking hand-embroidered art.",
+      "image": "/about/federation-record.jpg"
     },
     {
       "highlight": "International Conference",
       "date": "March 9th, 2025",
       "title": "First International Aari Work Conference",
       "org": "Virudhunagar, Tamil Nadu",
-      "description": "Participated as a key delegate at the 1st International Aari Work Conference in Virudhunagar, sharing insights on bridal couture embroidery and design innovation."
+      "description": "Participated as a key delegate at the 1st International Aari Work Conference in Virudhunagar, sharing insights on bridal couture embroidery and design innovation.",
+      "image": "/about/federation-convention.jpg"
     },
     {
       "highlight": "Federation Meeting",
       "date": "July 4th, 2026",
       "title": "4th General Body Meeting",
       "org": "Indian Aari Work Federation",
-      "description": "Attended the 4th General Body Meeting of the Indian Aari Work Federation, collaborating on artisan welfare, training programs, and federation governance."
+      "description": "Attended the 4th General Body Meeting of the Indian Aari Work Federation, collaborating on artisan welfare, training programs, and federation governance.",
+      "image": "/about/federation-convention.jpg"
     }
   ],
   "eventPhotos": [
@@ -62,5 +66,6 @@
       "date": "Grand Convention & Celebrity Guest Showcase",
       "badge": "Federation Conference ⭐"
     }
-  ]
+  ],
+  "customSections": []
 }

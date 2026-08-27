@@ -21,6 +21,7 @@ const defaultAchievements = [
     org: 'Indian Aari Work Federation',
     description: 'Appointed Joint Secretary of Ranipet District, leading initiatives to empower local embroidery artisans, promote traditional needlework, and enforce high quality standards.',
     highlight: 'District Leadership',
+    image: '/about/federation-record.jpg',
   },
   {
     icon: Trophy,
@@ -29,6 +30,7 @@ const defaultAchievements = [
     org: 'World Record Achievement',
     description: 'Successfully organized and conducted the Noble World Record Event for Aari Work, bringing together master craftspeople to create record-breaking hand-embroidered art.',
     highlight: 'World Record Event',
+    image: '/about/federation-record.jpg',
   },
   {
     icon: Globe,
@@ -37,6 +39,7 @@ const defaultAchievements = [
     org: 'Virudhunagar, Tamil Nadu',
     description: 'Participated as a key delegate at the 1st International Aari Work Conference in Virudhunagar, sharing insights on bridal couture embroidery and design innovation.',
     highlight: 'International Conference',
+    image: '/about/federation-convention.jpg',
   },
   {
     icon: Calendar,
@@ -45,6 +48,7 @@ const defaultAchievements = [
     org: 'Indian Aari Work Federation',
     description: 'Attended the 4th General Body Meeting of the Indian Aari Work Federation, collaborating on artisan welfare, training programs, and federation governance.',
     highlight: 'Federation Meeting',
+    image: '/about/federation-convention.jpg',
   },
 ]
 
@@ -443,20 +447,18 @@ export default function AboutPage() {
                 className="glass-gold p-6 rounded-3xl border border-gold-500/25 relative group hover:border-gold-400/50 transition-all duration-300 space-y-3 flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  {/* Optional Milestone Image Display */}
-                  {item.image && (
-                    <div
-                      className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black border border-gold-500/40 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
-                      onClick={() => setSelectedImage({ src: item.image, title: item.title, subtitle: item.description })}
-                    >
-                      <Image src={item.image} alt={item.title} fill unoptimized className="object-cover" />
-                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="px-3 py-1.5 rounded-xl bg-gold-500 text-darkbase font-inter text-xs font-bold flex items-center gap-1.5">
-                          <Eye size={14} /> View Full Photo
-                        </span>
-                      </div>
+                  {/* Milestone Image Display */}
+                  <div
+                    className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black border border-gold-500/40 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+                    onClick={() => setSelectedImage({ src: item.image || '/about/federation-record.jpg', title: item.title, subtitle: item.description })}
+                  >
+                    <Image src={item.image || '/about/federation-record.jpg'} alt={item.title} fill unoptimized className="object-cover" />
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="px-3 py-1.5 rounded-xl bg-gold-500 text-darkbase font-inter text-xs font-bold flex items-center gap-1.5">
+                        <Eye size={14} /> View Full Photo
+                      </span>
                     </div>
-                  )}
+                  </div>
 
                   <div className="flex items-center justify-between">
                     <span className="badge-gold text-[10px] font-semibold">{item.highlight}</span>
