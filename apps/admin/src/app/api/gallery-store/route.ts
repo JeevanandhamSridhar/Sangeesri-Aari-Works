@@ -28,7 +28,7 @@ function readStorageFile(): GalleryItem[] {
     }
     const raw = fs.readFileSync(JSON_PATH, 'utf-8')
     const parsed: GalleryItem[] = JSON.parse(raw)
-    const cleaned = parsed.filter((item) => !item.src.includes('blob:'))
+    const cleaned = parsed.filter((item) => item.src && !item.src.includes('blob:'))
     cleaned.sort((a, b) => {
       const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
       const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
@@ -46,7 +46,7 @@ function writeStorageFile(items: GalleryItem[]) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true })
     }
-    const cleanItems = items.filter((item) => !item.src.includes('blob:'))
+    const cleanItems = items.filter((item) => item.src && !item.src.includes('blob:'))
     cleanItems.sort((a, b) => {
       const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
       const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
@@ -59,7 +59,7 @@ function writeStorageFile(items: GalleryItem[]) {
 }
 
 function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] {
-  let cleaned = existingItems.filter((item) => !item.src.includes('blob:'))
+  let cleaned = existingItems.filter((item) => item.src && !item.src.includes('blob:'))
 
   if (!fs.existsSync(ADMIN_GALLERY_DIR)) {
     fs.mkdirSync(ADMIN_GALLERY_DIR, { recursive: true })
@@ -117,7 +117,9 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
   let updated = [...cleaned]
   let added = false
 
-  const unassignedFiles = allFiles.filter((f) => !registeredSrcs.has(`/gallery/${f}`))
+  const unassignedFiles = allFiles.filter(
+    (f) => !f.startsWith('angle_') && !registeredSrcs.has(`/gallery/${f}`)
+  )
 
   unassignedFiles.forEach((file) => {
     const relativeSrc = `/gallery/${file}`
@@ -142,12 +144,36 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
     added = true
   })
 
-  updated = updated.map((item) => ({
-    ...item,
-    images: Array.isArray(item.images) && item.images.length > 0
-      ? item.images.filter((i) => !i.includes('blob:'))
-      : [item.src],
-  }))
+  updated = updated.map((item) => {
+    let validImages = Array.isArray(item.images) && item.images.length > 0
+      ? item.images.filter((imgSrc) => {
+          if (!imgSrc || imgSrc.includes('blob:')) return false
+          if (imgSrc.startsWith('/gallery/')) {
+            const filename = imgSrc.replace('/gallery/', '')
+            return fs.existsSync(path.join(ADMIN_GALLERY_DIR, filename))
+          }
+          return true
+        })
+      : [item.src]
+
+    if (validImages.length === 0) {
+      validImages = ['/gallery/0021292954d624910413c938e24cf6eb.jpg']
+    }
+
+    let mainSrc = item.src
+    if (mainSrc.startsWith('/gallery/')) {
+      const filename = mainSrc.replace('/gallery/', '')
+      if (!fs.existsSync(path.join(ADMIN_GALLERY_DIR, filename))) {
+        mainSrc = validImages[0]
+      }
+    }
+
+    return {
+      ...item,
+      src: mainSrc,
+      images: validImages,
+    }
+  })
 
   updated.sort((a, b) => {
     const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
@@ -241,13 +267,18 @@ export async function POST(request: Request) {
         srcsToDelete.forEach((src) => {
           if (src.startsWith('/gallery/')) {
             const filename = src.replace('/gallery/', '')
-            const adminPath = path.join(ADMIN_GALLERY_DIR, filename)
-            const clientPath = path.join(CLIENT_GALLERY_DIR, filename)
-            if (fs.existsSync(adminPath)) {
-              try { fs.unlinkSync(adminPath) } catch {}
-            }
-            if (fs.existsSync(clientPath)) {
-              try { fs.unlinkSync(clientPath) } catch {}
+            const otherUses = current.some(
+              (i) => i.id !== id && (i.src === src || (i.images && i.images.includes(src)))
+            )
+            if (!otherUses) {
+              const adminPath = path.join(ADMIN_GALLERY_DIR, filename)
+              const clientPath = path.join(CLIENT_GALLERY_DIR, filename)
+              if (fs.existsSync(adminPath)) {
+                try { fs.unlinkSync(adminPath) } catch {}
+              }
+              if (fs.existsSync(clientPath)) {
+                try { fs.unlinkSync(clientPath) } catch {}
+              }
             }
           }
         })

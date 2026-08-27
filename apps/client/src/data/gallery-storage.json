@@ -704,7 +704,8 @@
     "category": "Bridal Blouses",
     "src": "/gallery/WhatsApp Image 2026-08-18 at 6.54.57 PM.jpeg",
     "images": [
-      "/gallery/WhatsApp Image 2026-08-18 at 6.54.57 PM.jpeg"
+      "/gallery/WhatsApp Image 2026-08-18 at 6.54.57 PM.jpeg",
+      "/gallery/angle_1787816050088_WhatsApp_Image_2026-08-18_at_6.54.57_PM__1_.jpeg"
     ],
     "showPrice": false,
     "priceEstimate": "₹3,500 – ₹6,500",
@@ -712,7 +713,8 @@
       "New Arrival",
       "Custom"
     ],
-    "description": "Custom handcrafted Aari embroidery blouse design."
+    "description": "Custom handcrafted Aari embroidery blouse design.",
+    "hidden": false
   },
   {
     "id": "gal-1787813385680-gzhr",
@@ -1181,42 +1183,6 @@
     "src": "/gallery/WhatsApp_Image_2026-08-27_at_12.44.20_AM.jpeg",
     "images": [
       "/gallery/WhatsApp_Image_2026-08-27_at_12.44.20_AM.jpeg"
-    ],
-    "showPrice": false,
-    "priceEstimate": "₹3,500 – ₹6,500",
-    "tags": [
-      "New Arrival",
-      "Custom"
-    ],
-    "description": "Custom handcrafted Aari embroidery blouse design.",
-    "hidden": false
-  },
-  {
-    "id": "gal-1787815746644-9i8i",
-    "code": "SSAW-065",
-    "title": "angle 1787815746568 WhatsApp Image 2026 08 18 at 6.54.57 PM  1 ",
-    "category": "Bridal Blouses",
-    "src": "/gallery/angle_1787815746568_WhatsApp_Image_2026-08-18_at_6.54.57_PM__1_.jpeg",
-    "images": [
-      "/gallery/angle_1787815746568_WhatsApp_Image_2026-08-18_at_6.54.57_PM__1_.jpeg"
-    ],
-    "showPrice": false,
-    "priceEstimate": "₹3,500 – ₹6,500",
-    "tags": [
-      "New Arrival",
-      "Custom"
-    ],
-    "description": "Custom handcrafted Aari embroidery blouse design.",
-    "hidden": false
-  },
-  {
-    "id": "gal-1787815755890-7ko9",
-    "code": "SSAW-066",
-    "title": "angle 1787815755847 WhatsApp Image 2026 08 18 at 6.54.57 PM  1 ",
-    "category": "Bridal Blouses",
-    "src": "/gallery/angle_1787815755847_WhatsApp_Image_2026-08-18_at_6.54.57_PM__1_.jpeg",
-    "images": [
-      "/gallery/angle_1787815755847_WhatsApp_Image_2026-08-18_at_6.54.57_PM__1_.jpeg"
     ],
     "showPrice": false,
     "priceEstimate": "₹3,500 – ₹6,500",
