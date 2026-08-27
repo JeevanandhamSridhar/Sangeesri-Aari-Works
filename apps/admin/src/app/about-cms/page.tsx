@@ -278,6 +278,23 @@ export default function AdminAboutCmsPage() {
     setMilestoneModalOpen(true)
   }
 
+  const persistAboutData = async (newData: any) => {
+    setAboutData(newData)
+    try {
+      const res = await fetch('/api/about-store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_about', data: newData }),
+      })
+      const result = await res.json()
+      if (result.success) {
+        toast.success('Changes saved live to About page!')
+      }
+    } catch {
+      toast.error('Failed to auto-save changes')
+    }
+  }
+
   const saveMilestone = () => {
     if (!mTitle || !mDescription) {
       toast.error('Please enter a milestone title and description')
@@ -296,21 +313,20 @@ export default function AdminAboutCmsPage() {
     const updatedAchievements = [...(aboutData.achievements || [])]
     if (editingMilestoneIdx !== null) {
       updatedAchievements[editingMilestoneIdx] = newMilestone
-      toast.success(`Updated milestone "${mTitle.slice(0, 25)}..."`)
     } else {
       updatedAchievements.push(newMilestone)
-      toast.success('New Key Federation Milestone added!')
     }
 
-    setAboutData((prev: any) => ({ ...prev, achievements: updatedAchievements }))
+    const newAboutData = { ...aboutData, achievements: updatedAchievements }
+    persistAboutData(newAboutData)
     setMilestoneModalOpen(false)
   }
 
   const removeMilestone = (idx: number) => {
     if (confirm('Are you sure you want to delete this Key Federation Milestone?')) {
       const updatedAchievements = (aboutData.achievements || []).filter((_: any, i: number) => i !== idx)
-      setAboutData((prev: any) => ({ ...prev, achievements: updatedAchievements }))
-      toast.success('Milestone removed')
+      const newAboutData = { ...aboutData, achievements: updatedAchievements }
+      persistAboutData(newAboutData)
     }
   }
 
