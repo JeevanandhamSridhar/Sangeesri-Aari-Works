@@ -4,7 +4,7 @@ import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRef, useState, useEffect } from 'react'
-import { Sparkles, Award, Heart, ShieldCheck, ArrowRight, Scissors, Star, Quote, Globe, Trophy, Calendar, Medal, Eye, X } from 'lucide-react'
+import { Sparkles, Award, Heart, ShieldCheck, ArrowRight, Scissors, Star, Quote, Globe, Trophy, Calendar, Medal, Eye, X, Layers } from 'lucide-react'
 
 const defaultSkills = [
   { label: 'Aari Embroidery & Zari Work', pct: 98 },
@@ -70,7 +70,7 @@ const defaultEventPhotos = [
 export default function AboutPage() {
   const artistRef = useRef<HTMLDivElement>(null)
   const isArtistInView = useInView(artistRef, { once: true, margin: '-80px' })
-  const [selectedImage, setSelectedImage] = useState<{ src: string; title: string; subtitle: string } | null>(null)
+  const [selectedImage, setSelectedImage] = useState<{ src: string; title: string; subtitle?: string } | null>(null)
   const [aboutStore, setAboutStore] = useState<any>(null)
 
   useEffect(() => {
@@ -97,6 +97,12 @@ export default function AboutPage() {
   const skillsList = aboutStore?.skills || defaultSkills
   const achievementsList = aboutStore?.achievements || defaultAchievements
   const eventPhotosList = aboutStore?.eventPhotos || defaultEventPhotos
+  const customSections = aboutStore?.customSections || []
+
+  // Filter sections by position
+  const belowStorySections = customSections.filter((s: any) => s.position === 'below_story')
+  const aboveMilestoneSections = customSections.filter((s: any) => s.position === 'above_milestones')
+  const belowMilestoneSections = customSections.filter((s: any) => s.position === 'below_milestones')
 
   return (
     <div className="min-h-screen bg-darkbase pt-28 md:pt-36 pb-24 overflow-x-hidden">
@@ -165,6 +171,27 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
+
+        {/* ── CUSTOM SECTIONS POSITIONED BELOW STORY ───────────────── */}
+        {belowStorySections.map((sec: any) => (
+          <div key={sec.id} className="glass-admin rounded-3xl border border-gold-500/30 p-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <span className="badge-gold text-xs font-bold">{sec.badge || 'Featured Category'}</span>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {sec.image && (
+                <div className="lg:col-span-5 relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black border border-white/10 cursor-pointer" onClick={() => setSelectedImage({ src: sec.image, title: sec.title, subtitle: sec.subtitle })}>
+                  <Image src={sec.image} alt={sec.title} fill unoptimized className="object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
+              )}
+              <div className={sec.image ? 'lg:col-span-7 space-y-3' : 'lg:col-span-12 space-y-3'}>
+                <h3 className="font-playfair text-2xl font-bold text-cream">{sec.title}</h3>
+                {sec.subtitle && <p className="font-inter text-xs text-gold-400 font-medium">{sec.subtitle}</p>}
+                <p className="font-inter text-xs sm:text-sm text-cream/80 leading-relaxed whitespace-pre-line">{sec.content}</p>
+              </div>
+            </div>
+          </div>
+        ))}
 
         {/* ── Meet the Founder & Artist ─────────────────────────────── */}
         <div ref={artistRef} className="relative overflow-hidden">
@@ -306,6 +333,27 @@ export default function AboutPage() {
           </div>
         </div>
 
+        {/* ── CUSTOM SECTIONS POSITIONED ABOVE MILESTONES ───────────── */}
+        {aboveMilestoneSections.map((sec: any) => (
+          <div key={sec.id} className="glass-admin rounded-3xl border border-gold-500/30 p-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <span className="badge-gold text-xs font-bold">{sec.badge || 'Featured Category'}</span>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {sec.image && (
+                <div className="lg:col-span-5 relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black border border-white/10 cursor-pointer" onClick={() => setSelectedImage({ src: sec.image, title: sec.title, subtitle: sec.subtitle })}>
+                  <Image src={sec.image} alt={sec.title} fill unoptimized className="object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
+              )}
+              <div className={sec.image ? 'lg:col-span-7 space-y-3' : 'lg:col-span-12 space-y-3'}>
+                <h3 className="font-playfair text-2xl font-bold text-cream">{sec.title}</h3>
+                {sec.subtitle && <p className="font-inter text-xs text-gold-400 font-medium">{sec.subtitle}</p>}
+                <p className="font-inter text-xs sm:text-sm text-cream/80 leading-relaxed whitespace-pre-line">{sec.content}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+
         {/* ── REAL FEDERATION EVENT & AWARD PHOTO GALLERY ───────────── */}
         <div className="space-y-8 pt-4">
           <div className="text-center max-w-2xl mx-auto space-y-2">
@@ -392,28 +440,66 @@ export default function AboutPage() {
             {achievementsList.map((item: any, idx: number) => (
               <div
                 key={idx}
-                className="glass-gold p-6 rounded-3xl border border-gold-500/25 relative group hover:border-gold-400/50 transition-all duration-300 space-y-3"
+                className="glass-gold p-6 rounded-3xl border border-gold-500/25 relative group hover:border-gold-400/50 transition-all duration-300 space-y-3 flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between">
-                  <span className="badge-gold text-[10px] font-semibold">{item.highlight}</span>
-                  <span className="font-inter text-xs text-gold-400 font-bold">{item.date}</span>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 shrink-0 group-hover:scale-110 transition-transform">
-                    <Medal size={22} />
+                <div className="space-y-3">
+                  {/* Optional Milestone Image Display */}
+                  {item.image && (
+                    <div
+                      className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black border border-gold-500/40 cursor-pointer group-hover:scale-[1.02] transition-transform duration-500"
+                      onClick={() => setSelectedImage({ src: item.image, title: item.title, subtitle: item.description })}
+                    >
+                      <Image src={item.image} alt={item.title} fill unoptimized className="object-cover" />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="px-3 py-1.5 rounded-xl bg-gold-500 text-darkbase font-inter text-xs font-bold flex items-center gap-1.5">
+                          <Eye size={14} /> View Full Photo
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between">
+                    <span className="badge-gold text-[10px] font-semibold">{item.highlight}</span>
+                    <span className="font-inter text-xs text-gold-400 font-bold">{item.date}</span>
                   </div>
-                  <div>
-                    <h3 className="font-playfair text-lg sm:text-xl font-bold text-cream">{item.title}</h3>
-                    <p className="font-inter text-xs text-gold-400/80 font-medium">{item.org}</p>
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 shrink-0 group-hover:scale-110 transition-transform">
+                      <Medal size={22} />
+                    </div>
+                    <div>
+                      <h3 className="font-playfair text-lg sm:text-xl font-bold text-cream">{item.title}</h3>
+                      <p className="font-inter text-xs text-gold-400/80 font-medium">{item.org}</p>
+                    </div>
                   </div>
+                  <p className="font-inter text-xs text-cream/70 leading-relaxed pt-1">
+                    {item.description}
+                  </p>
                 </div>
-                <p className="font-inter text-xs text-cream/70 leading-relaxed pt-1">
-                  {item.description}
-                </p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* ── CUSTOM SECTIONS POSITIONED BELOW MILESTONES ───────────── */}
+        {belowMilestoneSections.map((sec: any) => (
+          <div key={sec.id} className="glass-admin rounded-3xl border border-gold-500/30 p-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <span className="badge-gold text-xs font-bold">{sec.badge || 'Featured Category'}</span>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {sec.image && (
+                <div className="lg:col-span-5 relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black border border-white/10 cursor-pointer" onClick={() => setSelectedImage({ src: sec.image, title: sec.title, subtitle: sec.subtitle })}>
+                  <Image src={sec.image} alt={sec.title} fill unoptimized className="object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
+              )}
+              <div className={sec.image ? 'lg:col-span-7 space-y-3' : 'lg:col-span-12 space-y-3'}>
+                <h3 className="font-playfair text-2xl font-bold text-cream">{sec.title}</h3>
+                {sec.subtitle && <p className="font-inter text-xs text-gold-400 font-medium">{sec.subtitle}</p>}
+                <p className="font-inter text-xs sm:text-sm text-cream/80 leading-relaxed whitespace-pre-line">{sec.content}</p>
+              </div>
+            </div>
+          </div>
+        ))}
 
         {/* ── Core Values ─────────────────────────────────────────── */}
         <div className="space-y-10">
@@ -449,7 +535,7 @@ export default function AboutPage() {
 
       </div>
 
-      {/* ── FULLSCREEN LIGHTBOX FOR EVENT PHOTOS ──────────────────── */}
+      {/* ── FULLSCREEN LIGHTBOX FOR EVENT & MILESTONE PHOTOS ───────── */}
       {selectedImage && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
           <div className="relative max-w-4xl w-full glass-admin rounded-3xl border border-gold-500/40 p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
@@ -475,9 +561,11 @@ export default function AboutPage() {
               />
             </div>
 
-            <p className="font-inter text-xs sm:text-sm text-cream/80 leading-relaxed">
-              {selectedImage.subtitle}
-            </p>
+            {selectedImage.subtitle && (
+              <p className="font-inter text-xs sm:text-sm text-cream/80 leading-relaxed">
+                {selectedImage.subtitle}
+              </p>
+            )}
           </div>
         </div>
       )}
