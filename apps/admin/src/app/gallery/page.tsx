@@ -44,6 +44,7 @@ export default function AdminGalleryPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOption, setSortOption] = useState<'code_asc' | 'code_desc' | 'title_asc'>('code_asc')
   const [syncingFolder, setSyncingFolder] = useState(false)
 
   // Edit Modal State
@@ -255,7 +256,6 @@ export default function AdminGalleryPage() {
       reader.onload = (ev) => {
         const base64 = ev.target?.result as string
         if (base64) {
-          // Send to upload route to save to disk
           fetch('/api/gallery-store', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -328,8 +328,25 @@ export default function AdminGalleryPage() {
       item.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    if (sortOption === 'code_asc') {
+      const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+      const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+      return numA - numB
+    }
+    if (sortOption === 'code_desc') {
+      const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+      const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+      return numB - numA
+    }
+    if (sortOption === 'title_asc') {
+      return a.title.localeCompare(b.title)
+    }
+    return 0
+  })
+
   return (
-    <div className="space-y-8 max-w-6xl">
+    <div className="space-y-8 max-w-6xl pb-16">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="font-playfair text-3xl font-bold text-cream flex items-center gap-2">
@@ -432,8 +449,8 @@ export default function AdminGalleryPage() {
         </div>
       </div>
 
-      {/* FILTER & SEARCH */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* FILTER & SORT CONTROLS */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 glass-admin p-4 rounded-2xl border border-white/10">
         <div className="relative w-full sm:w-80">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-cream/40" />
           <input
@@ -445,14 +462,30 @@ export default function AdminGalleryPage() {
           />
         </div>
 
-        <p className="font-inter text-xs text-cream/60">
-          Showing <span className="text-gold-400 font-bold">{filteredItems.length}</span> of {items.length} designs
-        </p>
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-2">
+            <ArrowUpDown size={14} className="text-gold-400" />
+            <span className="font-inter text-xs text-cream/60">Sort Order:</span>
+            <select
+              value={sortOption}
+              onChange={(e: any) => setSortOption(e.target.value)}
+              className="input-admin text-xs bg-darkbase border-gold-500/30 text-gold-400 py-1.5 font-bold"
+            >
+              <option value="code_asc">Code Ascending (SSAW-001 → SSAW-046)</option>
+              <option value="code_desc">Code Descending (SSAW-046 → SSAW-001)</option>
+              <option value="title_asc">Title (A – Z)</option>
+            </select>
+          </div>
+
+          <p className="font-inter text-xs text-cream/60">
+            Showing <span className="text-gold-400 font-bold">{sortedItems.length}</span> of {items.length} designs
+          </p>
+        </div>
       </div>
 
       {/* GALLERY MANAGEMENT GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => {
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+        {sortedItems.map((item) => {
           const isPriceShown = globalShowPrices || item.showPrice
           const isHidden = !!item.hidden
           const angleCount = item.images ? item.images.length : 1
@@ -472,14 +505,14 @@ export default function AdminGalleryPage() {
                 <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5">
                   <button
                     onClick={() => handleCopyCode(item.code)}
-                    className="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-gold-500/40 text-gold-400 font-mono text-xs font-bold flex items-center gap-1 hover:bg-gold-500 hover:text-darkbase transition-all"
+                    className="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-gold-500/40 text-gold-400 font-mono text-xs font-bold flex items-center gap-1 hover:bg-gold-500 hover:text-darkbase transition-all shadow-md"
                   >
                     <Hash size={10} />
                     {item.code}
                     {copiedCode === item.code ? <Check size={10} className="text-green-400" /> : <Copy size={9} />}
                   </button>
                   {angleCount > 1 && (
-                    <span className="px-2 py-0.5 rounded-full bg-gold-500/90 text-darkbase font-inter text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-gold-500/90 text-darkbase font-inter text-[10px] font-bold shadow-md">
                       {angleCount} Angles 🎠
                     </span>
                   )}
@@ -490,7 +523,7 @@ export default function AdminGalleryPage() {
                   <button
                     onClick={() => toggleItemHidden(item.id)}
                     title={isHidden ? 'Hidden from website. Click to publish.' : 'Visible on website. Click to hide.'}
-                    className={`px-2.5 py-1 rounded-full backdrop-blur-md font-inter text-[10px] font-bold flex items-center gap-1 transition-all ${
+                    className={`px-2.5 py-1 rounded-full backdrop-blur-md font-inter text-[10px] font-bold flex items-center gap-1 transition-all shadow-md ${
                       isHidden
                         ? 'bg-red-500 text-white border border-red-400'
                         : 'bg-black/80 text-green-400 border border-green-500/40'
@@ -506,7 +539,7 @@ export default function AdminGalleryPage() {
                 </div>
               </div>
 
-              {/* CARD DETAILS */}
+              {/* CARD DETAILS & ACTIONS */}
               <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
                 <div>
                   <h3 className="font-playfair text-base font-bold text-cream mb-1 flex items-center justify-between">
@@ -525,21 +558,21 @@ export default function AdminGalleryPage() {
                   </div>
                 </div>
 
-                {/* CARD ACTIONS */}
-                <div className="flex items-center justify-between pt-3 border-t border-white/5 gap-2">
+                {/* CARD ACTIONS CLEANLY INSIDE THE CARD */}
+                <div className="flex items-center justify-between pt-3 border-t border-white/10 gap-2">
                   <button
                     onClick={() => openEditModal(item)}
-                    className="btn-luxury py-1.5 px-3 text-[11px] flex items-center gap-1 text-gold-400 hover:text-white"
+                    className="px-3 py-1.5 rounded-xl bg-gold-500/20 border border-gold-500/40 text-gold-400 hover:bg-gold-500 hover:text-darkbase transition-all font-inter text-xs font-bold flex items-center gap-1.5"
                   >
-                    <Edit3 size={12} /> Edit Code &amp; Photos
+                    <Edit3 size={13} /> Edit Code &amp; Photos
                   </button>
 
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="p-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
+                    className="p-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
                     title="Delete design"
                   >
-                    <Trash2 size={13} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>

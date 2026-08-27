@@ -28,7 +28,13 @@ function readStorageFile(): GalleryItem[] {
     }
     const raw = fs.readFileSync(JSON_PATH, 'utf-8')
     const parsed: GalleryItem[] = JSON.parse(raw)
-    return parsed.filter((item) => !item.src.includes('blob:'))
+    const cleaned = parsed.filter((item) => !item.src.includes('blob:'))
+    cleaned.sort((a, b) => {
+      const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+      const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+      return numA - numB
+    })
+    return cleaned
   } catch {
     return []
   }
@@ -41,6 +47,11 @@ function writeStorageFile(items: GalleryItem[]) {
       fs.mkdirSync(dir, { recursive: true })
     }
     const cleanItems = items.filter((item) => !item.src.includes('blob:'))
+    cleanItems.sort((a, b) => {
+      const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+      const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+      return numA - numB
+    })
     fs.writeFileSync(JSON_PATH, JSON.stringify(cleanItems, null, 2), 'utf-8')
   } catch (err) {
     console.error('Error writing gallery storage JSON:', err)

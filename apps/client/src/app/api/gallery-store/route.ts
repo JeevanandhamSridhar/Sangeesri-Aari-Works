@@ -34,7 +34,13 @@ function readStorageFile(): GalleryItem[] {
     }
     const raw = fs.readFileSync(JSON_PATH, 'utf-8')
     const parsed: GalleryItem[] = JSON.parse(raw)
-    return parsed.filter((item) => !item.src.includes('blob:'))
+    const cleaned = parsed.filter((item) => !item.src.includes('blob:'))
+    cleaned.sort((a, b) => {
+      const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+      const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+      return numA - numB
+    })
+    return cleaned
   } catch {
     return []
   }
@@ -47,6 +53,11 @@ function writeStorageFile(items: GalleryItem[]) {
       fs.mkdirSync(dir, { recursive: true })
     }
     const cleanItems = items.filter((item) => !item.src.includes('blob:'))
+    cleanItems.sort((a, b) => {
+      const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
+      const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
+      return numA - numB
+    })
     fs.writeFileSync(JSON_PATH, JSON.stringify(cleanItems, null, 2), 'utf-8')
   } catch (err) {
     console.error('Error writing gallery storage JSON:', err)
@@ -137,7 +148,6 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
     added = true
   })
 
-  // Clean images array - NO filler image mixing!
   updated = updated.map((item) => ({
     ...item,
     images: Array.isArray(item.images) && item.images.length > 0
@@ -145,7 +155,7 @@ function syncDirectoriesAndStorage(existingItems: GalleryItem[]): GalleryItem[] 
       : [item.src],
   }))
 
-  // Sort strictly by code number (SSAW-001, SSAW-002, ...)
+  // Always sort strictly by numeric code ascending (SSAW-001, SSAW-002, ...)
   updated.sort((a, b) => {
     const numA = parseInt(a.code.replace(/\D/g, ''), 10) || 0
     const numB = parseInt(b.code.replace(/\D/g, ''), 10) || 0
@@ -170,7 +180,6 @@ export async function GET(request: Request) {
   const existing = readStorageFile()
   const synced = syncDirectoriesAndStorage(existing)
   
-  // If request is from client website (not admin), filter out hidden items
   const filtered = isAdmin ? synced : synced.filter((item) => !item.hidden)
 
   return NextResponse.json({ success: true, designs: filtered }, { headers: corsHeaders })
